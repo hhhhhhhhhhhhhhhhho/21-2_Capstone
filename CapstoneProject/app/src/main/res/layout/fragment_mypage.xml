@@ -1,6 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/profileImage"
+        android:layout_width="130dp"
+        android:layout_height="150dp"
+        android:padding="20dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/ic_baseline_person_add_alt_24"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <!-- 위에 임의로 해놓은 거라 크기 조절이랑 이미지 아무렇게 바꿔주세요-->
+    <!-- 이름, 이메일 , 프로필 수정 버튼 추가해주세요!-->
+
+    <ImageView
+        android:id="@+id/faceImage"
+        android:layout_width="180dp"
+        android:layout_height="200dp"
+        app:layout_constraintTop_toBottomOf="@+id/profileImage"
+        android:layout_marginTop="100dp"
+        app:layout_constraintEnd_toStartOf="@+id/bodyImage"
+        app:layout_constraintStart_toStartOf="parent"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/faceImage"
+        app:layout_constraintEnd_toEndOf="@id/faceImage"
+        app:layout_constraintTop_toBottomOf="@id/faceImage"
+        android:layout_marginTop="20dp"
+        android:text="얼굴 사진 추가"
+        tools:ignore="HardcodedText" />
+
+    <ImageView
+        android:id="@+id/bodyImage"
+        android:layout_width="180dp"
+        android:layout_height="200dp"
+        app:layout_constraintTop_toTopOf="@id/faceImage"
+        app:layout_constraintStart_toEndOf="@id/faceImage"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/bodyImage"
+        app:layout_constraintEnd_toEndOf="@id/bodyImage"
+        app:layout_constraintTop_toBottomOf="@id/bodyImage"
+        android:layout_marginTop="20dp"
+        android:text="전신 사진 추가"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginHorizontal="60dp"
+        android:layout_marginBottom="50dp"
+        android:text="아바타 생성"
+        tools:ignore="HardcodedText" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
