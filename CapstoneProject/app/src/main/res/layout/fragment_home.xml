@@ -11,15 +11,15 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:gravity="center"
-        android:text="My Avatar"
-        android:fontFamily="@font/avatar_font"
-        android:textColor="@color/main_color"
-        android:shadowColor="#000000"
+        android:padding="5dp"
+        android:shadowColor="@color/main_color_2"
         android:shadowDx="7.0"
         android:shadowDy="7.0"
         android:shadowRadius="7.0"
+        android:text="CLOSET"
+        android:fontFamily="@font/avatar_font"
+        android:textColor="@color/main_color"
         android:textSize="40sp"
-        android:padding="5dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -35,66 +35,74 @@
         app:layout_constraintTop_toBottomOf="@id/TextView" />
 
     <TextView
-        android:id="@+id/button"
-        android:layout_width="100dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="50dp"
-        android:layout_marginEnd="40dp"
-        android:background="@drawable/ic_bubble_2"
-        android:text="액세서리"
-        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/person_image"
+        app:layout_constraintEnd_toEndOf="@id/person_image"
+        app:layout_constraintTop_toTopOf="@id/person_image"
+        app:layout_constraintBottom_toBottomOf="@id/person_image"
+        android:text="사진을 \n등록해주세요."
+        android:textSize="15sp"
+        android:gravity="center"
+        android:textColor="#FFFFFF"
+        android:layout_marginBottom="20dp"
         android:padding="5dp"
-        android:gravity="center_horizontal"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/person_image"
         tools:ignore="HardcodedText" />
+
+    <ImageButton
+        android:id="@+id/button"
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="52dp"
+        android:layout_marginEnd="56dp"
+        android:background="@drawable/ic_accessory"
+        android:backgroundTint="@color/main_color_2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/person_image" />
 
     <TextView
         android:id="@+id/button2"
         android:layout_width="80dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="150dp"
-        android:text="상의"
-        android:gravity="center"
-        android:textStyle="bold"
-        android:background="@drawable/ic_bubble"
+        android:layout_height="60dp"
+        android:layout_marginStart="40dp"
+        android:layout_marginTop="132dp"
+        android:backgroundTint="@color/main_color_2"
+        android:background="@drawable/ic_top"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/person_image"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintTop_toTopOf="@+id/person_image" />
 
     <ImageButton
         android:id="@+id/button3"
-        android:layout_width="90dp"
+        android:layout_width="80dp"
         android:layout_height="80dp"
-        android:layout_marginEnd="30dp"
-        android:layout_marginBottom="120dp"
+        android:layout_marginEnd="28dp"
+        android:layout_marginBottom="140dp"
+        android:backgroundTint="@color/main_color_2"
         android:background="@drawable/ic_pants"
         app:layout_constraintBottom_toBottomOf="@+id/person_image"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageButton
         android:id="@+id/button4"
         android:layout_width="80dp"
-        android:layout_height="60dp"
+        android:layout_height="80dp"
         android:layout_marginStart="40dp"
         android:layout_marginBottom="50dp"
         android:background="@drawable/ic_shoes"
+        android:backgroundTint="@color/main_color_2"
         app:layout_constraintBottom_toBottomOf="@+id/person_image"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <Button
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginHorizontal="50dp"
-            android:text="옷입히기"
-            android:backgroundTint="@color/main_color"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/person_image"
-            tools:ignore="HardcodedText" />
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="50dp"
+        android:backgroundTint="@color/main_color"
+        android:text="옷입히기"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/person_image"
+        tools:ignore="HardcodedText" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
