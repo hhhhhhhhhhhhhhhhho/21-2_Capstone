@@ -1,19 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <item
-        android:id="@+id/home"
+        android:id="@+id/avatar"
         android:icon="@drawable/ic_baseline_home_24"
+        app:showAsAction="never"
         android:title="홈" />
 
     <item
         android:id="@+id/closet"
         android:icon="@drawable/ic_baseline_checkroom_24"
+        app:showAsAction="never"
         android:title="나의 옷장" />
 
     <item
         android:id="@+id/myPage"
         android:icon="@drawable/ic_baseline_person_24"
+        app:showAsAction="never"
         android:title="나의 정보" />
 </menu>
