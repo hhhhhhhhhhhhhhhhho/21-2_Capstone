@@ -9,7 +9,7 @@
 <!--    이미지 변경 레이아웃 변경 -->
 
     <ImageView
-        android:layout_marginTop="150dp"
+        android:layout_marginTop="130dp"
         android:id="@+id/closetImage"
         android:layout_width="200dp"
         android:layout_height="200dp"
@@ -27,6 +27,7 @@
         app:layout_constraintTop_toBottomOf="@+id/closetImage"
         android:text="클로젯."
         android:textSize="40sp"
+        android:fontFamily="@font/dongdong"
         android:gravity="center"
         android:layout_marginTop="20dp"
         android:textColor="@color/main_color_2"
@@ -37,7 +38,7 @@
         android:layout_width="0dp"
         android:hint="이메일을 입력하세요."
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="90dp"
         app:layout_constraintTop_toBottomOf="@+id/closetTextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

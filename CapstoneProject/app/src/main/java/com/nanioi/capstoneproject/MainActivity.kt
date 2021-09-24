@@ -9,6 +9,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
+import com.nanioi.capstoneproject.Avatar.AvatarFragment
 import com.nanioi.capstoneproject.closet.ClosetFragment
 import com.nanioi.capstoneproject.home.HomeFragment
 import com.nanioi.capstoneproject.mypage.MyPageFragment
@@ -19,6 +20,7 @@ class MainActivity : AppCompatActivity() ,NavigationView.OnNavigationItemSelecte
     lateinit var navigationView: NavigationView
 
     val homeFragment = HomeFragment()
+    val avatarFragment = AvatarFragment()
     val closetFragment = ClosetFragment()
     val myPageFragment = MyPageFragment()
 
@@ -66,7 +68,8 @@ class MainActivity : AppCompatActivity() ,NavigationView.OnNavigationItemSelecte
     //by 나연. 드로어 내 아이템 클릭 시 이벤트 처리 함수 (21.09.24)
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
-            R.id.avatar -> replaceFragment(homeFragment)
+            R.id.main -> replaceFragment(homeFragment)
+            R.id.avatar -> replaceFragment(avatarFragment)
             R.id.closet -> replaceFragment(closetFragment)
             R.id.myPage -> replaceFragment(myPageFragment)
         }
