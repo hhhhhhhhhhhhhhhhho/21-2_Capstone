@@ -9,7 +9,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="gray_cc">#cccccc</color>
     <color name="gray_ec">#ececec</color>
+    <color name="dark_gray">#5E5B5B</color>
     <color name="main_color">#ED636D</color>
     <color name="main_color_2">#E3AFB2</color>
+    <color name="background">#F8F3F4</color>
     <color name="transfer">#00000000</color>
 </resources>

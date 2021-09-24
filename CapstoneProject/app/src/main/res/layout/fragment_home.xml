@@ -1,108 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:padding="30dp">
 
-    <TextView
-        android:id="@+id/TextView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:gravity="center"
-        android:padding="5dp"
-        android:shadowColor="@color/main_color_2"
-        android:shadowDx="7.0"
-        android:shadowDy="7.0"
-        android:shadowRadius="7.0"
-        android:text="CLOSET"
-        android:fontFamily="@font/avatar_font"
-        android:textColor="@color/main_color"
-        android:textSize="40sp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="HardcodedText" />
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/mainViewPager"
+        android:layout_width="match_parent"
+        android:layout_height="300dp"
+        android:background="@drawable/radius_pink"
+        android:orientation="horizontal" />
 
-    <ImageView
-        android:id="@+id/person_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_avatar"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/TextView" />
+    <me.relex.circleindicator.CircleIndicator3
+        android:id="@+id/indicator"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_marginTop="300dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/person_image"
-        app:layout_constraintEnd_toEndOf="@id/person_image"
-        app:layout_constraintTop_toTopOf="@id/person_image"
-        app:layout_constraintBottom_toBottomOf="@id/person_image"
-        android:text="사진을 \n등록해주세요."
-        android:textSize="15sp"
-        android:gravity="center"
-        android:textColor="#FFFFFF"
-        android:layout_marginBottom="20dp"
-        android:padding="5dp"
-        tools:ignore="HardcodedText" />
+<!--    요아래 모할까나...-->
 
-    <ImageButton
-        android:id="@+id/button"
-        android:layout_width="80dp"
-        android:layout_height="60dp"
-        android:layout_marginTop="52dp"
-        android:layout_marginEnd="56dp"
-        android:background="@drawable/ic_accessory"
-        android:backgroundTint="@color/main_color_2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/person_image" />
-
-    <TextView
-        android:id="@+id/button2"
-        android:layout_width="80dp"
-        android:layout_height="60dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginTop="132dp"
-        android:backgroundTint="@color/main_color_2"
-        android:background="@drawable/ic_top"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/person_image" />
-
-    <ImageButton
-        android:id="@+id/button3"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginEnd="28dp"
-        android:layout_marginBottom="140dp"
-        android:backgroundTint="@color/main_color_2"
-        android:background="@drawable/ic_pants"
-        app:layout_constraintBottom_toBottomOf="@+id/person_image"
-        app:layout_constraintEnd_toEndOf="parent" />
-
-    <ImageButton
-        android:id="@+id/button4"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:layout_marginStart="40dp"
-        android:layout_marginBottom="50dp"
-        android:background="@drawable/ic_shoes"
-        android:backgroundTint="@color/main_color_2"
-        app:layout_constraintBottom_toBottomOf="@+id/person_image"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
-        android:backgroundTint="@color/main_color"
-        android:text="옷입히기"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/person_image"
-        tools:ignore="HardcodedText" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
