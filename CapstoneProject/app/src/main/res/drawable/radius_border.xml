@@ -9,6 +9,8 @@
     <padding android:left="2px" android:top="2px"
         android:right="2px" android:bottom="2px" />
 
+    <corners android:radius="10dp"/>
+
     <solid android:color="@color/white"/>
 
 

@@ -5,21 +5,23 @@
 
     <item
         android:id="@+id/main"
-        android:icon="@drawable/ic_baseline_home_24"
+        android:icon="@drawable/ic_home"
         android:title="HOME" />
 
     <item
         android:id="@+id/closet"
-        android:icon="@drawable/ic_baseline_checkroom_24"
-        android:title="MY CLOSET" />
+        android:icon="@drawable/ic_closet"
+        android:title="CLOSET" />
 
     <item
         android:id="@+id/avatar"
-        android:icon="@drawable/ic_baseline_person_add_alt_24"
-        android:title="MY AVATAR" />
+        android:icon="@drawable/ic_styling"
+        android:title="STYLING" />
+
 
     <item
         android:id="@+id/myPage"
-        android:icon="@drawable/ic_baseline_person_24"
-        android:title="MYPAGE" />
+        android:icon="@drawable/ic_edit"
+        android:title="EDIT" />
+
 </menu>
