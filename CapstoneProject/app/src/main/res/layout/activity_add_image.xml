@@ -11,8 +11,8 @@
         android:id="@+id/photoImage"
         android:layout_width="250dp"
         android:layout_height="300dp"
-        android:background="@drawable/border"
         android:layout_marginTop="100dp"
+        android:background="@drawable/radius_border"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,10 +22,10 @@
         android:layout_width="60dp"
         android:layout_height="40dp"
         android:background="@drawable/ic_baseline_add_a_photo_24"
+        app:layout_constraintBottom_toBottomOf="@id/photoImage"
         app:layout_constraintEnd_toEndOf="@+id/photoImage"
         app:layout_constraintStart_toStartOf="@id/photoImage"
-        app:layout_constraintTop_toTopOf="@id/photoImage"
-        app:layout_constraintBottom_toBottomOf="@id/photoImage" />
+        app:layout_constraintTop_toTopOf="@id/photoImage" />
 
     <ProgressBar
         android:id="@+id/progressBar"
@@ -39,18 +39,18 @@
         tools:visibility="visible" />
 
     <CheckBox
-        android:layout_marginTop="40dp"
         android:id="@+id/topCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
+        android:layout_marginTop="40dp"
         android:text="상의"
         app:layout_constraintEnd_toStartOf="@id/pantsCheckBox"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/photoImage"
+        tools:ignore="HardcodedText"
         tools:layout_editor_absoluteX="27dp"
-        tools:layout_editor_absoluteY="408dp"
-        tools:ignore="HardcodedText" />
+        tools:layout_editor_absoluteY="408dp" />
 
     <CheckBox
         android:id="@+id/pantsCheckBox"
@@ -70,33 +70,48 @@
         app:layout_constraintEnd_toStartOf="@+id/shoesCheckBox"
         app:layout_constraintStart_toEndOf="@id/pantsCheckBox"
         app:layout_constraintTop_toTopOf="@id/topCheckBox"
+        tools:ignore="HardcodedText"
         tools:layout_editor_absoluteX="243dp"
-        tools:layout_editor_absoluteY="406dp"
-        tools:ignore="HardcodedText" />
+        tools:layout_editor_absoluteY="406dp" />
 
     <CheckBox
         android:id="@+id/shoesCheckBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="슈즈"
         android:layout_marginEnd="10dp"
+        android:text="슈즈"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/accessoryCheckBox"
         app:layout_constraintTop_toTopOf="@id/topCheckBox"
+        tools:ignore="HardcodedText"
         tools:layout_editor_absoluteX="311dp"
-        tools:layout_editor_absoluteY="404dp"
+        tools:layout_editor_absoluteY="404dp" />
+
+    <TextView
+        android:id="@+id/messageTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dp"
+        android:gravity="center"
+        android:text=" 해당 카테고리에 맞는 이미지만 등록해주세요."
+        android:textStyle="bold"
+        android:drawableLeft="@drawable/ic_baseline_error_outline_24"
+        android:textColor="@color/red"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/topCheckBox"
         tools:ignore="HardcodedText" />
 
     <Button
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/topCheckBox"
         android:layout_marginHorizontal="50dp"
         android:layout_marginTop="40dp"
-        android:text="사진 업로드"
         android:backgroundTint="@color/main_color"
+        android:text="사진 업로드"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/messageTextView"
         tools:ignore="HardcodedText" />
 
 
