@@ -45,4 +45,15 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     implementation platform('com.google.firebase:firebase-bom:28.4.0')
+
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0' // DrawerLayout
+    implementation 'com.google.android.material:material:1.0.0' // NavigationView
+
+    implementation "androidx.viewpager2:viewpager2:1.0.0"
+    implementation 'me.relex:circleindicator:2.1.4'
+
+//    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+//    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+
+    implementation 'com.github.bumptech.glide:glide:4.12.0'
 }

@@ -3,13 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/background">
 
     <ImageView
         android:id="@+id/profileImage"
-        android:layout_width="130dp"
-        android:layout_height="160dp"
-        android:layout_marginTop="40dp"
+        android:layout_width="150dp"
+        android:layout_height="200dp"
+        android:layout_marginTop="25dp"
         android:background="@drawable/border"
         android:padding="20dp"
         android:src="@drawable/ic_baseline_person_add_alt_24"
@@ -21,14 +22,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="13dp"
         android:maxLines="1"
+        android:layout_marginTop="5dp"
+        android:text="곽나연"
         android:textColor="@color/black"
-        android:textSize="25sp"
+        android:textSize="17sp"
         app:layout_constraintEnd_toEndOf="@+id/bodyImage"
         app:layout_constraintStart_toEndOf="@id/profileImage"
-        app:layout_constraintTop_toTopOf="@id/profileImage"
-        android:text="곽나연" />
+        app:layout_constraintTop_toTopOf="@id/profileImage" />
 
     <TextView
         android:id="@+id/emailTextView"
@@ -36,12 +37,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
         android:maxLines="2"
+        android:text="aaa@gmail.com"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="17sp"
         app:layout_constraintEnd_toEndOf="@id/titleTextView"
         app:layout_constraintStart_toStartOf="@id/titleTextView"
         app:layout_constraintTop_toBottomOf="@id/titleTextView"
-        android:text="aaa@gmail.com" />
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/height"
@@ -51,10 +53,11 @@
         android:backgroundTint="@color/main_color"
         android:text="키 : 170cm "
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="17sp"
         app:layout_constraintEnd_toEndOf="@id/titleTextView"
         app:layout_constraintStart_toStartOf="@id/titleTextView"
-        app:layout_constraintTop_toBottomOf="@id/emailTextView" />
+        app:layout_constraintTop_toBottomOf="@id/emailTextView"
+        tools:ignore="HardcodedText" />
 
     <TextView
         android:id="@+id/weight"
@@ -64,10 +67,22 @@
         android:backgroundTint="@color/main_color"
         android:text="몸무게 : 40kg"
         android:textColor="@color/black"
-        android:textSize="20sp"
+        android:textSize="17sp"
         app:layout_constraintEnd_toEndOf="@id/titleTextView"
         app:layout_constraintStart_toStartOf="@id/titleTextView"
-        app:layout_constraintTop_toBottomOf="@id/height" />
+        app:layout_constraintTop_toBottomOf="@id/height"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/titleTextView"
+        app:layout_constraintEnd_toEndOf="@id/titleTextView"
+        app:layout_constraintTop_toBottomOf="@id/weight"
+        android:layout_marginTop="15dp"
+        android:text="프로필 수정"
+        android:layout_marginEnd="50dp"
+        tools:ignore="HardcodedText" />
 
     <ImageView
         android:id="@+id/faceImage"
@@ -83,10 +98,11 @@
         android:layout_width="50dp"
         android:layout_height="40dp"
         android:background="@drawable/ic_baseline_add_a_photo_24"
+        app:layout_constraintBottom_toBottomOf="@id/faceImage"
         app:layout_constraintEnd_toEndOf="@+id/faceImage"
         app:layout_constraintStart_toStartOf="@id/faceImage"
-        app:layout_constraintTop_toTopOf="@id/faceImage"
-        app:layout_constraintBottom_toBottomOf="@id/faceImage" />
+        app:layout_constraintTop_toTopOf="@id/faceImage" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -110,10 +126,10 @@
         android:layout_width="50dp"
         android:layout_height="40dp"
         android:background="@drawable/ic_baseline_add_a_photo_24"
+        app:layout_constraintBottom_toBottomOf="@id/bodyImage"
         app:layout_constraintEnd_toEndOf="@+id/bodyImage"
         app:layout_constraintStart_toStartOf="@id/bodyImage"
-        app:layout_constraintTop_toTopOf="@id/bodyImage"
-        app:layout_constraintBottom_toBottomOf="@id/bodyImage" />
+        app:layout_constraintTop_toTopOf="@id/bodyImage" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -131,7 +147,7 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="60dp"
         android:backgroundTint="@color/main_color"
-        android:text="프로필 수정"
+        android:text="사진 업로드"
         app:layout_constraintBottom_toTopOf="@id/addAvatarButton"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -142,7 +158,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="60dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="20dp"
         android:backgroundTint="@color/main_color"
         android:text="아바타 생성"
         app:layout_constraintBottom_toBottomOf="parent"
