@@ -7,8 +7,6 @@
     android:background="@color/background"
     tools:context=".MainActivity">
 
-<!--    <include layout="@layout/main_toolbar"/>-->
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -32,37 +30,14 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-<!--    <View-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="1dp"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/toolbar"-->
-<!--        android:background="@color/main_color"/>-->
-
     <FrameLayout
         android:id="@+id/fragmentContainer"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/background"
-        app:layout_constraintTop_toBottomOf="@id/toolbar"
-        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"/>
-
-
-<!--        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView" />-->
-
-<!--    <com.google.android.material.bottomnavigation.BottomNavigationView-->
-<!--        android:id="@+id/bottomNavigationView"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:itemIconTint="@drawable/selector_menu_color"-->
-<!--        app:itemRippleColor="@null"-->
-<!--        app:itemTextColor="@color/black"-->
-<!--        app:menu="@menu/bottom_navigation_menu" />-->
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

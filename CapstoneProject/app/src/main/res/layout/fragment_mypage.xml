@@ -74,17 +74,6 @@
         app:layout_constraintTop_toBottomOf="@id/height"
         tools:ignore="HardcodedText" />
 
-<!--    <Button-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintStart_toStartOf="@id/titleTextView"-->
-<!--        app:layout_constraintEnd_toEndOf="@id/titleTextView"-->
-<!--        app:layout_constraintTop_toBottomOf="@id/weight"-->
-<!--        android:layout_marginTop="15dp"-->
-<!--        android:text="프로필 수정"-->
-<!--        android:layout_marginEnd="50dp"-->
-<!--        tools:ignore="HardcodedText" />-->
-
     <ImageView
         android:id="@+id/faceImage"
         android:layout_width="180dp"
@@ -126,7 +115,7 @@
         tools:ignore="HardcodedText" />
 
     <Button
-        android:id="@+id/profileInputButton"
+        android:id="@+id/editProfileButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="60dp"

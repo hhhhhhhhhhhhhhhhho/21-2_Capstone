@@ -1,13 +1,46 @@
 package com.nanioi.capstoneproject
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
+import android.text.Spannable
+import android.text.Spanned
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
+import android.view.View
+import androidx.appcompat.app.AppCompatActivity
+import com.nanioi.capstoneproject.databinding.ActivitySignInBinding
 
 class SignInActivity : AppCompatActivity() {
+
+    private val binding by lazy { ActivitySignInBinding.inflate(layoutInflater) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_in)
-    }
+//        setContentView(R.layout.activity_sign_in)
+        setContentView(binding.root)
+
+
+        binding.signInButton.setOnClickListener {
+            //TODO 아래 주석단거 코드 추가해주세요
+
+            //로그인 성공하면 MainActivity로
+
+            //실패하면 에러처리
+        }
+
+        //by 나연. 회원가입 클릭 시 회원가입 Activity로 이동 (2021.09.27)
+        var signUpText = binding.signUpTextView.text as Spannable
+        val clickSpan = object :ClickableSpan(){
+            override fun onClick(widget: View) {
+                startActivity(Intent(this@SignInActivity,SignUpActivity::class.java))
+            }
+        }
+        signUpText.setSpan(clickSpan, 13, 17, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        binding.signUpTextView.movementMethod = LinkMovementMethod.getInstance()
+
+
+   }
+
 }
 //
 //import android.content.Intent

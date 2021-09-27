@@ -39,19 +39,7 @@ class MainActivity : AppCompatActivity() ,NavigationView.OnNavigationItemSelecte
         navigationView = findViewById<NavigationView>(R.id.main_navigationView)
         navigationView.setNavigationItemSelectedListener(this) //navigation 리스너
 
-//        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigationView)
-
         replaceFragment(homeFragment)
-//
-//        bottomNavigationView.setOnNavigationItemSelectedListener {
-//            when (it.itemId) {
-//                R.id.home -> replaceFragment(homeFragment)
-//                R.id.closet -> replaceFragment(closetFragment)
-//                R.id.myPage -> replaceFragment(myPageFragment)
-//            }
-//            true
-//        }
-
 
     }
 
@@ -72,6 +60,7 @@ class MainActivity : AppCompatActivity() ,NavigationView.OnNavigationItemSelecte
             R.id.avatar -> replaceFragment(avatarFragment)
             R.id.closet -> replaceFragment(closetFragment)
             R.id.myPage -> replaceFragment(myPageFragment)
+            R.id.logout -> finish()
         }
         return false
     }

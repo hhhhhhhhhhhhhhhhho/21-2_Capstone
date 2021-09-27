@@ -7,8 +7,6 @@
     android:background="@color/background"
     android:paddingHorizontal="20dp">
 
-    <!--    선택 버튼 추가 -->
-
     <TextView
         android:id="@+id/top"
         android:layout_width="0dp"
