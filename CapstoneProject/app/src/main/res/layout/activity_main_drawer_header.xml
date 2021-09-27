@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/login_layout"
     android:layout_width="match_parent"
-    android:layout_height="590dp"
+    android:layout_height="550dp"
     android:background="@color/main_color"
     android:padding="30dp">
 
