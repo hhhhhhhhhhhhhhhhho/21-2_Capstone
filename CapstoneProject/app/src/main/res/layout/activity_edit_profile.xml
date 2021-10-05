@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -7,255 +8,262 @@
     android:background="@color/background"
     android:paddingHorizontal="20dp"
     android:paddingVertical="30dp"
-    tools:context=".SignUpActivity">
-
-    <TextView
-        android:id="@+id/usernameTextView"
-        android:layout_width="90dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:text="이름 "
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="HardcodedText" />
-
-    <EditText
-        android:id="@+id/user_name"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/radius_border"
-        android:maxLines="1"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/usernameTextView"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/userEmailTextView"
-        android:layout_width="90dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="이메일"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/usernameTextView"
-        tools:ignore="HardcodedText" />
-
-    <EditText
-        android:id="@+id/user_email"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:background="@drawable/radius_border"
-        android:maxLines="1"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/userEmailTextView"
-        app:layout_constraintTop_toBottomOf="@id/user_name"
-        tools:ignore="HardcodedText" />
-
-    <TextView
-        android:id="@+id/userPWTextView"
-        android:layout_width="90dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="비밀번호"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/userEmailTextView"
-        tools:ignore="HardcodedText" />
-
-    <EditText
-        android:id="@+id/user_pw"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:background="@drawable/radius_border"
-        android:hint="비밀번호 입력"
-        android:maxLines="1"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/userPWTextView"
-        app:layout_constraintTop_toBottomOf="@id/user_email"
-        tools:ignore="HardcodedText" />
+    tools:context=".mypage.EditProfileActivity">
 
 
-    <EditText
-        android:id="@+id/user_pw2"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:background="@drawable/radius_border"
-        android:hint="비밀번호 확인"
-        android:maxLines="1"
-        android:padding="10dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/userPWTextView"
-        app:layout_constraintTop_toBottomOf="@id/user_pw"
-        tools:ignore="HardcodedText" />
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:ignore="ScrollViewSize">
 
-    <!--    <TextView-->
-    <!--        android:id="@+id/genderTextView"-->
-    <!--        android:layout_width="90dp"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="30dp"-->
-    <!--        android:text="성별   "-->
-    <!--        android:textSize="18sp"-->
-    <!--        android:textStyle="bold"-->
-    <!--        app:layout_constraintStart_toStartOf="parent"-->
-    <!--        app:layout_constraintTop_toBottomOf="@id/user_pw2"-->
-    <!--        tools:ignore="HardcodedText" />-->
+        <TextView
+            android:id="@+id/usernameTextView"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="이름 "
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
 
-    <!--    <RadioButton-->
-    <!--        android:id="@+id/boyRadioButton"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="14dp"-->
-    <!--        android:layout_marginEnd="20dp"-->
-    <!--        android:text="남"-->
-    <!--        app:layout_constraintEnd_toStartOf="@id/girlRadioButton"-->
-    <!--        app:layout_constraintTop_toBottomOf="@id/user_pw2"-->
-    <!--        tools:ignore="HardcodedText" />-->
+        <EditText
+            android:id="@+id/user_name"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/radius_border"
+            android:hint="이름 입력"
+            android:maxLines="1"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/usernameTextView"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="HardcodedText" />
 
-    <!--    <RadioButton-->
-    <!--        android:id="@+id/girlRadioButton"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="14dp"-->
-    <!--        android:layout_marginEnd="10dp"-->
-    <!--        android:text="여"-->
-    <!--        app:layout_constraintEnd_toEndOf="parent"-->
-    <!--        app:layout_constraintTop_toBottomOf="@id/user_pw2"-->
-    <!--        tools:ignore="HardcodedText" />-->
+        <TextView
+            android:id="@+id/userEmailTextView"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="이메일"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/usernameTextView"
+            tools:ignore="HardcodedText" />
 
+        <EditText
+            android:id="@+id/user_email"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/radius_border"
+            android:hint="이메일 입력"
+            android:maxLines="1"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/userEmailTextView"
+            app:layout_constraintTop_toBottomOf="@id/user_name"
+            tools:ignore="HardcodedText" />
 
-    <TextView
-        android:id="@+id/bodySizeTextView"
-        android:layout_width="90dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:text="신체사이즈   "
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/user_pw2"
-        tools:ignore="HardcodedText" />
+        <TextView
+            android:id="@+id/userPWTextView"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="비밀번호"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/userEmailTextView"
+            tools:ignore="HardcodedText" />
 
-    <EditText
-        android:id="@+id/user_height"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="5dp"
-        android:background="@drawable/radius_border"
-        android:maxLines="1"
-        android:padding="10dp"
-        app:layout_constraintEnd_toStartOf="@+id/cm"
-        app:layout_constraintTop_toBottomOf="@id/user_pw2" />
-
-    <TextView
-        android:id="@+id/cm"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="20dp"
-        android:text="cm"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toStartOf="@id/user_weight"
-        app:layout_constraintTop_toBottomOf="@id/user_pw2"
-        tools:ignore="HardcodedText" />
+        <EditText
+            android:id="@+id/user_pw"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/radius_border"
+            android:hint="비밀번호 입력"
+            android:maxLines="1"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/userPWTextView"
+            app:layout_constraintTop_toBottomOf="@id/user_email"
+            tools:ignore="HardcodedText" />
 
 
-    <EditText
-        android:id="@+id/user_weight"
-        android:layout_width="60dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="14dp"
-        android:layout_marginEnd="5dp"
-        android:background="@drawable/radius_border"
-        android:maxLines="1"
-        android:padding="10dp"
-        app:layout_constraintEnd_toStartOf="@+id/kg"
-        app:layout_constraintTop_toBottomOf="@id/user_pw2" />
+        <EditText
+            android:id="@+id/user_pw2"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/radius_border"
+            android:hint="비밀번호 확인"
+            android:maxLines="1"
+            android:padding="10dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/userPWTextView"
+            app:layout_constraintTop_toBottomOf="@id/user_pw"
+            tools:ignore="HardcodedText" />
 
-    <TextView
-        android:id="@+id/kg"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
-        android:layout_marginEnd="10dp"
-        android:text="kg"
-        android:textSize="18sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/user_pw2"
-        tools:ignore="HardcodedText" />
+        <TextView
+            android:id="@+id/genderTextView"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="성별   "
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/user_pw2"
+            tools:ignore="HardcodedText" />
 
-    <ImageView
-        android:id="@+id/faceImage"
-        android:layout_width="180dp"
-        android:layout_height="240dp"
-        android:layout_marginTop="60dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginBottom="5dp"
-        android:background="@drawable/border"
-        app:layout_constraintBottom_toTopOf="@+id/faceImageButton"
-        app:layout_constraintEnd_toStartOf="@+id/bodyImage"
-        app:layout_constraintStart_toStartOf="parent" />
+        <RadioButton
+            android:id="@+id/boyRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="20dp"
+            android:text="남"
+            app:layout_constraintEnd_toStartOf="@id/girlRadioButton"
+            app:layout_constraintTop_toBottomOf="@id/user_pw2"
+            tools:ignore="HardcodedText" />
 
-    <Button
-        android:id="@+id/faceImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:backgroundTint="@color/main_color_2"
-        android:text="얼굴 사진 수"
-        app:layout_constraintBottom_toBottomOf="@id/bodyImageButton"
-        app:layout_constraintEnd_toEndOf="@id/faceImage"
-        app:layout_constraintStart_toStartOf="@id/faceImage"
-        tools:ignore="HardcodedText" />
-
-    <ImageView
-        android:id="@+id/bodyImage"
-        android:layout_width="180dp"
-        android:layout_height="240dp"
-        android:layout_marginStart="5dp"
-        android:background="@drawable/border"
-        app:layout_constraintBottom_toBottomOf="@id/faceImage"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/faceImage" />
+        <RadioButton
+            android:id="@+id/girlRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="10dp"
+            android:text="여"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/user_pw2"
+            tools:ignore="HardcodedText" />
 
 
-    <Button
-        android:id="@+id/bodyImageButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginBottom="15dp"
-        android:backgroundTint="@color/main_color_2"
-        android:text="전신 사진 수"
-        app:layout_constraintBottom_toTopOf="@+id/signUpButton"
-        app:layout_constraintEnd_toEndOf="@id/bodyImage"
-        app:layout_constraintStart_toStartOf="@id/bodyImage"
-        tools:ignore="HardcodedText" />
+        <TextView
+            android:id="@+id/bodySizeTextView"
+            android:layout_width="90dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="신체사이즈   "
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/genderTextView"
+            tools:ignore="HardcodedText" />
+
+        <EditText
+            android:id="@+id/user_height"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/radius_border"
+            android:maxLines="1"
+            android:padding="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/cm"
+            app:layout_constraintTop_toBottomOf="@id/boyRadioButton" />
+
+        <TextView
+            android:id="@+id/cm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="20dp"
+            android:text="cm"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toStartOf="@id/user_weight"
+            app:layout_constraintTop_toBottomOf="@id/boyRadioButton"
+            tools:ignore="HardcodedText" />
 
 
-    <Button
-        android:id="@+id/signUpButton"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:backgroundTint="@color/main_color"
-        android:text="회원정보 수정 완료"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="HardcodedText" />
+        <EditText
+            android:id="@+id/user_weight"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="14dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/radius_border"
+            android:maxLines="1"
+            android:padding="10dp"
+            app:layout_constraintEnd_toStartOf="@+id/kg"
+            app:layout_constraintTop_toBottomOf="@id/boyRadioButton" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <TextView
+            android:id="@+id/kg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="10dp"
+            android:text="kg"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/boyRadioButton"
+            tools:ignore="HardcodedText" />
+
+        <ImageView
+            android:id="@+id/faceImage"
+            android:layout_width="180dp"
+            android:layout_height="240dp"
+            android:layout_marginTop="40dp"
+            android:layout_marginEnd="5dp"
+            android:background="@drawable/border"
+            app:layout_constraintTop_toBottomOf="@+id/bodySizeTextView"
+            app:layout_constraintEnd_toStartOf="@+id/bodyImage"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Button
+            android:id="@+id/faceImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="@color/main_color_2"
+            android:text="얼굴 사진 수정"
+            app:layout_constraintTop_toBottomOf="@id/faceImage"
+            app:layout_constraintEnd_toEndOf="@id/faceImage"
+            app:layout_constraintStart_toStartOf="@id/faceImage"
+            tools:ignore="HardcodedText" />
+
+        <ImageView
+            android:id="@+id/bodyImage"
+            android:layout_width="180dp"
+            android:layout_height="240dp"
+            android:layout_marginStart="5dp"
+            android:background="@drawable/border"
+            app:layout_constraintBottom_toBottomOf="@id/faceImage"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@id/faceImage" />
+
+
+        <Button
+            android:id="@+id/bodyImageButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/main_color_2"
+            android:text="전신 사진 수정"
+            app:layout_constraintTop_toTopOf="@+id/faceImageButton"
+            app:layout_constraintEnd_toEndOf="@id/bodyImage"
+            app:layout_constraintStart_toStartOf="@id/bodyImage"
+            tools:ignore="HardcodedText" />
+
+
+        <Button
+            android:id="@+id/signUpButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:backgroundTint="@color/main_color"
+            android:text="프로필 수정 완료"
+            app:layout_constraintTop_toBottomOf="@id/bodyImageButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="HardcodedText" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>
