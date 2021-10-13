@@ -14,7 +14,7 @@
         android:title="CLOSET" />
 
     <item
-        android:id="@+id/avatar"
+        android:id="@+id/styling"
         android:icon="@drawable/ic_styling"
         android:title="STYLING" />
 
