@@ -1,5 +1,6 @@
 package com.nanioi.capstoneproject
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
@@ -9,7 +10,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
-import com.nanioi.capstoneproject.Avatar.AvatarFragment
+import com.nanioi.capstoneproject.Styling.StylingFragment
 import com.nanioi.capstoneproject.closet.ClosetFragment
 import com.nanioi.capstoneproject.home.HomeFragment
 import com.nanioi.capstoneproject.mypage.MyPageFragment
@@ -20,7 +21,7 @@ class MainActivity : AppCompatActivity() ,NavigationView.OnNavigationItemSelecte
     lateinit var navigationView: NavigationView
 
     val homeFragment = HomeFragment()
-    val avatarFragment = AvatarFragment()
+    val avatarFragment = StylingFragment()
     val closetFragment = ClosetFragment()
     val myPageFragment = MyPageFragment()
 
@@ -57,10 +58,10 @@ class MainActivity : AppCompatActivity() ,NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.main -> replaceFragment(homeFragment)
-            R.id.avatar -> replaceFragment(avatarFragment)
+            R.id.styling -> replaceFragment(avatarFragment)
             R.id.closet -> replaceFragment(closetFragment)
             R.id.myPage -> replaceFragment(myPageFragment)
-            R.id.logout -> finish()
+            R.id.logout -> startActivity(Intent(this,SignInActivity::class.java))
         }
         return false
     }

@@ -1,17 +1,13 @@
-package com.nanioi.capstoneproject.Avatar
+package com.nanioi.capstoneproject.Styling
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
-import com.nanioi.capstoneproject.R
-import com.nanioi.capstoneproject.databinding.FragmentAvatarBinding
-import com.nanioi.capstoneproject.databinding.FragmentMypageBinding
-import com.nanioi.capstoneproject.mypage.EditProfileActivity
+import com.nanioi.capstoneproject.databinding.FragmentStylingBinding
 
-class AvatarFragment: Fragment() {
+class StylingFragment: Fragment() {
 
     override fun onCreateView(
             inflater: LayoutInflater,
@@ -20,7 +16,7 @@ class AvatarFragment: Fragment() {
     ): View? {
 
 
-        val binding = FragmentAvatarBinding.inflate(inflater,container,false)
+        val binding = FragmentStylingBinding.inflate(inflater,container,false)
        binding.itemRecycleView.visibility = View.INVISIBLE
 
         //by 나연. 각 카테고리 버튼 클릭 시 item들 보여주는 RecyclerView 창 보여주기 (21.10.12)
@@ -44,12 +40,18 @@ class AvatarFragment: Fragment() {
                 binding.itemRecycleView.visibility = View.VISIBLE
             }
         }
-//        binding.backButton.setOnClickListener {
-//
-//        }
+        binding.backButton.setOnClickListener {
+            activity?.let {
+                binding.itemRecycleView.visibility = View.INVISIBLE
+            }
+        }
+        binding.selectItemButton.setOnClickListener {
+            activity?.let {
+                binding.itemRecycleView.visibility = View.INVISIBLE
+                // 아바타에 옷입히기 코드 구현
+            }
+        }
 
         return binding.root
     }
-
-//    fun setItemRecycleView()
 }
