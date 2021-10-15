@@ -1,5 +1,6 @@
 package com.nanioi.capstoneproject
 
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,7 +22,7 @@ class MainActivity : AppCompatActivity() ,NavigationView.OnNavigationItemSelecte
     lateinit var navigationView: NavigationView
 
     val homeFragment = HomeFragment()
-    val avatarFragment = StylingFragment()
+    val stylingFragment = StylingFragment()
     val closetFragment = ClosetFragment()
     val myPageFragment = MyPageFragment()
 
@@ -58,10 +59,10 @@ class MainActivity : AppCompatActivity() ,NavigationView.OnNavigationItemSelecte
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.main -> replaceFragment(homeFragment)
-            R.id.styling -> replaceFragment(avatarFragment)
+            R.id.styling -> replaceFragment(stylingFragment)
             R.id.closet -> replaceFragment(closetFragment)
             R.id.myPage -> replaceFragment(myPageFragment)
-            R.id.logout -> startActivity(Intent(this,SignInActivity::class.java))
+            R.id.logout -> logout(this)
         }
         return false
     }
@@ -78,11 +79,16 @@ class MainActivity : AppCompatActivity() ,NavigationView.OnNavigationItemSelecte
     }
 
     //by 나연. fragment 전환 함수 (21.09.24)
-    private fun replaceFragment(fragment: Fragment) {
+    public fun replaceFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
             .apply {
                 replace(R.id.fragmentContainer, fragment)
                 commit()
             }
+    }
+
+    private fun logout(context: Context){
+        //todo 회원 로그아웃 코드 구현하기
+        startActivity(Intent(context,SignInActivity::class.java))
     }
 }
