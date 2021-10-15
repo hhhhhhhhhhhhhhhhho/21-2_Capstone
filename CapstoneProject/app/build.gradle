@@ -1,6 +1,7 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'kotlin-kapt'
     id 'com.google.gms.google-services'
 }
 
@@ -54,8 +55,17 @@ dependencies {
     implementation 'androidx.legacy:legacy-support-v4:1.0.0' // DrawerLayout
     implementation 'com.google.android.material:material:1.0.0' // NavigationView
 
-    implementation "androidx.viewpager2:viewpager2:1.0.0"
-    implementation 'me.relex:circleindicator:2.1.4'
+    // CameraX core library using camera2 implementation
+    implementation "androidx.camera:camera-camera2:$camerax_version"
+    // CameraX Lifecycle Library
+    implementation "androidx.camera:camera-lifecycle:$camerax_version"
+    // CameraX View class
+    implementation "androidx.camera:camera-view:$camerax_view_version"
+
+    // ViewPager2
+    implementation "androidx.viewpager2:viewpager2:1.1.0-alpha01"
+    // Circle Indicator
+    implementation 'me.relex:circleindicator:2.1.6'
 
 //    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
 //    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
