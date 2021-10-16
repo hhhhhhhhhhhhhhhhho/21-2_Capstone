@@ -11,7 +11,7 @@
         android:id="@+id/photoImage"
         android:layout_width="250dp"
         android:layout_height="300dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="80dp"
         android:background="@drawable/radius_border"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -19,9 +19,9 @@
 
     <ImageButton
         android:id="@+id/addImageButton"
-        android:layout_width="60dp"
-        android:layout_height="40dp"
-        android:background="@drawable/ic_baseline_add_a_photo_24"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:background="@drawable/add_item"
         app:layout_constraintBottom_toBottomOf="@id/photoImage"
         app:layout_constraintEnd_toEndOf="@+id/photoImage"
         app:layout_constraintStart_toStartOf="@id/photoImage"
@@ -38,77 +38,55 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:visibility="visible" />
 
-    <CheckBox
-        android:id="@+id/topCheckBox"
+    <TextView
+        android:id="@+id/categoryTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="40dp"
-        android:text="상의"
-        app:layout_constraintEnd_toStartOf="@id/pantsCheckBox"
+        android:layout_marginStart="50dp"
+        android:text="카테고리"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/item_category"
+        app:layout_constraintEnd_toStartOf="@id/item_category"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/photoImage"
-        tools:ignore="HardcodedText"
-        tools:layout_editor_absoluteX="27dp"
-        tools:layout_editor_absoluteY="408dp" />
-
-    <CheckBox
-        android:id="@+id/pantsCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="하의"
-        app:layout_constraintEnd_toStartOf="@id/accessoryCheckBox"
-        app:layout_constraintStart_toEndOf="@+id/topCheckBox"
-        app:layout_constraintTop_toTopOf="@id/topCheckBox"
+        app:layout_constraintTop_toTopOf="@id/item_category"
         tools:ignore="HardcodedText" />
 
-    <CheckBox
-        android:id="@+id/accessoryCheckBox"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="액세서리"
-        app:layout_constraintEnd_toStartOf="@+id/shoesCheckBox"
-        app:layout_constraintStart_toEndOf="@id/pantsCheckBox"
-        app:layout_constraintTop_toTopOf="@id/topCheckBox"
-        tools:ignore="HardcodedText"
-        tools:layout_editor_absoluteX="243dp"
-        tools:layout_editor_absoluteY="406dp" />
 
-    <CheckBox
-        android:id="@+id/shoesCheckBox"
-        android:layout_width="wrap_content"
+    <NumberPicker
+        android:id="@+id/item_category"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="10dp"
-        android:text="슈즈"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="50dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/accessoryCheckBox"
-        app:layout_constraintTop_toTopOf="@id/topCheckBox"
-        tools:ignore="HardcodedText"
-        tools:layout_editor_absoluteX="311dp"
-        tools:layout_editor_absoluteY="404dp" />
+        app:layout_constraintStart_toEndOf="@id/categoryTextView"
+        app:layout_constraintTop_toBottomOf="@id/photoImage" />
+
 
     <TextView
         android:id="@+id/messageTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:gravity="center"
-        android:text=" 해당 카테고리에 맞는 이미지만 등록해주세요."
-        android:textStyle="bold"
+        android:layout_marginTop="20dp"
         android:drawableLeft="@drawable/ic_baseline_error_outline_24"
+        android:gravity="center"
+        android:text=" 선택할 카테고리에 맞는 이미지만 등록해주세요!"
         android:textColor="@color/red"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/topCheckBox"
+        app:layout_constraintTop_toBottomOf="@id/item_category"
         tools:ignore="HardcodedText" />
 
     <Button
+        android:id="@+id/itemUploadButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="50dp"
         android:layout_marginTop="40dp"
         android:backgroundTint="@color/main_color"
-        android:text="사진 업로드"
+        android:text="아이템 등록하기"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/messageTextView"
