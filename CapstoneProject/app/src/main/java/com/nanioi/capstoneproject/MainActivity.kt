@@ -11,12 +11,15 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 import com.nanioi.capstoneproject.Styling.StylingFragment
 import com.nanioi.capstoneproject.closet.ClosetFragment
 import com.nanioi.capstoneproject.home.HomeFragment
 import com.nanioi.capstoneproject.mypage.MyPageFragment
 
 class MainActivity : AppCompatActivity() ,NavigationView.OnNavigationItemSelectedListener{
+
+    private var auth : FirebaseAuth = FirebaseAuth.getInstance()
 
     lateinit var drawerLayout : DrawerLayout
     lateinit var navigationView: NavigationView
@@ -30,6 +33,12 @@ class MainActivity : AppCompatActivity() ,NavigationView.OnNavigationItemSelecte
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        initViews()
+
+    }
+
+    //by 나연. Main 페이지 뷰 툴바, drawerLayout, navigationView 초기화 (21.09.24)
+    private fun initViews() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
@@ -42,7 +51,6 @@ class MainActivity : AppCompatActivity() ,NavigationView.OnNavigationItemSelecte
         navigationView.setNavigationItemSelectedListener(this) //navigation 리스너
 
         replaceFragment(homeFragment)
-
     }
 
     //by 나연. 툴바 메뉴 버튼 클릭 시 실행 함수 (21.09.24)
@@ -87,8 +95,12 @@ class MainActivity : AppCompatActivity() ,NavigationView.OnNavigationItemSelecte
             }
     }
 
+    //by 나연. 로그아웃 실행 함수 (21.10,18)
     private fun logout(context: Context){
         //todo 회원 로그아웃 코드 구현하기
+
+        auth.signOut()
         startActivity(Intent(context,SignInActivity::class.java))
+        finish()
     }
 }

@@ -29,7 +29,7 @@
             tools:ignore="HardcodedText" />
 
         <EditText
-            android:id="@+id/user_name"
+            android:id="@+id/et_sign_up_name"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@drawable/radius_border"
@@ -54,7 +54,7 @@
             tools:ignore="HardcodedText" />
 
         <EditText
-            android:id="@+id/user_email"
+            android:id="@+id/et_sign_up_email"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
@@ -64,7 +64,7 @@
             android:padding="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/userEmailTextView"
-            app:layout_constraintTop_toBottomOf="@id/user_name"
+            app:layout_constraintTop_toBottomOf="@id/et_sign_up_name"
             tools:ignore="HardcodedText" />
 
         <TextView
@@ -80,7 +80,7 @@
             tools:ignore="HardcodedText" />
 
         <EditText
-            android:id="@+id/user_pw"
+            android:id="@+id/et_sign_up_password"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
@@ -90,12 +90,12 @@
             android:padding="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/userPWTextView"
-            app:layout_constraintTop_toBottomOf="@id/user_email"
+            app:layout_constraintTop_toBottomOf="@id/et_sign_up_email"
             tools:ignore="HardcodedText" />
 
 
         <EditText
-            android:id="@+id/user_pw2"
+            android:id="@+id/et_sign_up_password_check"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
@@ -105,7 +105,7 @@
             android:padding="10dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/userPWTextView"
-            app:layout_constraintTop_toBottomOf="@id/user_pw"
+            app:layout_constraintTop_toBottomOf="@id/et_sign_up_password"
             tools:ignore="HardcodedText" />
 
         <TextView
@@ -117,30 +117,39 @@
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/user_pw2"
+            app:layout_constraintTop_toBottomOf="@id/et_sign_up_password_check"
             tools:ignore="HardcodedText" />
 
-        <RadioButton
-            android:id="@+id/boyRadioButton"
+        <RadioGroup
+            android:id="@+id/rg_sign_up_gender"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:layout_marginEnd="20dp"
-            android:text="남"
-            app:layout_constraintEnd_toStartOf="@id/girlRadioButton"
-            app:layout_constraintTop_toBottomOf="@id/user_pw2"
-            tools:ignore="HardcodedText" />
-
-        <RadioButton
-            android:id="@+id/girlRadioButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:layout_marginEnd="10dp"
-            android:text="여"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/user_pw2"
-            tools:ignore="HardcodedText" />
+            app:layout_constraintTop_toBottomOf="et_sign_up_password_check">
+
+            <RadioButton
+                android:id="@+id/rb_sign_up_man"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:layout_marginEnd="20dp"
+                android:text="남"
+                app:layout_constraintEnd_toStartOf="@id/rb_sign_up_woman"
+                app:layout_constraintTop_toBottomOf="@id/et_sign_up_password_check"
+                tools:ignore="HardcodedText" />
+
+            <RadioButton
+                android:id="@+id/rb_sign_up_woman"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:layout_marginEnd="10dp"
+                android:text="여"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/et_sign_up_password_check"
+                tools:ignore="HardcodedText" />
+
+        </RadioGroup>
 
 
         <TextView
@@ -156,7 +165,7 @@
             tools:ignore="HardcodedText" />
 
         <EditText
-            android:id="@+id/user_height"
+            android:id="@+id/et_sign_up_cm"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
@@ -165,7 +174,7 @@
             android:maxLines="1"
             android:padding="10dp"
             app:layout_constraintEnd_toStartOf="@+id/cm"
-            app:layout_constraintTop_toBottomOf="@id/boyRadioButton" />
+            app:layout_constraintTop_toBottomOf="@id/rg_sign_up_gender" />
 
         <TextView
             android:id="@+id/cm"
@@ -176,13 +185,13 @@
             android:text="cm"
             android:textSize="18sp"
             android:textStyle="bold"
-            app:layout_constraintEnd_toStartOf="@id/user_weight"
-            app:layout_constraintTop_toBottomOf="@id/boyRadioButton"
+            app:layout_constraintEnd_toStartOf="@id/et_sign_up_kg"
+            app:layout_constraintTop_toBottomOf="@id/rg_sign_up_gender"
             tools:ignore="HardcodedText" />
 
 
         <EditText
-            android:id="@+id/user_weight"
+            android:id="@+id/et_sign_up_kg"
             android:layout_width="60dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="14dp"
@@ -191,7 +200,7 @@
             android:maxLines="1"
             android:padding="10dp"
             app:layout_constraintEnd_toStartOf="@+id/kg"
-            app:layout_constraintTop_toBottomOf="@id/boyRadioButton" />
+            app:layout_constraintTop_toBottomOf="@id/rg_sign_up_gender" />
 
         <TextView
             android:id="@+id/kg"
@@ -203,65 +212,64 @@
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/boyRadioButton"
+            app:layout_constraintTop_toBottomOf="@id/rg_sign_up_gender"
             tools:ignore="HardcodedText" />
 
         <ImageView
-            android:id="@+id/faceImage"
+            android:id="@+id/iv_sign_up_face"
             android:layout_width="180dp"
             android:layout_height="240dp"
             android:layout_marginTop="40dp"
             android:layout_marginEnd="5dp"
             android:background="@drawable/border"
-            app:layout_constraintTop_toBottomOf="@+id/bodySizeTextView"
-            app:layout_constraintEnd_toStartOf="@+id/bodyImage"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toStartOf="@+id/iv_sign_up_body"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/bodySizeTextView" />
 
         <Button
-            android:id="@+id/faceImageButton"
+            android:id="@+id/btn_sign_up_face"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
             android:backgroundTint="@color/main_color_2"
             android:text="얼굴 사진 업로드"
-            app:layout_constraintTop_toBottomOf="@id/faceImage"
-            app:layout_constraintEnd_toEndOf="@id/faceImage"
-            app:layout_constraintStart_toStartOf="@id/faceImage"
+            app:layout_constraintEnd_toEndOf="@id/iv_sign_up_face"
+            app:layout_constraintStart_toStartOf="@id/iv_sign_up_face"
+            app:layout_constraintTop_toBottomOf="@+id/iv_sign_up_face"
             tools:ignore="HardcodedText" />
 
         <ImageView
-            android:id="@+id/bodyImage"
+            android:id="@+id/iv_sign_up_body"
             android:layout_width="180dp"
             android:layout_height="240dp"
             android:layout_marginStart="5dp"
             android:background="@drawable/border"
-            app:layout_constraintBottom_toBottomOf="@id/faceImage"
+            app:layout_constraintBottom_toBottomOf="@id/iv_sign_up_face"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/faceImage" />
+            app:layout_constraintStart_toEndOf="@id/iv_sign_up_face" />
 
 
         <Button
-            android:id="@+id/bodyImageButton"
+            android:id="@+id/btn_sign_up_body"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/main_color_2"
             android:text="전신 사진 업로드"
-            app:layout_constraintTop_toTopOf="@+id/faceImageButton"
-            app:layout_constraintEnd_toEndOf="@id/bodyImage"
-            app:layout_constraintStart_toStartOf="@id/bodyImage"
+            app:layout_constraintEnd_toEndOf="@id/iv_sign_up_body"
+            app:layout_constraintStart_toStartOf="@id/iv_sign_up_body"
+            app:layout_constraintTop_toTopOf="@+id/btn_sign_up_face"
             tools:ignore="HardcodedText" />
 
 
         <Button
-            android:id="@+id/signUpButton"
+            android:id="@+id/btn_sign_up_pass"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
             android:backgroundTint="@color/main_color"
             android:text="회원가입 완료"
-            app:layout_constraintTop_toBottomOf="@id/bodyImageButton"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btn_sign_up_body"
             tools:ignore="HardcodedText" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

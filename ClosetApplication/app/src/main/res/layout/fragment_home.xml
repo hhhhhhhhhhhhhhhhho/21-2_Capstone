@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background"
+    android:padding="30dp">
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:layout_marginTop="12dp"
+        android:id="@+id/mainViewPager"
+        android:layout_width="0dp"
+        android:layout_height="500dp"
+        android:background="@drawable/radius_pink"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <me.relex.circleindicator.CircleIndicator3
+        android:id="@+id/indicator"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        app:ci_drawable="@drawable/indicator_inactive"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/mainViewPager" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/goClosetButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="3dp"
+        android:background="@drawable/radius_pink_border"
+        android:drawableStart="@drawable/drawable_closet_customise"
+        android:drawableTint="@color/main_color"
+        android:padding="10dp"
+        android:paddingStart="20dp"
+        android:text="나만의 옷장\n보러가기"
+        android:textColor="@color/main_color"
+        app:layout_constraintEnd_toStartOf="@id/goStylingButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/indicator"
+        tools:ignore="HardcodedText,RtlSymmetry" />
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/goStylingButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="3dp"
+        android:background="@drawable/radius_pink_border"
+        android:drawableStart="@drawable/drawable_styling_customise"
+        android:drawableTint="@color/main_color"
+        android:padding="10dp"
+        android:paddingStart="20dp"
+        android:text="가상 스타일링\n하러가기"
+        android:textColor="@color/main_color"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/goClosetButton"
+        app:layout_constraintTop_toBottomOf="@id/indicator"
+        tools:ignore="HardcodedText,RtlSymmetry" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

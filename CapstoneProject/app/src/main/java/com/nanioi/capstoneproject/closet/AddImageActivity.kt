@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -33,7 +34,7 @@ class AddImageActivity : AppCompatActivity() {
 
     private val auth: FirebaseAuth by lazy { Firebase.auth }
     private val storage: FirebaseStorage by lazy { Firebase.storage }
-    private val articleDB: DatabaseReference by lazy { Firebase.database.reference.child(DB_ITEM) }
+    private val itemDB: DatabaseReference by lazy { Firebase.database.reference.child(DB_ITEM) }
 
     companion object {
         const val PERMISSION_REQUEST_CODE = 1000
@@ -66,14 +67,14 @@ class AddImageActivity : AppCompatActivity() {
 
         //by 나연. 이미지 부분 버튼 클릭 시 이미지 업로드 함수 (21.10.16)
         itemUploadButton.setOnClickListener {
-            //todo 아이템 서버에 저장 코드 구현
-
-            val userId = auth.currentUser?.uid.orEmpty()
+            //val userId = auth.currentUser?.uid.orEmpty()
+            val userId = "ssdsfsefss"
             val category_number = itemCategory.value
             showProgress()
 
             if (imageUri != null) {
-                val photoUri = imageUri ?: return@setOnClickListener
+                val photoUri = imageUri ?: return@setOnClickListener // 널이면 리턴, if문으로 널처리 했지만 한번 더 check
+                // 비동기
                 uploadPhoto(photoUri,
                     successHandler = { uri ->
                         uploadItem(userId, category_number, uri)
@@ -83,35 +84,37 @@ class AddImageActivity : AppCompatActivity() {
                         hideProgress()
                     }
                 )
-            } else {
+            } else { // 동기
                 Toast.makeText(this@AddImageActivity, "사진 업로드에 실패했습니다.", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
     //by 나연. 이미지 업로드 함수 (21.10.17)
-    private fun uploadPhoto(uri: Uri, successHandler: (Uri) -> Unit, errorHandler: () -> Unit) {
+    //storage 사용
+    private fun uploadPhoto(uri:Uri,successHandler:(String)->Unit,errorHandler :()->Unit){
         val fileName = "${System.currentTimeMillis()}.png"
-        storage.reference.child("article/photo").child(fileName)
+        storage.reference.child("item/photo").child(fileName)
             .putFile(uri)
-            .addOnCompleteListener {
-                if (it.isSuccessful) {
-                    storage.reference.child("article/photo").child(fileName)
+            .addOnCompleteListener{ // 성공했는지 확인 리스너
+                if(it.isSuccessful){ // 성공시 -> 업로드 완료
+                    storage.reference.child("item/photo").child(fileName)
                         .downloadUrl
-                        .addOnSuccessListener { uri ->
-                            successHandler(uri)
+                        .addOnSuccessListener { uri->
+                            successHandler(uri.toString()) // downloadUrl을 잘 가져온 경우
                         }.addOnFailureListener {
                             errorHandler()
                         }
-                } else {
+                }else{ // 업로드 실패
                     errorHandler()
                 }
             }
     }
-    private fun uploadItem(userId: String, categoryNumber: Int, uri: Uri) {
+
+    private fun uploadItem(userId: String, categoryNumber: Int, uri: String) {
         //todo itemId 어케할건지 회의
-        val model = ItemModel(userId, System.currentTimeMillis(), categoryNumber, uri)
-        articleDB.push().setValue(model)
+        val model = ItemModel(userId, System.currentTimeMillis(), categoryNumber, uri,false)
+        itemDB.push().setValue(model) // DB에 모델을 넣어줌
 
         hideProgress()
         finish()
@@ -152,13 +155,13 @@ class AddImageActivity : AppCompatActivity() {
             ContextCompat.checkSelfPermission(
                 this,
                 android.Manifest.permission.READ_EXTERNAL_STORAGE
-            ) == PackageManager.PERMISSION_GRANTED -> {
+            ) == PackageManager.PERMISSION_GRANTED -> { // 허용된경우
                 uploadAction()
             }
-            shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE) -> {
+            shouldShowRequestPermissionRationale(android.Manifest.permission.READ_EXTERNAL_STORAGE) -> { // 교육용 팝업이 필요한경우
                 showPermissionContextPopup()
             }
-            else -> {
+            else -> { // 그 외 해당권한 요청
                 requestPermissions(
                     arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
                     PERMISSION_REQUEST_CODE
@@ -166,8 +169,20 @@ class AddImageActivity : AppCompatActivity() {
             }
         }
     }
+    //by 나연. 카메라 실행 함수 (21.10.16)
+    private fun startCameraScreen() {
+        val intent = Intent(this, CameraActivity::class.java)
+        startActivityForResult(intent, CAMERA_REQUEST_CODE)
+    }
 
-    //by 나연. 카메라/갤러리 권한 동의 함수 (21.10.16)
+    // by 나연. 앨범에서 선택한 이미지 받아오기 함수 (21.10.16)
+    private fun startContentProvider() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.type = "image/*" // 이미지타입만 가져오도록
+        startActivityForResult(intent, GALLERY_REQUEST_CODE) // 이미지 가져온 것에 대해 데이터 받아오기
+    }
+
+    //by 나연. 카메라/갤러리 권한 동의 교육용 팝업 구현 함수 (21.10.16)
     private fun showPermissionContextPopup() {
         AlertDialog.Builder(this)
             .setTitle("권한이 필요합니다.")
@@ -182,25 +197,21 @@ class AddImageActivity : AppCompatActivity() {
             .show()
     }
 
-    //by 나연. 카메라 실행 함수 (21.10.16)
-    private fun startCameraScreen() {
-        val intent = Intent(this, CameraActivity::class.java)
-        startActivityForResult(intent, CAMERA_REQUEST_CODE)
-    }
+    override fun onRequestPermissionsResult( // 권한에 대한 결과가 오게 되면 이 함수 호출된다.
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-    //by 나연. 갤러리 실행 함수 (21.10.16)
-//    private fun startGalleryScreen() {
-//        startActivityForResult(
-//                GalleryActivity.newIntent(this),
-//                GALLERY_REQUEST_CODE
-//        )
-//    }
-
-    // by 나연. 앨범에서 선택한 이미지 받아오기 함수 (21.10.16)
-    private fun startContentProvider() {
-        val intent = Intent(Intent.ACTION_GET_CONTENT)
-        intent.type = "image/*"
-        startActivityForResult(intent, GALLERY_REQUEST_CODE)
+        when(requestCode){
+            PERMISSION_REQUEST_CODE->
+                if(grantResults.isNotEmpty()&& grantResults[0] == PackageManager.PERMISSION_GRANTED){ // 승낙된경우
+                    startContentProvider()
+                }else{
+                    Toast.makeText(this,"권한을 거부하셨습니다.", Toast.LENGTH_SHORT).show()
+                }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -211,12 +222,12 @@ class AddImageActivity : AppCompatActivity() {
         }
 
         when (requestCode) {
-            GALLERY_REQUEST_CODE -> {
+            GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
                 val uri = data?.data
                 if (uri != null) {
                     binding.addImageButton.visibility = View.INVISIBLE
                     binding.photoImage.setImageURI(uri)
-                    imageUri = uri
+                    imageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
                 } else {
                     Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
                 }
