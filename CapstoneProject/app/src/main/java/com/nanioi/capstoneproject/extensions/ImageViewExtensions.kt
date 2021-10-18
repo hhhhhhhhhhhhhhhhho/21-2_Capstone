@@ -22,3 +22,7 @@ internal fun ImageView.loadCenterCrop(url: String, corner: Float = 0f) {
         }
         .into(this)
 }
+//Glide 사용 예시
+//Glide.with(binding.thumbnailImageView)
+//.load(articleModel.imageUrl)
+//.into(binding.thumbnailImageView)
