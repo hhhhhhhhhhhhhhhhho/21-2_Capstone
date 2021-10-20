@@ -7,13 +7,14 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.os.Environment
+import android.provider.MediaStore
 import android.view.View
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.core.content.ContextCompat
-import androidx.core.view.isInvisible
+import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
+import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
@@ -23,13 +24,14 @@ import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.nanioi.closetapplication.DBkey.Companion.DB_ITEM
 import com.nanioi.closetapplication.databinding.ActivityAddImageBinding
+import java.io.File
 
 class AddImageActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityAddImageBinding.inflate(layoutInflater) }
 
     private var imageUri: Uri? = null
-
+    private lateinit var photoFile:File
     private val auth: FirebaseAuth by lazy { Firebase.auth }
     private val storage: FirebaseStorage by lazy { Firebase.storage }
     private val itemDB: DatabaseReference by lazy { Firebase.database.reference.child(DB_ITEM) }
@@ -65,8 +67,7 @@ class AddImageActivity : AppCompatActivity() {
 
         //by 나연. 이미지 부분 버튼 클릭 시 이미지 업로드 함수 (21.10.16)
         itemUploadButton.setOnClickListener {
-            //val userId = auth.currentUser?.uid.orEmpty()
-            val userId = "ssdsfsefss"
+            val userId = auth.currentUser?.uid.orEmpty()
             val category_number = itemCategory.value
             showProgress()
 
@@ -83,7 +84,7 @@ class AddImageActivity : AppCompatActivity() {
                     }
                 )
             } else { // 동기
-                Toast.makeText(this@AddImageActivity, "사진 업로드에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@AddImageActivity, "이미지를 추가해주세요.", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -91,7 +92,7 @@ class AddImageActivity : AppCompatActivity() {
     //by 나연. 이미지 업로드 함수 (21.10.17)
     //storage 사용
     private fun uploadPhoto(uri:Uri,successHandler:(String)->Unit,errorHandler :()->Unit){
-        val fileName = "${System.currentTimeMillis()}.png"
+        val fileName = "${System.currentTimeMillis()}.jpg"
         storage.reference.child("item/photo").child(fileName)
             .putFile(uri)
             .addOnCompleteListener{ // 성공했는지 확인 리스너
@@ -134,7 +135,7 @@ class AddImageActivity : AppCompatActivity() {
             .setMessage("사진첨부할 방식을 선택하세요")
             .setPositiveButton("카메라") { _, _ ->
                 checkExternalStoragePermission {
-                    startCameraScreen()
+                    startCameraCapture()
                 }
             }
             .setNegativeButton("갤러리") { _, _ ->
@@ -168,9 +169,17 @@ class AddImageActivity : AppCompatActivity() {
         }
     }
     //by 나연. 카메라 실행 함수 (21.10.16)
-    private fun startCameraScreen() {
-//        val intent = Intent(this, CameraActivity::class.java)
-//        startActivityForResult(intent, CAMERA_REQUEST_CODE)
+    private fun startCameraCapture() {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        if(intent.resolveActivity(packageManager)!=null){
+            val dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            val file = File.createTempFile("photo_",".jpg",dir)
+            val uri = FileProvider.getUriForFile(this,"$packageName.fileprovider",file) // file ->uri
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+            startActivityForResult(intent, CAMERA_REQUEST_CODE)
+            photoFile = file
+            imageUri = uri
+        }
     }
 
     // by 나연. 앨범에서 선택한 이미지 받아오기 함수 (21.10.16)
@@ -232,6 +241,15 @@ class AddImageActivity : AppCompatActivity() {
             }
             CAMERA_REQUEST_CODE -> {
                 //todo
+                val uri = data?.data
+                if (uri != null) {
+                    binding.addImageButton.visibility = View.INVISIBLE
+                    binding.photoImage.setImageURI(uri)
+                    //Glide.with(this).load(photoFile).into(binding.photoImage)
+                    imageUri = uri
+                } else {
+                    Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                }
             }
             else -> {
                 Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()

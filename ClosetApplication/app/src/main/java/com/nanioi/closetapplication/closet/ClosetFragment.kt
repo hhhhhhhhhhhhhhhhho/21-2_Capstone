@@ -3,8 +3,11 @@ package com.nanioi.closetapplication.closet
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import androidx.activity.viewModels
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.ChildEventListener
@@ -22,10 +25,13 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
 
     private lateinit var itemDB: DatabaseReference
     private lateinit var usersDB: DatabaseReference
+
     private lateinit var topItemAdapter: itemAdapter
     private lateinit var pantsItemAdapter: itemAdapter
     private lateinit var accessoryItemAdapter: itemAdapter
     private lateinit var shoesItemAdapter: itemAdapter
+
+    private val viewModel by viewModels<itemGalleryViewModel>()
 
     private val topItemList = mutableListOf<ItemModel>()
     private val pantsItemList = mutableListOf<ItemModel>()
@@ -75,22 +81,31 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
         val fragmentClosetBinding = FragmentClosetBinding.bind(view)
         binding = fragmentClosetBinding
 
-        initItemList()
+        //initItemList()
+        topItemList.clear()
+        pantsItemList.clear()
+        accessoryItemList.clear()
+        shoesItemList.clear()
+
         usersDB = Firebase.database.reference.child(DB_USERS)
         itemDB = Firebase.database.reference.child(DB_ITEM)
 
+        //initViews(view, fragmentClosetBinding)
+        topItemAdapter = itemAdapter(onItemClicked = { ItemModel ->
+            ItemModel.isSelected = true
+            Snackbar.make(view, "해당 아이템을 선택하였습니다.", Snackbar.LENGTH_LONG).show()
 
-        initViews(view,fragmentClosetBinding)
+        })
+        pantsItemAdapter = itemAdapter(onItemClicked = { ItemModel ->
+            ItemModel.isSelected = true
 
-        itemDB.addChildEventListener(listener) // 리스너 등록
-    }
-
-    //by.나연 뷰 초기화 함수 (21.10.18)
-    private fun initViews(view: View, fragmentClosetBinding: FragmentClosetBinding) {
-        topItemAdapter = itemAdapter()
-        pantsItemAdapter = itemAdapter()
-        accessoryItemAdapter = itemAdapter()
-        shoesItemAdapter = itemAdapter()
+        })
+        accessoryItemAdapter = itemAdapter(onItemClicked = { ItemModel ->
+            ItemModel.isSelected = true
+        })
+        shoesItemAdapter = itemAdapter(onItemClicked = { ItemModel ->
+            ItemModel.isSelected = true
+        })
 
         fragmentClosetBinding.topItemRecyclerView.layoutManager = LinearLayoutManager(context)
         fragmentClosetBinding.topItemRecyclerView.adapter = topItemAdapter
@@ -102,26 +117,18 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
         fragmentClosetBinding.shoesItemRecyclerView.adapter = shoesItemAdapter
 
         fragmentClosetBinding.addItemButton.setOnClickListener {
-            val intent = Intent(requireContext(), AddImageActivity::class.java) //context가 널일 수 있어 requireContext 사용
-            startActivity(intent) // 아이템 등록 창으로 이동
-//            if (auth.currentUser != null) {
-//                val intent = Intent(requireContext(), AddImageActivity::class.java) //context가 널일 수 있어 requireContext 사용
-//                startActivity(intent) // 아이템 등록 창으로 이동
-//            } else {
-//                Snackbar.make(view, "로그인 후 사용해주세요", Snackbar.LENGTH_LONG).show()
-//            }
+            context?.let {
+                if (auth.currentUser != null) {
+                    val intent = Intent(it, AddImageActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    Snackbar.make(view, "로그인 후 사용해주세요", Snackbar.LENGTH_LONG).show()
+                }
+            }
         }
 
-        fragmentClosetBinding.deleteItemButton.setOnClickListener {
-//            val list = itemList.filter { it.isSelected }
-//            removePhoto(list)
-        }
-        fragmentClosetBinding.goDressUpButton.setOnClickListener {
-//            val list = itemList.filter { it.isSelected }
-//            //todo 스타일링 탭으로 정보 전송
-        }
+        itemDB.addChildEventListener(listener) // 리스너 등록
     }
-
 
     //by.나연 아이템리스트 초기화 함수 (21.10.18)
     private fun initItemList() {
@@ -131,13 +138,71 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
         shoesItemList.clear()
     }
 
-//    private fun removePhoto(removeItems: List<ItemModel>) {
-//        itemList.remove(removeItems)
-//        ItemListAdapter.setPhotoList(itemList)
-//    }
+    //by.나연 뷰 초기화 함수 (21.10.18)
+    private fun initViews(view: View, fragmentClosetBinding: FragmentClosetBinding) {
+        topItemAdapter = itemAdapter(onItemClicked = { ItemModel ->
+            ItemModel.isSelected = true
+            Snackbar.make(view, "해당 아이템을 선택하였습니다.", Snackbar.LENGTH_LONG).show()
+
+        })
+        pantsItemAdapter = itemAdapter(onItemClicked = { ItemModel ->
+            ItemModel.isSelected = true
+
+        })
+        accessoryItemAdapter = itemAdapter(onItemClicked = { ItemModel ->
+            ItemModel.isSelected = true
+        })
+        shoesItemAdapter = itemAdapter(onItemClicked = { ItemModel ->
+            ItemModel.isSelected = true
+        })
+
+        fragmentClosetBinding.topItemRecyclerView.layoutManager = LinearLayoutManager(context)
+        fragmentClosetBinding.topItemRecyclerView.adapter = topItemAdapter
+        fragmentClosetBinding.pantsItemRecyclerView.layoutManager = LinearLayoutManager(context)
+        fragmentClosetBinding.pantsItemRecyclerView.adapter = pantsItemAdapter
+        fragmentClosetBinding.accessoryItemRecyclerView.layoutManager = LinearLayoutManager(context)
+        fragmentClosetBinding.accessoryItemRecyclerView.adapter = accessoryItemAdapter
+        fragmentClosetBinding.shoesItemRecyclerView.layoutManager = LinearLayoutManager(context)
+        fragmentClosetBinding.shoesItemRecyclerView.adapter = shoesItemAdapter
+
+//        fragmentClosetBinding.addItemButton.setOnClickListener {
+//            if (auth.currentUser != null) {
+//                val intent = Intent(
+//                    requireContext(),
+//                    AddImageActivity::class.java
+//                ) //context가 널일 수 있어 requireContext 사용
+//                startActivity(intent) // 아이템 등록 창으로 이동
+//            } else {
+//                Snackbar.make(view, "로그인 후 사용해주세요", Snackbar.LENGTH_LONG).show()
+//            }
+//        }
+        fragmentClosetBinding.addItemButton.setOnClickListener {
+            context?.let {
+                if (auth.currentUser != null) {
+                    val intent = Intent(it, AddImageActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    Snackbar.make(view, "로그인 후 사용해주세요", Snackbar.LENGTH_LONG).show()
+                }
+            }
+        }
+
+        //todo 선택이미지 삭제기능
+        fragmentClosetBinding.deleteItemButton.setOnClickListener {
+            viewModel.confirmCheckedPhotos()
+//            val list = itemList.filter { it.isSelected }
+//            removePhoto(list)
+        }
+        //todo 선택이미지 가상스타일링 스타일링 탭으로 정보 전송
+        fragmentClosetBinding.goDressUpButton.setOnClickListener {
+            viewModel.confirmCheckedPhotos()
+        }
+    }
+
     //by.나연 뷰가 다시 보일때 데이터 다시 불러와 뷰 다시 그리기 (21.10.18)
     override fun onResume() {
         super.onResume()
+
         topItemAdapter.notifyDataSetChanged()
         pantsItemAdapter.notifyDataSetChanged()
         accessoryItemAdapter.notifyDataSetChanged()
@@ -148,5 +213,11 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
     override fun onDestroyView() {
         super.onDestroyView()
         itemDB.removeEventListener(listener)
+    }
+
+    //todo item 삭제함수 구현
+    private fun removePhoto(removeItems: List<ItemModel>) {
+//        itemList.remove(removeItems)
+//        ItemListAdapter.setPhotoList(itemList)
     }
 }
