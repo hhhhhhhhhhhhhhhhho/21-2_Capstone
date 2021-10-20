@@ -35,12 +35,14 @@
         <entry key="app/src/main/res/font/font.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_add_image.xml" value="0.17962962962962964" />
         <entry key="app/src/main/res/layout/activity_edit_profile.xml" value="0.17962962962962964" />
+        <entry key="app/src/main/res/layout/activity_login.xml" value="0.11388888888888889" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.17603850050658562" />
         <entry key="app/src/main/res/layout/activity_main_drawer_header.xml" value="0.17962962962962964" />
+        <entry key="app/src/main/res/layout/activity_sign.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.17962962962962964" />
         <entry key="app/src/main/res/layout/activity_sign_up.xml" value="0.22" />
         <entry key="app/src/main/res/layout/bottom_sheet.xml" value="0.1828774062816616" />
-        <entry key="app/src/main/res/layout/fragment_closet.xml" value="0.1828774062816616" />
+        <entry key="app/src/main/res/layout/fragment_closet.xml" value="0.33" />
         <entry key="app/src/main/res/layout/fragment_home.xml" value="0.1828774062816616" />
         <entry key="app/src/main/res/layout/fragment_mypage.xml" value="0.1828774062816616" />
         <entry key="app/src/main/res/layout/fragment_styling.xml" value="0.1828774062816616" />
@@ -50,6 +52,7 @@
         <entry key="app/src/main/res/layout/select_item.xml" value="0.1828774062816616" />
         <entry key="app/src/main/res/layout/viewholder_gallery_photo_item.xml" value="0.1828774062816616" />
         <entry key="app/src/main/res/menu/navigation_menu.xml" value="0.32685185185185184" />
+        <entry key="app/src/main/res/xml/file_paths.xml" value="0.12407407407407407" />
       </map>
     </option>
   </component>
