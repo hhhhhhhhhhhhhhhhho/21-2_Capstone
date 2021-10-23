@@ -84,14 +84,18 @@
             app:layout_constraintStart_toStartOf="parent" />
 
         <HorizontalScrollView
-            android:id="@+id/itemRecycleView"
+            android:id="@+id/selectItemTap"
             android:layout_width="match_parent"
             android:layout_height="430dp"
             android:layout_gravity="center"
             android:layout_margin="20dp"
             android:background="@drawable/border"
-            tools:layout_editor_absoluteX="75dp"
-            tools:layout_editor_absoluteY="207dp">
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.491">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="wrap_content"
@@ -101,9 +105,9 @@
                     android:id="@+id/ItemView"
                     android:layout_width="wrap_content"
                     android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
                     android:orientation="horizontal"
                     android:paddingHorizontal="15dp"
-                    android:layout_marginTop="5dp"
                     app:layout_constraintBottom_toTopOf="@+id/selectItemButton"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -120,6 +124,7 @@
                         android:src="@drawable/ic_baseline_add_a_photo_24" />
 
                     <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/itemRecycleView"
                         android:layout_width="wrap_content"
                         android:layout_height="300dp"
                         android:layout_gravity="center"

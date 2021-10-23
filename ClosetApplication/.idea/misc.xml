@@ -50,7 +50,9 @@
         <entry key="app/src/main/res/layout/main_layout.xml" value="0.1828774062816616" />
         <entry key="app/src/main/res/layout/recommended_item_list.xml" value="0.1828774062816616" />
         <entry key="app/src/main/res/layout/select_item.xml" value="0.1828774062816616" />
-        <entry key="app/src/main/res/layout/viewholder_gallery_photo_item.xml" value="0.1828774062816616" />
+        <entry key="app/src/main/res/layout/viewholder_gallery_photo_item.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/viewholder_item.xml" value="0.21197916666666666" />
+        <entry key="app/src/main/res/layout/viewholder_item_styling.xml" value="0.21197916666666666" />
         <entry key="app/src/main/res/menu/navigation_menu.xml" value="0.32685185185185184" />
         <entry key="app/src/main/res/xml/file_paths.xml" value="0.12407407407407407" />
       </map>
