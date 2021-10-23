@@ -1,5 +1,6 @@
 package com.nanioi.closetapplication.closet
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
@@ -60,7 +61,6 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
                     shoesItemAdapter.submitList(shoesItemList)
                 }
             }
-
         }
 
         override fun onChildChanged(snapshot: DataSnapshot, previousChildName: String?) {}
@@ -81,51 +81,12 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
         val fragmentClosetBinding = FragmentClosetBinding.bind(view)
         binding = fragmentClosetBinding
 
-        //initItemList()
-        topItemList.clear()
-        pantsItemList.clear()
-        accessoryItemList.clear()
-        shoesItemList.clear()
+        initItemList()
 
         usersDB = Firebase.database.reference.child(DB_USERS)
         itemDB = Firebase.database.reference.child(DB_ITEM)
 
-        //initViews(view, fragmentClosetBinding)
-        topItemAdapter = itemAdapter(onItemClicked = { ItemModel ->
-            ItemModel.isSelected = true
-            Snackbar.make(view, "해당 아이템을 선택하였습니다.", Snackbar.LENGTH_LONG).show()
-
-        })
-        pantsItemAdapter = itemAdapter(onItemClicked = { ItemModel ->
-            ItemModel.isSelected = true
-
-        })
-        accessoryItemAdapter = itemAdapter(onItemClicked = { ItemModel ->
-            ItemModel.isSelected = true
-        })
-        shoesItemAdapter = itemAdapter(onItemClicked = { ItemModel ->
-            ItemModel.isSelected = true
-        })
-
-        fragmentClosetBinding.topItemRecyclerView.layoutManager = LinearLayoutManager(context)
-        fragmentClosetBinding.topItemRecyclerView.adapter = topItemAdapter
-        fragmentClosetBinding.pantsItemRecyclerView.layoutManager = LinearLayoutManager(context)
-        fragmentClosetBinding.pantsItemRecyclerView.adapter = pantsItemAdapter
-        fragmentClosetBinding.accessoryItemRecyclerView.layoutManager = LinearLayoutManager(context)
-        fragmentClosetBinding.accessoryItemRecyclerView.adapter = accessoryItemAdapter
-        fragmentClosetBinding.shoesItemRecyclerView.layoutManager = LinearLayoutManager(context)
-        fragmentClosetBinding.shoesItemRecyclerView.adapter = shoesItemAdapter
-
-        fragmentClosetBinding.addItemButton.setOnClickListener {
-            context?.let {
-                if (auth.currentUser != null) {
-                    val intent = Intent(it, AddImageActivity::class.java)
-                    startActivity(intent)
-                } else {
-                    Snackbar.make(view, "로그인 후 사용해주세요", Snackbar.LENGTH_LONG).show()
-                }
-            }
-        }
+        initViews(view, fragmentClosetBinding)
 
         itemDB.addChildEventListener(listener) // 리스너 등록
     }
@@ -147,35 +108,34 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
         })
         pantsItemAdapter = itemAdapter(onItemClicked = { ItemModel ->
             ItemModel.isSelected = true
-
+            Snackbar.make(view, "해당 아이템을 선택하였습니다.", Snackbar.LENGTH_LONG).show()
         })
         accessoryItemAdapter = itemAdapter(onItemClicked = { ItemModel ->
             ItemModel.isSelected = true
+            Snackbar.make(view, "해당 아이템을 선택하였습니다.", Snackbar.LENGTH_LONG).show()
         })
         shoesItemAdapter = itemAdapter(onItemClicked = { ItemModel ->
             ItemModel.isSelected = true
+            Snackbar.make(view, "해당 아이템을 선택하였습니다.", Snackbar.LENGTH_LONG).show()
         })
 
-        fragmentClosetBinding.topItemRecyclerView.layoutManager = LinearLayoutManager(context)
+        fragmentClosetBinding.topItemRecyclerView.layoutManager = LinearLayoutManager(context).also {
+            it.orientation = LinearLayoutManager.HORIZONTAL
+        }
         fragmentClosetBinding.topItemRecyclerView.adapter = topItemAdapter
-        fragmentClosetBinding.pantsItemRecyclerView.layoutManager = LinearLayoutManager(context)
+        fragmentClosetBinding.pantsItemRecyclerView.layoutManager = LinearLayoutManager(context).also {
+            it.orientation = LinearLayoutManager.HORIZONTAL
+        }
         fragmentClosetBinding.pantsItemRecyclerView.adapter = pantsItemAdapter
-        fragmentClosetBinding.accessoryItemRecyclerView.layoutManager = LinearLayoutManager(context)
+        fragmentClosetBinding.accessoryItemRecyclerView.layoutManager = LinearLayoutManager(context).also {
+            it.orientation = LinearLayoutManager.HORIZONTAL
+        }
         fragmentClosetBinding.accessoryItemRecyclerView.adapter = accessoryItemAdapter
-        fragmentClosetBinding.shoesItemRecyclerView.layoutManager = LinearLayoutManager(context)
+        fragmentClosetBinding.shoesItemRecyclerView.layoutManager = LinearLayoutManager(context).also {
+            it.orientation = LinearLayoutManager.HORIZONTAL
+        }
         fragmentClosetBinding.shoesItemRecyclerView.adapter = shoesItemAdapter
 
-//        fragmentClosetBinding.addItemButton.setOnClickListener {
-//            if (auth.currentUser != null) {
-//                val intent = Intent(
-//                    requireContext(),
-//                    AddImageActivity::class.java
-//                ) //context가 널일 수 있어 requireContext 사용
-//                startActivity(intent) // 아이템 등록 창으로 이동
-//            } else {
-//                Snackbar.make(view, "로그인 후 사용해주세요", Snackbar.LENGTH_LONG).show()
-//            }
-//        }
         fragmentClosetBinding.addItemButton.setOnClickListener {
             context?.let {
                 if (auth.currentUser != null) {
@@ -200,6 +160,7 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
     }
 
     //by.나연 뷰가 다시 보일때 데이터 다시 불러와 뷰 다시 그리기 (21.10.18)
+    @SuppressLint("NotifyDataSetChanged")
     override fun onResume() {
         super.onResume()
 

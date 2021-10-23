@@ -4,7 +4,10 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.ImageDecoder
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
@@ -22,14 +25,20 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import com.gun0912.tedpermission.PermissionListener
+import com.gun0912.tedpermission.TedPermission
 import com.nanioi.closetapplication.DBkey.Companion.DB_ITEM
 import com.nanioi.closetapplication.databinding.ActivityAddImageBinding
 import java.io.File
+import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AddImageActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityAddImageBinding.inflate(layoutInflater) }
 
+    private lateinit var curPhotoPath:String
     private var imageUri: Uri? = null
     private lateinit var photoFile:File
     private val auth: FirebaseAuth by lazy { Firebase.auth }
@@ -60,9 +69,7 @@ class AddImageActivity : AppCompatActivity() {
         addImageButton.visibility = View.VISIBLE
         //by 나연. 이미지 부분 버튼 클릭 시 이미지 업로드 함수 (21.10.16)
         addImageButton.setOnClickListener {
-            // todo 갤러리, 사진 선택 이미지 없로드 코드
             showPictureUploadDialog()
-
         }
 
         //by 나연. 이미지 부분 버튼 클릭 시 이미지 업로드 함수 (21.10.16)
@@ -110,6 +117,7 @@ class AddImageActivity : AppCompatActivity() {
             }
     }
 
+    //by 나연. RealtimeDB에 itemModel 넣어주는 함수 (21.10.17)
     private fun uploadItem(userId: String, categoryNumber: Int, uri: String) {
         //todo itemId 어케할건지 회의
         val model = ItemModel(userId, System.currentTimeMillis(), categoryNumber, uri,false)
@@ -134,13 +142,11 @@ class AddImageActivity : AppCompatActivity() {
             .setTitle("사진첨부")
             .setMessage("사진첨부할 방식을 선택하세요")
             .setPositiveButton("카메라") { _, _ ->
-                checkExternalStoragePermission {
-                    startCameraCapture()
-                }
+                setPermission()
+                startCameraCapture()
             }
             .setNegativeButton("갤러리") { _, _ ->
                 checkExternalStoragePermission {
-                    //startGalleryScreen()
                     startContentProvider()
                 }
             }
@@ -148,7 +154,7 @@ class AddImageActivity : AppCompatActivity() {
             .show()
     }
 
-    //by 나연. 카메라/갤러리 권한 확인 함수 (21.10.16)
+    //by 나연. 갤러리 권한 확인 함수 (21.10.16)
     private fun checkExternalStoragePermission(uploadAction: () -> Unit) {
         when {
             ContextCompat.checkSelfPermission(
@@ -168,18 +174,55 @@ class AddImageActivity : AppCompatActivity() {
             }
         }
     }
-    //by 나연. 카메라 실행 함수 (21.10.16)
-    private fun startCameraCapture() {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        if(intent.resolveActivity(packageManager)!=null){
-            val dir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-            val file = File.createTempFile("photo_",".jpg",dir)
-            val uri = FileProvider.getUriForFile(this,"$packageName.fileprovider",file) // file ->uri
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-            startActivityForResult(intent, CAMERA_REQUEST_CODE)
-            photoFile = file
-            imageUri = uri
+
+    //by 나연. 카메라 권한 확인 (테드 퍼미션 설정) 함수 (21.10.23)
+    private fun setPermission(){
+        val permission = object :PermissionListener{
+            override fun onPermissionGranted() { // 설정해놓은 위험권한들이 허용된 경우 이 곳 수행
+                Toast.makeText(this@AddImageActivity,"권한이 허용 되었습니다.",Toast.LENGTH_SHORT).show()
+            }
+
+            override fun onPermissionDenied(deniedPermissions: MutableList<String>?) { // 설정해놓은 위험권한들 중 거부한 경우 이곳 수행
+                Toast.makeText(this@AddImageActivity,"권한이 거부 되었습니다.",Toast.LENGTH_SHORT).show()
+            }
         }
+        TedPermission.with(this)
+            .setPermissionListener(permission)
+            .setRationaleMessage("카메라 앱을 사용하시려면 권한을 허용해주세요.")
+            .setDeniedMessage("권한을 거부하셨습니다. [앱 설정] -> [권한] 항목에서 허용해주세요.")
+            .setPermissions(android.Manifest.permission.WRITE_EXTERNAL_STORAGE,android.Manifest.permission.CAMERA)
+            .check()
+    }
+    //by 나연. 카메라 실행 함수 (21.10.23)
+    private fun startCameraCapture() {
+        //기본 카메라 앱 실행
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            takePictureIntent.resolveActivity(packageManager)?.also {
+                val photoFile : File? = try {
+                    createImageFile()
+                }catch (ex:IOException){
+                    null
+                }
+                photoFile?.also{
+                    val photoURI : Uri = FileProvider.getUriForFile(
+                        this,
+                        "$packageName.fileprovider",
+                        it
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,photoURI)
+                    imageUri = photoURI
+                    startActivityForResult(takePictureIntent, CAMERA_REQUEST_CODE)
+                }
+            }
+        }
+    }
+
+    //by 나연. 이미지 파일 생성 함수 (21.10.23)
+    private fun createImageFile(): File? {
+        val timestamp:String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        val storageDir:File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile("JPEG_${timestamp}_",".jpg",storageDir)
+            .apply { curPhotoPath = absolutePath }
     }
 
     // by 나연. 앨범에서 선택한 이미지 받아오기 함수 (21.10.16)
@@ -216,7 +259,7 @@ class AddImageActivity : AppCompatActivity() {
                 if(grantResults.isNotEmpty()&& grantResults[0] == PackageManager.PERMISSION_GRANTED){ // 승낙된경우
                     startContentProvider()
                 }else{
-                    Toast.makeText(this,"권한을 거부하셨습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this,"권한을 거부하셨습니다. [앱 설정] -> [권한] 항목에서 허용해주세요.", Toast.LENGTH_SHORT).show()
                 }
         }
     }
@@ -240,15 +283,21 @@ class AddImageActivity : AppCompatActivity() {
                 }
             }
             CAMERA_REQUEST_CODE -> {
-                //todo
-                val uri = data?.data
-                if (uri != null) {
+                //startActivityForResult를 통해 기본카메라 앱으로 부터 받아온 사진 결과값
+                val bitmap : Bitmap
+                val file = File(curPhotoPath)
+                if(Build.VERSION.SDK_INT < 28){ // 안드로이드 9.0(Pie)버전보다 낮은 경우
+                    bitmap = MediaStore.Images.Media.getBitmap(contentResolver,Uri.fromFile(file))
                     binding.addImageButton.visibility = View.INVISIBLE
-                    binding.photoImage.setImageURI(uri)
-                    //Glide.with(this).load(photoFile).into(binding.photoImage)
-                    imageUri = uri
-                } else {
-                    Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                    binding.photoImage.setImageBitmap(bitmap)
+                }else{
+                    val decode = ImageDecoder.createSource(
+                        this.contentResolver,
+                        Uri.fromFile(file)
+                    )
+                    bitmap = ImageDecoder.decodeBitmap(decode)
+                    binding.addImageButton.visibility = View.INVISIBLE
+                    binding.photoImage.setImageBitmap(bitmap)
                 }
             }
             else -> {
