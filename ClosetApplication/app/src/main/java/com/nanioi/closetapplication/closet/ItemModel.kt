@@ -1,7 +1,5 @@
 package com.nanioi.closetapplication.closet
 
-import android.net.Uri
-
 data class ItemModel(
     val userId: String,
     val itemId: Long,
