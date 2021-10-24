@@ -13,6 +13,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.nanioi.closetapplication.DBkey.Companion.DB_USERS
 
+// 테스트용 로그인 액티비티
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var auth:FirebaseAuth
