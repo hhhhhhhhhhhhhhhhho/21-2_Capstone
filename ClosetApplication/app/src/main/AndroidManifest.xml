@@ -14,19 +14,20 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ClosetApplication">
+        android:theme="@style/Theme.ClosetApplication"
+        android:name=".closetApplication">
         <activity android:name=".MainActivity">
         </activity>
         <activity android:name=".SignInActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".SignUpActivity"/>
         <activity android:name=".closet.AddImageActivity"/>
         <activity android:name=".mypage.EditProfileActivity"/>
         <activity android:name=".LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <provider
