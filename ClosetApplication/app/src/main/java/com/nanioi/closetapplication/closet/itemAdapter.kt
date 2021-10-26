@@ -15,10 +15,10 @@ import com.nanioi.closetapplication.extensions.loadCenterCrop
 import java.lang.Boolean.getBoolean
 
 class itemAdapter(
-    val onItemClicked: (ItemModel) -> Unit
+    private val checkPhotoListener: (ItemModel) -> Unit
 ) : RecyclerView.Adapter<itemAdapter.ViewHolder>() {
 
-    private var PhotoList: List<ItemModel> = listOf()
+    private var itemList : List<ItemModel> = listOf()
 
     inner class ViewHolder(
         private val binding: ViewholderItemBinding
@@ -39,7 +39,7 @@ class itemAdapter(
 
         fun bindViews(data: ItemModel) = with(binding) {
             root.setOnClickListener {
-                onItemClicked(data)
+                checkPhotoListener(data)
             }
         }
     }
@@ -49,13 +49,13 @@ class itemAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bindData(PhotoList[position])
-        holder.bindViews(PhotoList[position])
+        holder.bindData(itemList[position])
+        holder.bindViews(itemList[position])
     }
-    override fun getItemCount(): Int = PhotoList.size
+    override fun getItemCount(): Int = itemList.size
 
     fun setPhotoList(itemList: List<ItemModel>) {
-        PhotoList = itemList
+        this.itemList = itemList
         notifyDataSetChanged()
     }
 }

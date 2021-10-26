@@ -1,60 +1,87 @@
 package com.nanioi.closetapplication.closet
 
+import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
 
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.nanioi.closetapplication.DBkey
+import com.nanioi.closetapplication.closetApplication.Companion.appContext
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 
+//viewModel은 repo에 있는 데이터를 관찰하고 있다가 변경이 되면 mutableData의 값을 변경시켜주는 역할
 class itemViewModel : ViewModel() {
 
-    var itemList =  mutableListOf<ItemModel>()
-    val itemStateLiveData = MutableLiveData<List<ItemModel>>()
-    val itemDB = Firebase.database.reference.child(DBkey.DB_ITEM)
+    val db = FirebaseFirestore.getInstance()
+    val user = Firebase.auth.currentUser!!.uid
 
-    fun fetchData() {
-        itemDB.addValueEventListener(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val itemModel = snapshot.getValue(ItemModel::class.java) // ItemModel 클래스로 데이터를 받아옴
-                itemModel ?: return
+    var itemList = mutableListOf<ItemModel>()
+    //var itemStateLiveData = MutableLiveData<MutableList<ItemModel>>()
+    val itemStateLiveData = MutableLiveData<ItemState>(ItemState.Uninitialized)
 
-                itemList.add(itemModel)
-            }
+    fun fetchData() = viewModelScope.launch {
+        setState(
+            ItemState.Loading
+        )
+        itemList = db.collection(DBkey.DB_USERS).document(user)
+            .collection(DBkey.DB_ITEM).get().await()
+            .toObjects(ItemModel::class.java)
 
-            override fun onCancelled(error: DatabaseError) {}
-        })
-        setState(itemList)
+        setState(
+            ItemState.Success(
+                photoList = itemList
+            )
+        )
     }
 
-    fun selectPhoto(item: ItemModel) { // 선택된거 id 값으루 찾아서 그 인덱스에 있는 사진의 isSelected 값을 반대로 바꿔
-
+    fun selectPhoto(item: ItemModel) {
         val findItem = itemList.find { it.itemId == item.itemId }
-        findItem?.let { item ->
-            itemList[itemList.indexOf(item)] =
-                item.copy(
-                    isSelected = item.isSelected.not()
+        findItem?.let { photo ->
+            itemList[itemList.indexOf(photo)] =
+                photo.copy(
+                    isSelected = photo.isSelected.not()
                 )
+            setState(
+                ItemState.Success(
+                    photoList = itemList
+                )
+            )
         }
-        setState(itemList)
     }
 
-    fun deleteItem(deleteItemList: List<ItemModel>) {
-        this.itemList.removeAll(deleteItemList)
-        setState(itemList)
+    fun deletePhoto() {
+        val findItem = itemList.filter { it.isSelected }
+        itemList.removeAll(findItem)
+        setState(
+            ItemState.Success(
+                photoList = itemList
+            )
+        )
     }
 
-    private fun setState(itemList: List<ItemModel>) {
-        itemStateLiveData.value = itemList
+    private fun setState(state: ItemState) {
+        itemStateLiveData.postValue(state)
     }
 
-    fun confirmCheckedPhotos(): List<ItemModel> {
-        val photoList = itemList.filter { it.isSelected }
-        return photoList
+    fun confirmCheckedPhotos() {
+        setState(
+            ItemState.Loading
+        )
+        setState(
+            ItemState.Confirm(
+                photoList = itemList.filter { it.isSelected }
+            )
+        )
     }
 }

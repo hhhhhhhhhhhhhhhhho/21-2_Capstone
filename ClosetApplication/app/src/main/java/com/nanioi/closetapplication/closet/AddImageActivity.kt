@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.core.content.ContextCompat
@@ -22,12 +23,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
+import com.nanioi.closetapplication.DBkey
 import com.nanioi.closetapplication.DBkey.Companion.DB_ITEM
+import com.nanioi.closetapplication.DBkey.Companion.DB_USERS
 import com.nanioi.closetapplication.databinding.ActivityAddImageBinding
 import java.io.File
 import java.io.IOException
@@ -38,12 +42,13 @@ class AddImageActivity : AppCompatActivity() {
 
     private val binding by lazy { ActivityAddImageBinding.inflate(layoutInflater) }
 
+    val db = Firebase.firestore
     private lateinit var curPhotoPath:String
     private var imageUri: Uri? = null
     private lateinit var photoFile:File
     private val auth: FirebaseAuth by lazy { Firebase.auth }
     private val storage: FirebaseStorage by lazy { Firebase.storage }
-    private val itemDB: DatabaseReference by lazy { Firebase.database.reference.child(DB_ITEM) }
+    private val userDB: DatabaseReference by lazy { Firebase.database.reference.child(DB_USERS) }
 
     companion object {
         const val PERMISSION_REQUEST_CODE = 1000
@@ -120,9 +125,14 @@ class AddImageActivity : AppCompatActivity() {
     //by 나연. RealtimeDB에 itemModel 넣어주는 함수 (21.10.17)
     private fun uploadItem(userId: String, categoryNumber: Int, uri: String) {
         //todo itemId 어케할건지 회의
-        val model = ItemModel(userId, System.currentTimeMillis(), categoryNumber, uri,false)
-        itemDB.push().setValue(model) // DB에 모델을 넣어줌
-
+        val itemId = System.currentTimeMillis()
+        val model = ItemModel(userId, itemId, categoryNumber, uri,false)
+        userDB.child(userId).child(DB_ITEM).push().setValue(model) // DB에 모델을 넣어줌
+        auth.currentUser?.let {
+            db.collection(DB_USERS).document(it.uid).collection(DBkey.DB_ITEM).document(itemId.toString()).set(model)
+                .addOnSuccessListener { Log.d("aaaa","모델 업로드 성공") }
+                .addOnFailureListener { e -> Log.d("aaaa","Error writing document",e) }
+        }
         hideProgress()
         finish()
     }
@@ -131,7 +141,6 @@ class AddImageActivity : AppCompatActivity() {
     private fun showProgress() {
         binding.progressBar.isVisible = true
     }
-
     private fun hideProgress() {
         binding.progressBar.isVisible = false
     }

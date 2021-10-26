@@ -6,6 +6,6 @@ data class ItemModel(
     val categoryNumber: Int,
     val imageUrl: String,
     var isSelected: Boolean = false
-){
-    constructor(): this("", 0,0,"",false)
+) {
+    constructor() : this("", 0, 0, "", false)
 }
