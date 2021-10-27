@@ -46,6 +46,7 @@ class AddImageActivity : AppCompatActivity() {
     private lateinit var curPhotoPath:String
     private var imageUri: Uri? = null
     private lateinit var photoFile:File
+    private var itemId :Long = 0
     private val auth: FirebaseAuth by lazy { Firebase.auth }
     private val storage: FirebaseStorage by lazy { Firebase.storage }
     private val userDB: DatabaseReference by lazy { Firebase.database.reference.child(DB_USERS) }
@@ -104,7 +105,8 @@ class AddImageActivity : AppCompatActivity() {
     //by 나연. 이미지 업로드 함수 (21.10.17)
     //storage 사용
     private fun uploadPhoto(uri:Uri,successHandler:(String)->Unit,errorHandler :()->Unit){
-        val fileName = "${System.currentTimeMillis()}.jpg"
+        itemId = System.currentTimeMillis()
+        val fileName = itemId.toString() + ".jpg"
         storage.reference.child("item/photo").child(fileName)
             .putFile(uri)
             .addOnCompleteListener{ // 성공했는지 확인 리스너
@@ -125,7 +127,6 @@ class AddImageActivity : AppCompatActivity() {
     //by 나연. RealtimeDB에 itemModel 넣어주는 함수 (21.10.17)
     private fun uploadItem(userId: String, categoryNumber: Int, uri: String) {
         //todo itemId 어케할건지 회의
-        val itemId = System.currentTimeMillis()
         val model = ItemModel(userId, itemId, categoryNumber, uri,false)
         userDB.child(userId).child(DB_ITEM).push().setValue(model) // DB에 모델을 넣어줌
         auth.currentUser?.let {

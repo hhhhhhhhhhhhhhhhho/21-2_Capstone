@@ -9,6 +9,8 @@ import com.google.firebase.auth.ktx.auth
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 import com.nanioi.closetapplication.DBkey
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -18,6 +20,7 @@ class itemViewModel : ViewModel() {
 
     val db = FirebaseFirestore.getInstance()
     val user = Firebase.auth.currentUser!!.uid
+    private val storage: FirebaseStorage by lazy { Firebase.storage }
 
     var itemList = mutableListOf<ItemModel>()
     private var _itemStateLiveData = MutableLiveData<ItemState>(ItemState.Uninitialized)
@@ -60,6 +63,9 @@ class itemViewModel : ViewModel() {
         for(item in findItem){
             db.collection(DBkey.DB_USERS).document(user)
                 .collection(DBkey.DB_ITEM).document(item.itemId.toString()).delete()
+
+            val fileName = item.itemId.toString() + ".jpg"
+            storage.reference.child("item/photo").child(fileName).delete()
         }
         itemList.removeAll(findItem)
         setState(
