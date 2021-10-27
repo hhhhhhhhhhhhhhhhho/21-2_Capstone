@@ -88,7 +88,7 @@
             android:layout_width="match_parent"
             android:layout_height="430dp"
             android:layout_gravity="center"
-            android:layout_margin="20dp"
+            android:layout_marginHorizontal="20dp"
             android:background="@drawable/border"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -98,51 +98,46 @@
             app:layout_constraintVertical_bias="0.491">
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-                <LinearLayout
-                    android:id="@+id/ItemView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_marginTop="5dp"
-                    android:orientation="horizontal"
-                    android:paddingHorizontal="15dp"
-                    app:layout_constraintBottom_toTopOf="@+id/selectItemButton"
-                    app:layout_constraintEnd_toEndOf="parent"
+                <ImageView
+                    android:id="@+id/uploadPhoto"
+                    android:layout_width="200dp"
+                    android:layout_height="300dp"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@drawable/radius_border"
+                    android:scaleType="center"
+                    android:src="@drawable/ic_baseline_add_a_photo_24"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/backButton">
+                    app:layout_constraintTop_toBottomOf="@+id/backButton" />
 
-                    <ImageView
-                        android:id="@+id/uploadPhoto"
-                        android:layout_width="200dp"
-                        android:layout_height="300dp"
-                        android:layout_gravity="center"
-                        android:layout_marginEnd="15dp"
-                        android:background="@drawable/radius_border"
-                        android:scaleType="center"
-                        android:src="@drawable/ic_baseline_add_a_photo_24" />
-
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/itemRecycleView"
-                        android:layout_width="wrap_content"
-                        android:layout_height="300dp"
-                        android:layout_gravity="center"
-                        android:orientation="horizontal"
-                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
-
-                </LinearLayout>
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/itemRecycleView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="300dp"
+                    android:layout_gravity="center"
+                    android:layout_marginEnd="15dp"
+                    android:maxWidth=""
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/uploadPhoto"
+                    app:layout_constraintTop_toTopOf="@+id/uploadPhoto" />
 
                 <Button
                     android:id="@+id/selectItemButton"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="30dp"
+                    android:layout_marginTop="10dp"
                     android:text="선택완료"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/ItemView"
+                    app:layout_constraintTop_toBottomOf="@id/uploadPhoto"
                     tools:ignore="HardcodedText" />
 
                 <ImageButton

@@ -53,8 +53,9 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
         val fragmentClosetBinding = FragmentClosetBinding.bind(view)
         binding = fragmentClosetBinding
 
+        Log.d("bb","onViewCreated")
         initViews(view, fragmentClosetBinding)
-        viewModel.fetchData()
+        //viewModel.fetchData()
         observeState()
     }
 
