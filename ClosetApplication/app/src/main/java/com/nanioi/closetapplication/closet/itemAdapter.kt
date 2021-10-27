@@ -2,6 +2,7 @@ package com.nanioi.closetapplication.closet
 
 import android.graphics.Paint
 import android.graphics.Typeface
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -55,6 +56,7 @@ class itemAdapter(
     override fun getItemCount(): Int = itemList.size
 
     fun setPhotoList(itemList: List<ItemModel>) {
+        Log.d("bb","setPhotoList")
         this.itemList = itemList
         notifyDataSetChanged()
     }

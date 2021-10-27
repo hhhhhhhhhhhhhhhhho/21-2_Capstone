@@ -1,30 +1,18 @@
 package com.nanioi.closetapplication.closet
 
-import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import androidx.activity.viewModels
 import androidx.core.view.isGone
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
-import com.nanioi.closetapplication.DBkey.Companion.DB_ITEM
-import com.nanioi.closetapplication.DBkey.Companion.DB_USERS
 import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.databinding.FragmentClosetBinding
 
@@ -101,11 +89,13 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
             context?.let {
                 if (auth.currentUser != null) {
                     val intent = Intent(it, AddImageActivity::class.java)
+                    Log.d("bb","add ")
                     startActivity(intent)
                 } else {
                     Snackbar.make(view, "로그인 후 사용해주세요", Snackbar.LENGTH_LONG).show()
                 }
             }
+            Log.d("bb","add 후")
         }
         //todo 선택이미지 삭제기능
         fragmentClosetBinding.deleteItemButton.setOnClickListener {
@@ -120,13 +110,14 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
 
     //by나연. 아이템 중복 쌓임 방지 아이템 리스트 초기화
     private fun initList() {
+        Log.d("bb","init :"+topItemList.toString())
         topItemList.clear()
         pantsItemList.clear()
         accessoryItemList.clear()
         shoesItemList.clear()
     }
 
-    private fun observeState() = viewModel.itemStateLiveData.observe(this) {
+    private fun observeState() = viewModel.itemStateLiveData.observe(viewLifecycleOwner) {
         when (it) {
             is ItemState.Loading -> handleLoading()
             is ItemState.Success -> handleSuccess(it)
@@ -137,12 +128,14 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
 
     //by 나연. 데이터 변경 관찰, UI 업데이트 함수 (21.10.25)
     private fun handleLoading() = with(binding) {
+        Log.d("bb","observe loading")
         this!!.progressBar.isVisible = true
     }
 
     private fun handleSuccess(state: ItemState.Success) = with(binding) {
         this!!.progressBar.isGone = true
         initList()
+        Log.d("bb","observe success")
         for (item in state.photoList) {
             when (item.categoryNumber) {
                 0 -> topItemList.add(item)
@@ -159,43 +152,23 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
     }
 
     private fun handleConfirm(state: ItemState.Confirm) {
+        Log.d("bb","observe confirm")
 //        setResult(Activity.RESULT_OK, Intent().apply {
 //            putExtra(URI_LIST_KEY, ArrayList(state.photoList.map { it.uri }))
 //        })
 //        finish()
     }
 
+    override fun onResume() {
+        super.onResume()
 
-    //    private fun observerData() {
-//        viewModel.setState().observe(viewLifecycleOwner, Observer {
-//            initList()
-//            for (item in it) {
-//                Log.d("aaaa",item.toString())
-//                when (item.categoryNumber) {
-//                    0 -> topItemList.add(item)
-//                    1 -> pantsItemList.add(item)
-//                    2 -> accessoryItemList.add(item)
-//                    3 -> shoesItemList.add(item)
-//                }
-//            }
-//            topItemAdapter.setPhotoList(topItemList)
-//            pantsItemAdapter.setPhotoList(pantsItemList)
-//            accessoryItemAdapter.setPhotoList(accessoryItemList)
-//            shoesItemAdapter.setPhotoList(shoesItemList)
-//        })
-//    }
-//    override fun onResume() {
-//        super.onResume()
-//
-//        viewModel.fetchData()
-////        topItemAdapter.notifyDataSetChanged()
-////        pantsItemAdapter.notifyDataSetChanged()
-////        accessoryItemAdapter.notifyDataSetChanged()
-////        shoesItemAdapter.notifyDataSetChanged()
-//    }
+        Log.d("bb","resume")
+        viewModel.fetchData()
+    }
 
-//    override fun onDestroyView() {
-//        super.onDestroyView()
-//
-//    }
+    override fun onDestroyView() {
+        super.onDestroyView()
+        Log.d("bb","destroy")
+      //  viewModel.
+    }
 }

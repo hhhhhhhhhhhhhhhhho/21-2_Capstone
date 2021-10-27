@@ -5,18 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.ValueEventListener
-import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.nanioi.closetapplication.DBkey
-import com.nanioi.closetapplication.closetApplication.Companion.appContext
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -27,10 +20,11 @@ class itemViewModel : ViewModel() {
     val user = Firebase.auth.currentUser!!.uid
 
     var itemList = mutableListOf<ItemModel>()
-    //var itemStateLiveData = MutableLiveData<MutableList<ItemModel>>()
-    val itemStateLiveData = MutableLiveData<ItemState>(ItemState.Uninitialized)
+    private var _itemStateLiveData = MutableLiveData<ItemState>(ItemState.Uninitialized)
+    val itemStateLiveData : LiveData<ItemState> = _itemStateLiveData
 
     fun fetchData() = viewModelScope.launch {
+        Log.d("bb","fetch")
         setState(
             ItemState.Loading
         )
@@ -44,8 +38,8 @@ class itemViewModel : ViewModel() {
             )
         )
     }
-
     fun selectPhoto(item: ItemModel) {
+        Log.d("bb","select")
         val findItem = itemList.find { it.itemId == item.itemId }
         findItem?.let { photo ->
             itemList[itemList.indexOf(photo)] =
@@ -61,20 +55,28 @@ class itemViewModel : ViewModel() {
     }
 
     fun deletePhoto() {
+        Log.d("bb","delete")
         val findItem = itemList.filter { it.isSelected }
+        for(item in findItem){
+            db.collection(DBkey.DB_USERS).document(user)
+                .collection(DBkey.DB_ITEM).document(item.itemId.toString()).delete()
+        }
         itemList.removeAll(findItem)
         setState(
             ItemState.Success(
                 photoList = itemList
             )
         )
+        //fetchData()
     }
 
     private fun setState(state: ItemState) {
-        itemStateLiveData.postValue(state)
+        Log.d("bb","setState")
+        _itemStateLiveData.postValue(state)
     }
 
     fun confirmCheckedPhotos() {
+        Log.d("bb","confirm")
         setState(
             ItemState.Loading
         )
