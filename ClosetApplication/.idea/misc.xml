@@ -32,12 +32,15 @@
         <entry key="app/src/main/res/drawable-v24/radius_pink_border.xml" value="0.2" />
         <entry key="app/src/main/res/drawable-v24/selector_menu_color.xml" value="0.2" />
         <entry key="app/src/main/res/drawable-v24/top_radius_white_background.xml" value="0.2" />
+        <entry key="app/src/main/res/drawable/radius_pink.xml" value="0.35555555555555557" />
+        <entry key="app/src/main/res/drawable/radius_white.xml" value="0.35555555555555557" />
+        <entry key="app/src/main/res/drawable/shadow.xml" value="0.35555555555555557" />
         <entry key="app/src/main/res/font/font.xml" value="0.2" />
         <entry key="app/src/main/res/layout/activity_add_image.xml" value="0.17962962962962964" />
         <entry key="app/src/main/res/layout/activity_edit_profile.xml" value="0.17962962962962964" />
         <entry key="app/src/main/res/layout/activity_login.xml" value="0.11388888888888889" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.17603850050658562" />
-        <entry key="app/src/main/res/layout/activity_main_drawer_header.xml" value="0.17962962962962964" />
+        <entry key="app/src/main/res/layout/activity_main_drawer_header.xml" value="0.33" />
         <entry key="app/src/main/res/layout/activity_sign.xml" value="0.1" />
         <entry key="app/src/main/res/layout/activity_sign_in.xml" value="0.17962962962962964" />
         <entry key="app/src/main/res/layout/activity_sign_up.xml" value="0.22" />

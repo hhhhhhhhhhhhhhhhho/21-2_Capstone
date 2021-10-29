@@ -65,9 +65,4 @@ class stylingItemViewModel :ViewModel() {
             )
         }
     }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.d("aaa","clear")
-    }
 }
