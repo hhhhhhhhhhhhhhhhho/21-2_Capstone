@@ -31,6 +31,7 @@ class itemViewModel : ViewModel() {
         setState(
             ItemState.Loading
         )
+
         itemList = db.collection(DBkey.DB_USERS).document(user)
             .collection(DBkey.DB_ITEM).get().await()
             .toObjects(ItemModel::class.java)
@@ -91,5 +92,10 @@ class itemViewModel : ViewModel() {
                 photoList = itemList.filter { it.isSelected }
             )
         )
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("bb","clear")
     }
 }

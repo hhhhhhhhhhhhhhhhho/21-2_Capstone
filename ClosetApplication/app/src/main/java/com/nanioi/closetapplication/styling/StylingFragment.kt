@@ -22,130 +22,136 @@ import com.nanioi.closetapplication.closet.ItemModel
 import com.nanioi.closetapplication.closet.ItemState
 import com.nanioi.closetapplication.closet.itemAdapter
 import com.nanioi.closetapplication.closet.itemViewModel
+import com.nanioi.closetapplication.databinding.FragmentClosetBinding
 import com.nanioi.closetapplication.databinding.FragmentStylingBinding
 
 class StylingFragment: Fragment(R.layout.fragment_styling) {
 
-    private val topItemList = mutableListOf<ItemModel>()
-    private val pantsItemList = mutableListOf<ItemModel>()
-    private val accessoryItemList = mutableListOf<ItemModel>()
-    private val shoesItemList = mutableListOf<ItemModel>()
-
-    private var binding: FragmentStylingBinding? = null
-
-    private val ItemAdapter = stylingItemAdapter {
+    private val topItemAdapter = stylingItemAdapter {
         viewModel.selectPhoto(it)
     }
-
+    private val pantsItemAdapter = stylingItemAdapter {
+        viewModel.selectPhoto(it)
+    }
+    private val accessoryItemAdapter = stylingItemAdapter {
+        viewModel.selectPhoto(it)
+    }
+    private val shoesItemAdapter = stylingItemAdapter {
+        viewModel.selectPhoto(it)
+    }
     private val viewModel by viewModels<stylingItemViewModel>()
+
+    private lateinit var itemList : List<ItemModel>
+    private lateinit var topItemList : List<ItemModel>
+    private lateinit var pantsItemList : List<ItemModel>
+    private lateinit var accessoryItemList : List<ItemModel>
+    private lateinit var shoesItemList : List<ItemModel>
+
+    private lateinit var binding: FragmentStylingBinding
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val fragmentStylingBinding = FragmentStylingBinding.bind(view)
         binding = fragmentStylingBinding
 
+        Log.d("aaa","onViewCreated")
         initViews()
+        viewModel.fetchData()
         observeState()
     }
 
     private fun initViews() {
-        binding!!.selectItemTap.visibility = View.INVISIBLE
-
-        binding!!.itemRecycleView.apply {
-            layoutManager = LinearLayoutManager(context).also {
-                it.orientation = LinearLayoutManager.HORIZONTAL
-            }
-            adapter = ItemAdapter
-        }
+        binding.selectItemTap.visibility = View.INVISIBLE
 
         //by 나연. 각 카테고리 버튼 클릭 시 item들 보여주는 RecyclerView 창 보여주기 (21.10.12)
-        binding!!.topButton.setOnClickListener {
+        binding.topButton.setOnClickListener {
             activity?.let {
-                binding!!.selectItemTap.visibility = View.VISIBLE
+                binding.selectItemTap.visibility = View.VISIBLE
                 initRecyclerView(0)
             }
         }
-        binding!!.accessoryButton.setOnClickListener {
+        binding.pantsButton.setOnClickListener {
+            Log.d("aaa","pantButton")
             activity?.let {
-                binding!!.selectItemTap.visibility = View.VISIBLE
-                initRecyclerView(2)
-            }
-        }
-        binding!!.pantsButton.setOnClickListener {
-            activity?.let {
-                binding!!.selectItemTap.visibility = View.VISIBLE
                 initRecyclerView(1)
+                binding.selectItemTap.visibility = View.VISIBLE
             }
         }
-        binding!!.shoesButton.setOnClickListener {
+        binding.accessoryButton.setOnClickListener {
             activity?.let {
-                binding!!.selectItemTap.visibility = View.VISIBLE
+                initRecyclerView(2)
+                binding.selectItemTap.visibility = View.VISIBLE
+            }
+        }
+        binding.shoesButton.setOnClickListener {
+            activity?.let {
+                binding.selectItemTap.visibility = View.VISIBLE
                 initRecyclerView(3)
             }
         }
-        binding!!.backButton.setOnClickListener {
+        binding.backButton.setOnClickListener {
             activity?.let {
-                binding!!.selectItemTap.visibility = View.INVISIBLE
+                binding.selectItemTap.visibility = View.INVISIBLE
             }
         }
-        binding!!.selectItemButton.setOnClickListener {
+        binding.selectItemButton.setOnClickListener {
             activity?.let {
                 viewModel.confirmCheckedPhotos()
-                binding!!.selectItemTap.visibility = View.INVISIBLE
+                binding.selectItemTap.visibility = View.INVISIBLE
                 // 아바타에 옷입히기 코드 구현
             }
         }
     }
-    //by나연. 아이템 중복 쌓임 방지 아이템 리스트 초기화
-    private fun initList() {
-        topItemList.clear()
-        pantsItemList.clear()
-        accessoryItemList.clear()
-        shoesItemList.clear()
-    }
 
     private fun initRecyclerView(categoryNum: Int) {
+        viewModel.fetchData()
+        binding.itemRecycleView.layoutManager = LinearLayoutManager(context).also {
+            it.orientation = LinearLayoutManager.HORIZONTAL
+        }
+        Log.d("aaa","initRecyclerView")
         when(categoryNum){
             0->{
-                ItemAdapter.submitList(topItemList)
-                Log.d("aa", "topItem : " + topItemList.toString())
+                binding.itemRecycleView.adapter = topItemAdapter
             }
             1->{
-                ItemAdapter.submitList(pantsItemList)
-                Log.d("aa", "topItem : " + topItemList.toString())
+                binding.itemRecycleView.adapter = pantsItemAdapter
             }
             2->{
-                ItemAdapter.submitList(accessoryItemList)
-                Log.d("aa", "topItem : " + topItemList.toString())
+                binding.itemRecycleView.adapter = accessoryItemAdapter
             }
             3->{
-                ItemAdapter.submitList(shoesItemList)
-                Log.d("aa", "topItem : " + topItemList.toString())
+                binding.itemRecycleView.adapter = shoesItemAdapter
             }
         }
     }
     private fun observeState() = viewModel.itemStateLiveData.observe(viewLifecycleOwner) {
+        Log.d("aaa","observestate")
         when (it) {
             is stylingState.Success -> handleSuccess(it)
             is stylingState.Confirm -> handleConfirm(it)
             else -> Unit
         }
     }
+    @SuppressLint("NotifyDataSetChanged")
     private fun handleSuccess(state: stylingState.Success) = with(binding) {
-        initList()
-        Log.d("bb","observe success")
-        for (item in state.photoList) {
-            when (item.categoryNumber) {
-                0 -> topItemList.add(item)
-                1 -> pantsItemList.add(item)
-                2 -> accessoryItemList.add(item)
-                3 -> shoesItemList.add(item)
-            }
-        }
+        //initList()
+        Log.d("aaa","observe success")
+
+        itemList = state.photoList
+        topItemList = itemList.filter { it.categoryNumber == 0 }
+        pantsItemList = itemList.filter { it.categoryNumber == 1 }
+        accessoryItemList = itemList.filter { it.categoryNumber == 2 }
+        shoesItemList = itemList.filter { it.categoryNumber == 3 }
+
+        topItemAdapter.setPhotoList(topItemList)
+        pantsItemAdapter.setPhotoList(pantsItemList)
+        accessoryItemAdapter.setPhotoList(accessoryItemList)
+        shoesItemAdapter.setPhotoList(shoesItemList)
     }
 
     private fun handleConfirm(state: stylingState.Confirm) {
-        Log.d("bb","observe confirm")
+        Log.d("aaa","observe confirm")
 //        setResult(Activity.RESULT_OK, Intent().apply {
 //            putExtra(URI_LIST_KEY, ArrayList(state.photoList.map { it.uri }))
 //        })
@@ -154,14 +160,20 @@ class StylingFragment: Fragment(R.layout.fragment_styling) {
 
     override fun onResume() {
         super.onResume()
-
-        Log.d("bb","resume")
         viewModel.fetchData()
+        Log.d("aaa","resume")
     }
-
+    override fun onPause() {
+        super.onPause()
+        Log.d("aaa","onPause")
+    }
+    override fun onStop() {
+        super.onStop()
+        Log.d("aaa","onStop")
+    }
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("bb","destroy")
+        Log.d("aaa","destroy")
         //  viewModel.
     }
 }

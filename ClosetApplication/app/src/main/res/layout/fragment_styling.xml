@@ -83,74 +83,54 @@
             app:layout_constraintBottom_toBottomOf="@+id/person_image"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <HorizontalScrollView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/selectItemTap"
             android:layout_width="match_parent"
             android:layout_height="430dp"
             android:layout_gravity="center"
-            android:layout_marginHorizontal="20dp"
-            android:background="@drawable/border"
+            android:layout_marginHorizontal="10dp"
+            android:background="@drawable/radius_border"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="1.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintVertical_bias="0.491">
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent">
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/itemRecycleView"
+                android:layout_width="wrap_content"
+                android:layout_height="300dp"
+                android:layout_gravity="center"
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="15dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/backButton" />
 
-                <ImageView
-                    android:id="@+id/uploadPhoto"
-                    android:layout_width="200dp"
-                    android:layout_height="300dp"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="15dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/radius_border"
-                    android:scaleType="center"
-                    android:src="@drawable/ic_baseline_add_a_photo_24"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/backButton" />
+            <Button
+                android:id="@+id/selectItemButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="30dp"
+                android:text="선택완료"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/itemRecycleView"
+                tools:ignore="HardcodedText" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/itemRecycleView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="300dp"
-                    android:layout_gravity="center"
-                    android:layout_marginEnd="15dp"
-                    android:orientation="horizontal"
-                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/uploadPhoto"
-                    app:layout_constraintTop_toTopOf="@+id/uploadPhoto" />
+            <ImageButton
+                android:id="@+id/backButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:background="@drawable/ic_baseline_close_24"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <Button
-                    android:id="@+id/selectItemButton"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginHorizontal="30dp"
-                    android:layout_marginTop="10dp"
-                    android:text="선택완료"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/uploadPhoto"
-                    tools:ignore="HardcodedText" />
-
-                <ImageButton
-                    android:id="@+id/backButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:background="@drawable/ic_baseline_close_24"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </HorizontalScrollView>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
