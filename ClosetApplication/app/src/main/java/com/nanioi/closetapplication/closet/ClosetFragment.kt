@@ -55,7 +55,7 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
 
         Log.d("bb","onViewCreated")
         initViews(view, fragmentClosetBinding)
-        //viewModel.fetchData()
+//        viewModel.fetchData()
         observeState()
     }
 
@@ -165,11 +165,11 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
 
         Log.d("bb","resume")
         viewModel.fetchData()
+        observeState()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         Log.d("bb","destroy")
-      //  viewModel.
     }
 }

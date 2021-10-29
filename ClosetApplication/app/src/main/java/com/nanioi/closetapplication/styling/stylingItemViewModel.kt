@@ -20,15 +20,15 @@ class stylingItemViewModel :ViewModel() {
     val user = Firebase.auth.currentUser!!.uid
 
     var itemList = mutableListOf<ItemModel>()
-    //private var _stylingItem = MutableLiveData<ItemModel>()
-    //val stylingItem : LiveData<ItemModel> = _stylingItem
     private var _itemStateLiveData = MutableLiveData<stylingState>(stylingState.Uninitialized)
     val itemStateLiveData : LiveData<stylingState> = _itemStateLiveData
 
     fun fetchData() = viewModelScope.launch {
+        Log.d("aaa","fetch")
         itemList = db.collection(DBkey.DB_USERS).document(user)
             .collection(DBkey.DB_ITEM).get().await()
             .toObjects(ItemModel::class.java)
+
         setState(
             stylingState.Success(
                 photoList = itemList
@@ -36,7 +36,7 @@ class stylingItemViewModel :ViewModel() {
         )
     }
     fun selectPhoto(item: ItemModel) {
-        Log.d("bb","select")
+        Log.d("aaa","select")
         val findItem = itemList.find { it.itemId == item.itemId }
         findItem?.let { photo ->
             itemList[itemList.indexOf(photo)] =
@@ -51,11 +51,11 @@ class stylingItemViewModel :ViewModel() {
         }
     }
     private fun setState(state: stylingState) {
-        Log.d("bb","setState")
+        Log.d("aaa","setState")
         _itemStateLiveData.postValue(state)
     }
     fun confirmCheckedPhotos() {
-        Log.d("bb","confirm")
+        Log.d("aaa","confirm")
         val findItem = itemList.find { it.isSelected == true }
         findItem?.let { item->
             setState(
@@ -64,5 +64,10 @@ class stylingItemViewModel :ViewModel() {
                 )
             )
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("aaa","clear")
     }
 }

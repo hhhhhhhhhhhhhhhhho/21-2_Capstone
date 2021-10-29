@@ -1,10 +1,9 @@
 package com.nanioi.closetapplication.styling
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.closet.ItemModel
@@ -12,14 +11,16 @@ import com.nanioi.closetapplication.databinding.ViewholderItemStylingBinding
 import com.nanioi.closetapplication.extensions.loadCenterCrop
 
 class stylingItemAdapter(
-    val onItemClicked: (ItemModel) -> Unit
-) : ListAdapter<ItemModel, stylingItemAdapter.ViewHolder>(diffUtil) {
+    private val onItemClicked: (ItemModel) -> Unit
+) : RecyclerView.Adapter<stylingItemAdapter.ViewHolder>() {
 
+    private var itemList : List<ItemModel> = listOf()
 
-    inner class ViewHolder(private val binding: ViewholderItemStylingBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(
+        private val binding: ViewholderItemStylingBinding
+        ) : RecyclerView.ViewHolder(binding.root) {
 
-        fun bind(item: ItemModel)= with(binding) {
-
+        fun bindData(item: ItemModel) = with(binding) {
             photoImageView.loadCenterCrop(item.imageUrl, 8f)
             checkButton.setImageDrawable(
                 ContextCompat.getDrawable(
@@ -30,8 +31,11 @@ class stylingItemAdapter(
                         R.drawable.ic_before_check
                 )
             )
-            binding.root.setOnClickListener {
-                onItemClicked(item)
+        }
+
+        fun bindViews(data: ItemModel) = with(binding) {
+            root.setOnClickListener {
+                onItemClicked(data)
             }
         }
     }
@@ -40,20 +44,16 @@ class stylingItemAdapter(
         return ViewHolder(ViewholderItemStylingBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(currentList[position])
+    override fun onBindViewHolder(holder: stylingItemAdapter.ViewHolder, position: Int) {
+        holder.bindData(itemList[position])
+        holder.bindViews(itemList[position])
     }
+    override fun getItemCount(): Int = itemList.size
 
-    companion object {
-        val diffUtil = object : DiffUtil.ItemCallback<ItemModel>() {
-            override fun areItemsTheSame(oldItem: ItemModel, newItem: ItemModel): Boolean {
-                return oldItem.itemId == newItem.itemId
-            }
 
-            override fun areContentsTheSame(oldItem: ItemModel, newItem: ItemModel): Boolean {
-                return oldItem == newItem
-            }
-
-        }
+    fun setPhotoList(itemList: List<ItemModel>) {
+        Log.d("bb","setPhotoList")
+        this.itemList = itemList
+        notifyDataSetChanged()
     }
 }
