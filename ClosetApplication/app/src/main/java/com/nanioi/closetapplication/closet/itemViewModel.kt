@@ -16,6 +16,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
 //viewModel은 repo에 있는 데이터를 관찰하고 있다가 변경이 되면 mutableData의 값을 변경시켜주는 역할
+//viewModelScope : destroy 될 때 자식 코루틴들을 자동으로 취소하는 기능을 제공
 class itemViewModel : ViewModel() {
 
     val db = FirebaseFirestore.getInstance()
@@ -74,7 +75,6 @@ class itemViewModel : ViewModel() {
                 photoList = itemList
             )
         )
-        //fetchData()
     }
 
     private fun setState(state: ItemState) {
@@ -92,10 +92,5 @@ class itemViewModel : ViewModel() {
                 photoList = itemList.filter { it.isSelected }
             )
         )
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        Log.d("bb","clear")
     }
 }
