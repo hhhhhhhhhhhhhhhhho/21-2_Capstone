@@ -21,7 +21,7 @@ class MyPageFragment : Fragment(){
         //by 나연. 프로필 수정 버튼 클릭 시 activity이동 (21.09.27)
         binding.editProfileButton.setOnClickListener {
             activity?.let {
-                startActivity(Intent(context,EditProfileActivity::class.java))
+                startActivity(Intent(requireContext(),EditProfileActivity::class.java))
             }
         }
 

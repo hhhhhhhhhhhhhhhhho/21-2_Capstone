@@ -26,7 +26,6 @@
         <activity android:name=".closet.AddImageActivity"/>
         <activity android:name=".mypage.EditProfileActivity"/>
         <activity android:name=".MainActivity"/>
-        <activity android:name=".LoginActivity"/>
 
         <activity
             android:name="com.soundcloud.android.crop.CropImageActivity"

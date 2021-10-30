@@ -5,7 +5,6 @@ import android.database.Cursor
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -13,6 +12,8 @@ import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.FileProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
@@ -26,8 +27,8 @@ import com.google.firebase.storage.UploadTask
 import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.User.SignInActivity
-import com.nanioi.closetapplication.User.utils.ImageResizeUtils
 import com.nanioi.closetapplication.User.utils.LoginUserData
+import com.nanioi.closetapplication.User.utils.ImageResizeUtils
 import com.soundcloud.android.crop.Crop
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -37,14 +38,13 @@ import java.io.File
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.collections.HashMap
 
 class EditProfileActivity : AppCompatActivity() {
 
     private var tvEditUserDataEmail: TextView? = null //이메일 확인 텍스트 변수 선언
     private var etEditUserDataName: EditText? = null //이름 입력창 변수 선언
     private var cbEditUserDataPassword: CheckBox? = null //비밀번호 변경 여부 체크박스 변수 선언
-    private var llEditUserDataPassword: LinearLayout? = null //비밀번호 변경 레이아웃 변수 선언
+    private var llEditUserDataPassword: ConstraintLayout? = null //비밀번호 변경 레이아웃 변수 선언
     private var etEditUserDataChangePassword: EditText? = null //변경할 비밀번호 입력창 변수 선언
     private var etEditUserDataChangePasswordCheck: EditText? = null //변경할 비밀번호 확인 입력창 변수 선언
     private var etEditUserDataCm: EditText? = null //키 입력창 변수 선언
@@ -82,9 +82,6 @@ class EditProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_edit_profile)
 
-        //TODO 준승님이 해야할 것 각각 EditText 부분에 회원정보 불러서 setText 시키기
-        // 즉 클릭 전에 이미 저장된 자신의 정보들이 칸마다 정보가 불러와 져있고 화면에 그게 떠야 합니다.
-        // 클릭해서 정보 입력하면 그 정보들은 그 프로필 수정 버튼이 눌려야 저장된 정보가 바뀌게 구현해주세요
         tvEditUserDataEmail = findViewById(R.id.tv_edit_user_data_email)
         etEditUserDataName = findViewById(R.id.et_edit_user_data_name)
         cbEditUserDataPassword = findViewById(R.id.cb_edit_user_data_password)
@@ -121,10 +118,7 @@ class EditProfileActivity : AppCompatActivity() {
             fbStorageRef.child("user/${LoginUserData.uid}/img_face.jpg").downloadUrl.addOnSuccessListener { uri ->
                 Glide.with(this@EditProfileActivity).asBitmap().load(uri)
                     .into(object : SimpleTarget<Bitmap?>() {
-                        override fun onResourceReady(
-                            resource: Bitmap,
-                            transition: Transition<in Bitmap?>?
-                        ) {
+                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap?>?) {
                             ivEditUserDataFace?.setImageBitmap(resource)
                             imgFaceBitmap = resource
                         }
@@ -132,26 +126,21 @@ class EditProfileActivity : AppCompatActivity() {
 
             }.addOnFailureListener {
                 runOnUiThread {
-                    Toast.makeText(this@EditProfileActivity, "얼굴 사진 가져오기 실패", Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(this@EditProfileActivity, "얼굴 사진 가져오기 실패", Toast.LENGTH_SHORT).show()
                 }
             }
 
             fbStorageRef.child("user/${LoginUserData.uid}/img_body.jpg").downloadUrl.addOnSuccessListener { uri ->
                 Glide.with(this@EditProfileActivity).asBitmap().load(uri)
                     .into(object : SimpleTarget<Bitmap?>() {
-                        override fun onResourceReady(
-                            resource: Bitmap,
-                            transition: Transition<in Bitmap?>?
-                        ) {
+                        override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap?>?) {
                             ivEditUserDataBody?.setImageBitmap(resource)
                             imgBodyBitmap = resource
                         }
                     })
             }.addOnFailureListener {
                 runOnUiThread {
-                    Toast.makeText(this@EditProfileActivity, "전신 사진 가져오기 실패", Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(this@EditProfileActivity, "전신 사진 가져오기 실패", Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -165,60 +154,29 @@ class EditProfileActivity : AppCompatActivity() {
                                     if (etEditUserDataChangePassword?.text!!.isNotEmpty())
                                         if (etEditUserDataChangePasswordCheck?.text!!.isNotEmpty())
                                             if (etEditUserDataChangePassword!!.text.toString() == etEditUserDataChangePasswordCheck?.text.toString()) {
-                                                firebaseAuth?.currentUser?.updatePassword(
-                                                    etEditUserDataChangePassword!!.text.toString()
-                                                )
+                                                firebaseAuth?.currentUser?.updatePassword(etEditUserDataChangePassword!!.text.toString())
                                                     ?.addOnCompleteListener(this) {
                                                         if (it.isSuccessful) {
-                                                            Toast.makeText(
-                                                                this@EditProfileActivity,
-                                                                "비밀번호 변경 완료",
-                                                                Toast.LENGTH_SHORT
-                                                            ).show()
+                                                            Toast.makeText(this@EditProfileActivity, "비밀번호 변경 완료", Toast.LENGTH_SHORT).show()
                                                             changeUserData()
                                                         }
                                                     }
                                             } else
-                                                Toast.makeText(
-                                                    this@EditProfileActivity,
-                                                    "변경할 비밀번호가 일치하지 않습니다.",
-                                                    Toast.LENGTH_SHORT
-                                                ).show()
+                                                Toast.makeText(this@EditProfileActivity, "변경할 비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show()
                                         else
-                                            Toast.makeText(
-                                                this@EditProfileActivity,
-                                                "변경할 비밀번호 확인을 입력해 주세요.",
-                                                Toast.LENGTH_SHORT
-                                            ).show()
+                                            Toast.makeText(this@EditProfileActivity, "변경할 비밀번호 확인을 입력해 주세요.", Toast.LENGTH_SHORT).show()
                                     else
-                                        Toast.makeText(
-                                            this@EditProfileActivity,
-                                            "변경할 비밀번호를 입력해 주세요.",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+                                        Toast.makeText(this@EditProfileActivity, "변경할 비밀번호를 입력해 주세요.", Toast.LENGTH_SHORT).show()
                                 else
                                     changeUserData()
                             else
-                                Toast.makeText(
-                                    this@EditProfileActivity,
-                                    "전신 사진을 업로드 해 주세요.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                Toast.makeText(this@EditProfileActivity, "전신 사진을 업로드 해 주세요.", Toast.LENGTH_SHORT).show()
                         else
-                            Toast.makeText(
-                                this@EditProfileActivity,
-                                "얼굴 사진을 업로드 해 주세요.",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(this@EditProfileActivity, "얼굴 사진을 업로드 해 주세요.", Toast.LENGTH_SHORT).show()
                     else
-                        Toast.makeText(
-                            this@EditProfileActivity,
-                            "몸무게를 입력해 주세요.",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(this@EditProfileActivity, "몸무게를 입력해 주세요.", Toast.LENGTH_SHORT).show()
                 else
-                    Toast.makeText(this@EditProfileActivity, "키를 입력해 주세요.", Toast.LENGTH_SHORT)
-                        .show()
+                    Toast.makeText(this@EditProfileActivity, "키를 입력해 주세요.", Toast.LENGTH_SHORT).show()
             else
                 Toast.makeText(this@EditProfileActivity, "이름을 입력해 주세요.", Toast.LENGTH_SHORT).show()
         }
@@ -234,58 +192,38 @@ class EditProfileActivity : AppCompatActivity() {
                         if (it.isSuccessful) {
                             val databaseOut: FirebaseDatabase = FirebaseDatabase.getInstance()
                             val referenceOut: DatabaseReference = databaseOut.getReference("Users")
-                            referenceOut.child(LoginUserData.uid!!).removeValue()
-                                .addOnCompleteListener(this@EditProfileActivity) { task ->
-                                    if (task.isSuccessful) {
-                                        CoroutineScope(Dispatchers.IO).launch {
-                                            fbStorageRef.child("user/${LoginUserData.uid}/img_face.jpg")
-                                                .delete().addOnSuccessListener {
-                                                fbStorageRef.child("user/${LoginUserData.uid}/img_body.jpg")
-                                                    .delete().addOnSuccessListener {
-                                                    runOnUiThread {
-                                                        LoginUserData.uid = null
-                                                        LoginUserData.email = null
-                                                        LoginUserData.name = null
-                                                        LoginUserData.gender = null
-                                                        LoginUserData.cm = null
-                                                        LoginUserData.kg = null
+                            referenceOut.child(LoginUserData.uid!!).removeValue().addOnCompleteListener(this@EditProfileActivity) { task ->
+                                if (task.isSuccessful) {
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        fbStorageRef.child("user/${LoginUserData.uid}/img_face.jpg").delete().addOnSuccessListener {
+                                            fbStorageRef.child("user/${LoginUserData.uid}/img_body.jpg").delete().addOnSuccessListener {
+                                                runOnUiThread {
+                                                    LoginUserData.uid = null
+                                                    LoginUserData.email = null
+                                                    LoginUserData.name = null
+                                                    LoginUserData.gender = null
+                                                    LoginUserData.cm = null
+                                                    LoginUserData.kg = null
 
-                                                        Toast.makeText(
-                                                            this@EditProfileActivity,
-                                                            "회원 탈퇴 완료",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
+                                                    Toast.makeText(this@EditProfileActivity, "회원 탈퇴 완료", Toast.LENGTH_SHORT).show()
 
-                                                        dialog.dismiss()
-                                                        startActivity(
-                                                            Intent(
-                                                                this@EditProfileActivity,
-                                                                SignInActivity::class.java
-                                                            )
-                                                        )
-                                                        finish()
-                                                    }
-                                                }.addOnFailureListener {
-                                                    runOnUiThread {
-                                                        Toast.makeText(
-                                                            this@EditProfileActivity,
-                                                            "사진 삭제 실패",
-                                                            Toast.LENGTH_SHORT
-                                                        ).show()
-                                                    }
+                                                    dialog.dismiss()
+                                                    startActivity(Intent(this@EditProfileActivity, SignInActivity::class.java))
+                                                    finish()
                                                 }
                                             }.addOnFailureListener {
                                                 runOnUiThread {
-                                                    Toast.makeText(
-                                                        this@EditProfileActivity,
-                                                        "사진 삭제 실패",
-                                                        Toast.LENGTH_SHORT
-                                                    ).show()
+                                                    Toast.makeText(this@EditProfileActivity, "사진 삭제 실패", Toast.LENGTH_SHORT).show()
                                                 }
+                                            }
+                                        }.addOnFailureListener {
+                                            runOnUiThread {
+                                                Toast.makeText(this@EditProfileActivity, "사진 삭제 실패", Toast.LENGTH_SHORT).show()
                                             }
                                         }
                                     }
                                 }
+                            }
                         }
                     }
             }
@@ -300,8 +238,7 @@ class EditProfileActivity : AppCompatActivity() {
         btnEditUserDataFace?.setOnClickListener {
             val pictureFaceValue = arrayOf("사진 촬영", "갤러리에서 가져오기")
 
-            var pictureFaceDialog: AlertDialog.Builder =
-                AlertDialog.Builder(this@EditProfileActivity)
+            var pictureFaceDialog: AlertDialog.Builder = AlertDialog.Builder(this@EditProfileActivity)
             pictureFaceDialog.setTitle("얼굴 사진 업로드 방법")
 
             pictureFaceDialog.setSingleChoiceItems(pictureFaceValue, -1) { dialog, item ->
@@ -357,8 +294,7 @@ class EditProfileActivity : AppCompatActivity() {
         btnEditUserDataBody?.setOnClickListener {
             val pictureBodyValue = arrayOf("사진 촬영", "갤러리에서 가져오기")
 
-            var pictureBodyDialog: AlertDialog.Builder =
-                AlertDialog.Builder(this@EditProfileActivity)
+            var pictureBodyDialog: AlertDialog.Builder = AlertDialog.Builder(this@EditProfileActivity)
             pictureBodyDialog.setTitle("전신 사진 업로드 방법")
 
             pictureBodyDialog.setSingleChoiceItems(pictureBodyValue, -1) { dialog, item ->
@@ -429,8 +365,7 @@ class EditProfileActivity : AppCompatActivity() {
                         assert(photoUri != null)
                         cursor = contentResolver.query(photoUri, proj, null, null, null)
                         assert(cursor != null)
-                        val column_index: Int =
-                            cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                        val column_index: Int = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                         cursor.moveToFirst()
                         tempFile = File(cursor.getString(column_index))
                     } finally {
@@ -457,8 +392,7 @@ class EditProfileActivity : AppCompatActivity() {
                         assert(photoUri != null)
                         cursor = contentResolver.query(photoUri, proj, null, null, null)
                         assert(cursor != null)
-                        val column_index: Int =
-                            cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+                        val column_index: Int = cursor!!.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
                         cursor.moveToFirst()
                         tempFile = File(cursor.getString(column_index))
                     } finally {
@@ -476,8 +410,7 @@ class EditProfileActivity : AppCompatActivity() {
                         REQUEST_CODE_FACE_CAMERA -> {
                             ImageResizeUtils.resizeFile(cropFile, cropFile, 1280, 90, isCamera)
                             val bitmapOptions = BitmapFactory.Options()
-                            val bitmapImage =
-                                BitmapFactory.decodeFile(cropFile.absolutePath, bitmapOptions)
+                            val bitmapImage = BitmapFactory.decodeFile(cropFile.absolutePath, bitmapOptions)
 
                             ivEditUserDataFace?.setImageBitmap(bitmapImage)
                             imgFaceBitmap = bitmapImage
@@ -486,8 +419,7 @@ class EditProfileActivity : AppCompatActivity() {
                         REQUEST_CODE_FACE_GALLARY -> {
                             ImageResizeUtils.resizeFile(cropFile, cropFile, 1280, 90, isCamera)
                             val bitmapOptions = BitmapFactory.Options()
-                            val bitmapImage =
-                                BitmapFactory.decodeFile(cropFile.absolutePath, bitmapOptions)
+                            val bitmapImage = BitmapFactory.decodeFile(cropFile.absolutePath, bitmapOptions)
 
                             ivEditUserDataFace?.setImageBitmap(bitmapImage)
                             imgFaceBitmap = bitmapImage
@@ -496,8 +428,7 @@ class EditProfileActivity : AppCompatActivity() {
                         REQUEST_CODE_BODY_CAMERA -> {
                             ImageResizeUtils.resizeFile(cropFile, cropFile, 1280, 90, isCamera)
                             val bitmapOptions = BitmapFactory.Options()
-                            val bitmapImage =
-                                BitmapFactory.decodeFile(cropFile.absolutePath, bitmapOptions)
+                            val bitmapImage = BitmapFactory.decodeFile(cropFile.absolutePath, bitmapOptions)
 
                             ivEditUserDataBody?.setImageBitmap(bitmapImage)
                             imgBodyBitmap = bitmapImage
@@ -506,8 +437,7 @@ class EditProfileActivity : AppCompatActivity() {
                         REQUEST_CODE_BODY_GALLARY -> {
                             ImageResizeUtils.resizeFile(cropFile, cropFile, 1280, 90, isCamera)
                             val bitmapOptions = BitmapFactory.Options()
-                            val bitmapImage =
-                                BitmapFactory.decodeFile(cropFile.absolutePath, bitmapOptions)
+                            val bitmapImage = BitmapFactory.decodeFile(cropFile.absolutePath, bitmapOptions)
 
                             ivEditUserDataBody?.setImageBitmap(bitmapImage)
                             imgBodyBitmap = bitmapImage
@@ -552,34 +482,17 @@ class EditProfileActivity : AppCompatActivity() {
 
             if (uploadFaceFile != null) {
                 withContext(Dispatchers.IO) {
-                    fbStorageRef.child("user/${LoginUserData.uid}/img_face.jpg").delete()
-                        .addOnSuccessListener {
-                            uploadRef = fbStorageRef.child("user/${LoginUserData.uid}/img_face.jpg")
-                            uploadTask = uploadRef?.putFile(uploadFaceFile!!)
-                            uploadTask!!.addOnFailureListener {
-                                runOnUiThread {
-                                    Toast.makeText(
-                                        this@EditProfileActivity,
-                                        "얼굴사진 업로드 실패",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }.addOnSuccessListener {
-                                runOnUiThread {
-                                    Toast.makeText(
-                                        this@EditProfileActivity,
-                                        "얼굴사진 업로드 성공",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
-                            }
-                        }.addOnFailureListener {
+                    fbStorageRef.child("user/${LoginUserData.uid}/img_face.jpg").delete().addOnSuccessListener {
+                        uploadRef = fbStorageRef.child("user/${LoginUserData.uid}/img_face.jpg")
+                        uploadTask = uploadRef?.putFile(uploadFaceFile!!)
+                        uploadTask!!.addOnFailureListener {
+                            runOnUiThread { Toast.makeText(this@EditProfileActivity, "얼굴사진 업로드 실패", Toast.LENGTH_SHORT).show() }
+                        }.addOnSuccessListener {
+                            runOnUiThread { Toast.makeText(this@EditProfileActivity, "얼굴사진 업로드 성공", Toast.LENGTH_SHORT).show() }
+                        }
+                    }.addOnFailureListener {
                         runOnUiThread {
-                            Toast.makeText(
-                                this@EditProfileActivity,
-                                "얼굴 사진 삭제 실패",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                            Toast.makeText(this@EditProfileActivity, "얼굴 사진 삭제 실패", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -592,29 +505,13 @@ class EditProfileActivity : AppCompatActivity() {
                             uploadRef = fbStorageRef.child("user/${LoginUserData.uid}/img_body.jpg")
                             uploadTask = uploadRef?.putFile(uploadBodyFile!!)
                             uploadTask!!.addOnFailureListener {
-                                runOnUiThread {
-                                    Toast.makeText(
-                                        this@EditProfileActivity,
-                                        "전신사진 업로드 실패",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
+                                runOnUiThread { Toast.makeText(this@EditProfileActivity, "전신사진 업로드 실패", Toast.LENGTH_SHORT).show() }
                             }.addOnSuccessListener {
-                                runOnUiThread {
-                                    Toast.makeText(
-                                        this@EditProfileActivity,
-                                        "전신사진 업로드 성공",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                }
+                                runOnUiThread { Toast.makeText(this@EditProfileActivity, "전신사진 업로드 성공", Toast.LENGTH_SHORT).show() }
                             }
                         }.addOnFailureListener {
                             runOnUiThread {
-                                Toast.makeText(
-                                    this@EditProfileActivity,
-                                    "전신 사진 삭제 실패",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                Toast.makeText(this@EditProfileActivity, "전신 사진 삭제 실패", Toast.LENGTH_SHORT).show()
                             }
                         }
                 }
@@ -622,19 +519,16 @@ class EditProfileActivity : AppCompatActivity() {
 
             val database: FirebaseDatabase = FirebaseDatabase.getInstance()
             val reference: DatabaseReference = database.getReference("Users")
-            reference.child(LoginUserData.uid!!).setValue(hashMap)
-                .addOnCompleteListener(this@EditProfileActivity) { task ->
-                    if (task.isSuccessful) {
-                        Toast.makeText(this@EditProfileActivity, "회원정보 수정 완료", Toast.LENGTH_SHORT)
-                            .show()
+            reference.child(LoginUserData.uid!!).setValue(hashMap).addOnCompleteListener(this@EditProfileActivity) { task ->
+                if (task.isSuccessful) {
+                    Toast.makeText(this@EditProfileActivity, "회원정보 수정 완료", Toast.LENGTH_SHORT).show()
 
-                        startActivity(Intent(this@EditProfileActivity, MainActivity::class.java))
-                        Log.e("ang", "aldajosda")
-                        finish()
-                    } else
-                        Toast.makeText(this@EditProfileActivity, "회원정보 수정 실패", Toast.LENGTH_SHORT)
-                            .show()
-                }
+                    startActivity(Intent(this@EditProfileActivity, MainActivity::class.java))
+                    Log.e("ang", "aldajosda")
+                    finish()
+                } else
+                    Toast.makeText(this@EditProfileActivity, "회원정보 수정 실패", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -650,8 +544,7 @@ class EditProfileActivity : AppCompatActivity() {
             try {
                 val timeStamp: String = SimpleDateFormat("HHmmss").format(Date())
                 val imageFileName = "Closet_" + timeStamp + "_"
-                val storageDir: File =
-                    File(Environment.getExternalStorageDirectory().toString() + "/Closet/")
+                val storageDir: File = File(Environment.getExternalStorageDirectory().toString() + "/Closet/")
                 if (!storageDir.exists()) storageDir.mkdirs()
                 val image = File.createTempFile(imageFileName, ".jpg", storageDir)
                 tempFile = image
