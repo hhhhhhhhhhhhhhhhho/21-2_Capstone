@@ -2,16 +2,23 @@ package com.nanioi.closetapplication
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
+import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.ActionBarDrawerToggle
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.nanioi.closetapplication.User.SignInActivity
+import com.nanioi.closetapplication.User.utils.LoginUserData
 import com.nanioi.closetapplication.closet.ClosetFragment
 import com.nanioi.closetapplication.home.HomeFragment
 import com.nanioi.closetapplication.mypage.MyPageFragment
@@ -21,8 +28,15 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
 
     private var auth : FirebaseAuth = FirebaseAuth.getInstance()
 
-    lateinit var drawerLayout : DrawerLayout
-    lateinit var navigationView: NavigationView
+    private var toolbar: Toolbar? = null
+    private var drawerLayout: DrawerLayout? = null
+    private var navView: NavigationView? = null
+    private var drawerToggle: ActionBarDrawerToggle? = null
+    private var navHeaderView: View? = null
+    private var tvHeaderName: TextView? = null
+    private var tvHeaderEmail: TextView? = null
+    private var tvHeaderCm: TextView? = null
+    private var tvHeaderKg: TextView? = null
 
     val homeFragment = HomeFragment()
     val stylingFragment = StylingFragment()
@@ -46,18 +60,50 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
         supportActionBar?.setDisplayShowTitleEnabled(false) // 툴바에 타이틀 안보이게
 
 
-        drawerLayout = findViewById<DrawerLayout>(R.id.main_drawer_layout)
-        navigationView = findViewById<NavigationView>(R.id.main_navigationView)
-        navigationView.setNavigationItemSelectedListener(this) //navigation 리스너
+        drawerLayout = findViewById(R.id.main_drawer_layout)
+        navView = findViewById(R.id.main_navigationView)
+        navView?.setNavigationItemSelectedListener(this) //navigation 리스너
 
+        drawerToggle = ActionBarDrawerToggle(
+            this,
+            drawerLayout,
+            toolbar,
+            R.string.navigation_drawer_open,
+            R.string.navigation_drawer_close
+        )
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        drawerLayout?.addDrawerListener(drawerToggle!!)
+        navView?.setNavigationItemSelectedListener(this)
+
+        navHeaderView = navView?.getHeaderView(0)
+
+        tvHeaderName = navHeaderView!!.findViewById(R.id.tv_header_email)
+        tvHeaderEmail = navHeaderView!!.findViewById(R.id.tv_header_email)
+        tvHeaderCm = navHeaderView!!.findViewById(R.id.tv_header_cm)
+        tvHeaderKg = navHeaderView!!.findViewById(R.id.tv_header_kg)
+
+        tvHeaderName?.text = LoginUserData.name
+        tvHeaderEmail?.text = LoginUserData.email
+        tvHeaderCm?.text = "키 : ${LoginUserData.cm}cm"
+        tvHeaderKg?.text = "몸무게 : ${LoginUserData.kg}kg"
         replaceFragment(homeFragment)
     }
+//    // todo by 준승. 뭔함수인지
+//    override fun onPostCreate(savedInstanceState: Bundle?) {
+//        super.onPostCreate(savedInstanceState)
+//        drawerToggle?.syncState()
+//    }
+//    // todo by 준승. 뭔함수인지
+//    override fun onConfigurationChanged(newConfig: Configuration) {
+//        super.onConfigurationChanged(newConfig)
+//        drawerToggle?.onConfigurationChanged(newConfig)
+//    }
 
     //by 나연. 툴바 메뉴 버튼 클릭 시 실행 함수 (21.09.24)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> { // 메뉴 버튼
-                drawerLayout.openDrawer(GravityCompat.START)    // 네비게이션 드로어 열기
+                drawerLayout?.openDrawer(GravityCompat.START)    // 네비게이션 드로어 열기
             }
         }
         return super.onOptionsItemSelected(item)
@@ -77,8 +123,8 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
 
     //by 나연. 뒤로가기 처리 함수 (21.09.24)
     override fun onBackPressed() {
-        if(drawerLayout.isDrawerOpen(GravityCompat.START)){
-            drawerLayout.closeDrawers()
+        if(drawerLayout?.isDrawerOpen(GravityCompat.START)!!){
+            drawerLayout?.closeDrawers()
             // 테스트를 위해 뒤로가기 버튼시 Toast 메시지
             Toast.makeText(this,"back btn clicked", Toast.LENGTH_SHORT).show()
         } else{
@@ -98,9 +144,29 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
     //by 나연. 로그아웃 실행 함수 (21.10,18)
     private fun logout(context: Context){
         //todo 회원 로그아웃 코드 구현하기
+        var logOutDialog: AlertDialog.Builder = AlertDialog.Builder(this@MainActivity)
+        logOutDialog.setTitle("알림")
+        logOutDialog.setMessage("로그아웃 하시겠습니까?")
+
+        logOutDialog.setPositiveButton("확인") { dialog, _ ->
+            LoginUserData.uid = null
+            LoginUserData.email = null
+            LoginUserData.name = null
+            LoginUserData.gender = null
+            LoginUserData.cm = null
+            LoginUserData.kg = null
+
+            dialog.dismiss()
+            startActivity(Intent(context, SignInActivity::class.java))
+            finish()
+        }
+        logOutDialog.setNegativeButton("취소") { dialog, _ ->
+            dialog.dismiss()
+            finish()
+        }
+        logOutDialog.setCancelable(false)
+        logOutDialog.show()
 
         auth.signOut()
-        startActivity(Intent(context,SignInActivity::class.java))
-        finish()
     }
 }
