@@ -1,27 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="NONE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="a5508342-8170-47e6-a7b4-e9f11185afec" name="Default Changelist" comment="" />
+    <list default="true" id="c370c072-cc95-4a93-abac-6939c45a0e9b" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/closet/iiiAdapter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/21-2_Capstone.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/build.gradle" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/build.gradle" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/google-services.json" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/google-services.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/DBkey.kt" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/DBkey.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/SignInActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/SignInActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/SignUpActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/SignUpActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/closet/AddImageActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/closet/AddImageActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/closet/ClosetFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/closet/ClosetFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/closet/ImageUploadApplication.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/closet/ItemModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/closet/ItemModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/extensions/ImageViewExtensions.kt" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/extensions/ImageViewExtensions.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/home/HomeFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/src/main/java/com/nanioi/capstoneproject/home/HomeFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/src/main/res/layout/activity_edit_profile.xml" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/src/main/res/layout/activity_edit_profile.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/src/main/res/layout/activity_main_drawer_header.xml" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/src/main/res/layout/activity_main_drawer_header.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/src/main/res/layout/activity_sign_in.xml" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/src/main/res/layout/activity_sign_in.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/src/main/res/layout/activity_sign_up.xml" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/src/main/res/layout/activity_sign_up.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CapstoneProject/app/src/main/res/layout/fragment_mypage.xml" beforeDir="false" afterPath="$PROJECT_DIR$/CapstoneProject/app/src/main/res/layout/fragment_mypage.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ProjectId" id="1yJSqRtmpiBkgp6MZZhm9R4bD0y" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1zgL5RC7spIEgxkEgeTmvPXERte" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
   <component name="PropertiesComponent">
-    <property name="android.sdk.path" value="$USER_HOME$/Library/Android/sdk" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
   </component>
-  <component name="SvnConfiguration">
-    <configuration />
-  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
-      <changelist id="a5508342-8170-47e6-a7b4-e9f11185afec" name="Default Changelist" comment="" />
-      <created>1631968388200</created>
+      <changelist id="c370c072-cc95-4a93-abac-6939c45a0e9b" name="Default Changelist" comment="" />
+      <created>1634564601501</created>
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
-      <updated>1631968388200</updated>
+      <updated>1634564601501</updated>
     </task>
     <servers />
   </component>

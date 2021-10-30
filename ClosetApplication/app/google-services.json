@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "556838944322",
+    "firebase_url": "https://closet-89ea8-default-rtdb.firebaseio.com",
+    "project_id": "closet-89ea8",
+    "storage_bucket": "closet-89ea8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556838944322:android:893a395e4e2a864b4837db",
+        "android_client_info": {
+          "package_name": "com.nanioi.closetapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "556838944322-04rmlsc5rdm21ojltvtttgspuqia02el.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDCV0q_rOqOx20x5yhW6kK1UX_nL3WSiXs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "556838944322-04rmlsc5rdm21ojltvtttgspuqia02el.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
