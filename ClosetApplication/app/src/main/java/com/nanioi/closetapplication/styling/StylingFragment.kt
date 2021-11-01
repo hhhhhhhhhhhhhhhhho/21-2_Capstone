@@ -18,12 +18,13 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.ktx.Firebase
 import com.nanioi.closetapplication.R
-import com.nanioi.closetapplication.closet.ItemModel
-import com.nanioi.closetapplication.closet.ItemState
-import com.nanioi.closetapplication.closet.itemAdapter
-import com.nanioi.closetapplication.closet.itemViewModel
+import com.nanioi.closetapplication.closet.*
 import com.nanioi.closetapplication.databinding.FragmentClosetBinding
 import com.nanioi.closetapplication.databinding.FragmentStylingBinding
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.lang.Exception
+import java.net.Socket
 
 class StylingFragment: Fragment(R.layout.fragment_styling) {
 
@@ -156,6 +157,39 @@ class StylingFragment: Fragment(R.layout.fragment_styling) {
 //            putExtra(URI_LIST_KEY, ArrayList(state.photoList.map { it.uri }))
 //        })
 //        finish()
+        val auth = FirebaseAuth.getInstance()
+
+        stylingObject.item =state.photo
+        stylingObject.userId = auth.currentUser?.uid.toString()
+
+        ClientThread().start()
+    }
+
+    class ClientThread : Thread() {
+        override fun run() {
+            super.run()
+
+            val host = "localhost"
+            val port = 5001
+
+            //OutputStream에 전송할 데이터를 담아 보낸 뒤, InputStream을 통해 데이터를 읽
+            try {
+                val socket = Socket(host, port)
+                val outstream = ObjectOutputStream(socket.getOutputStream())
+                outstream.writeObject(stylingObject)
+                outstream.flush()
+                Log.d("ClientStream", "Sent to server.")
+
+                val instream = ObjectInputStream(socket.getInputStream())
+                val input: stylingObject = instream.readObject() as stylingObject
+                Log.d("ClientThread", "Received data: $input")
+                //todo 받은거 스타일링 탭 전송
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+            //handler.post(Runnable { textView.setText(input.toString()) })
+
+        }
     }
 
     override fun onResume() {
