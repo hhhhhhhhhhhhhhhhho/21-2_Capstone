@@ -16,19 +16,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ClosetApplication"
         android:name=".closetApplication">
-        <activity android:name=".MainActivity">
-        </activity>
-        <activity android:name=".SignInActivity">
-        </activity>
-        <activity android:name=".SignUpActivity"/>
-        <activity android:name=".closet.AddImageActivity"/>
-        <activity android:name=".mypage.EditProfileActivity"/>
-        <activity android:name=".LoginActivity">
+        <activity android:name=".User.SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".User.SignUpActivity"/>
+        <activity android:name=".closet.AddImageActivity"/>
+        <activity android:name=".mypage.EditProfileActivity"/>
+        <activity android:name=".MainActivity"/>
+
+        <activity
+            android:name="com.soundcloud.android.crop.CropImageActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/Theme.AppCompat.NoActionBar" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
