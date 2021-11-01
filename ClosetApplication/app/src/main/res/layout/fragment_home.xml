@@ -12,7 +12,6 @@
         android:id="@+id/mainViewPager"
         android:layout_width="0dp"
         android:layout_height="500dp"
-        android:background="@drawable/radius_pink"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,6 +38,7 @@
         android:paddingStart="20dp"
         android:text="나만의 옷장\n보러가기"
         android:textColor="@color/main_color"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toStartOf="@id/goStylingButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/indicator"
@@ -58,7 +58,7 @@
         android:textColor="@color/main_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/goClosetButton"
-        app:layout_constraintTop_toBottomOf="@id/indicator"
+        app:layout_constraintTop_toTopOf="@id/goClosetButton"
         tools:ignore="HardcodedText,RtlSymmetry" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

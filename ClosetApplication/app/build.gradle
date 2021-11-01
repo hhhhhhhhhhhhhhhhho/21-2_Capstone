@@ -77,4 +77,8 @@ dependencies {
     // Crop
     implementation 'com.soundcloud.android:android-crop:1.0.1@aar'
 
+    //Socket
+    implementation ('io.socket:socket.io-client:2.0.0') {
+        exclude group: 'org.json', module: 'json'
+    }
 }

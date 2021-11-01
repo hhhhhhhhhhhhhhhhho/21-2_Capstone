@@ -50,10 +50,12 @@
         <entry key="app/src/main/res/layout/activity_sign_up.xml" value="0.22" />
         <entry key="app/src/main/res/layout/bottom_sheet.xml" value="0.1828774062816616" />
         <entry key="app/src/main/res/layout/fragment_closet.xml" value="0.33" />
-        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.1828774062816616" />
+        <entry key="app/src/main/res/layout/fragment_home.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_mypage.xml" value="0.22" />
         <entry key="app/src/main/res/layout/fragment_styling.xml" value="0.33" />
         <entry key="app/src/main/res/layout/header_footer.xml" value="0.31354166666666666" />
+        <entry key="app/src/main/res/layout/home_image.xml" value="0.37604166666666666" />
+        <entry key="app/src/main/res/layout/home_image_slider.xml" value="0.1" />
         <entry key="app/src/main/res/layout/main_detail_for_viewpager.xml" value="0.1828774062816616" />
         <entry key="app/src/main/res/layout/main_layout.xml" value="0.1828774062816616" />
         <entry key="app/src/main/res/layout/recommended_item_list.xml" value="0.1828774062816616" />
