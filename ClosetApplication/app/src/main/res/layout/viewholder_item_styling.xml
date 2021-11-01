@@ -15,7 +15,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintDimensionRatio="w,5:4"
         android:layout_margin="8dp"
-        android:backgroundTint="@color/main_color_2"
         app:cardCornerRadius="8dp"
         android:elevation="8dp"
         android:foreground="?android:attr/selectableItemBackground">

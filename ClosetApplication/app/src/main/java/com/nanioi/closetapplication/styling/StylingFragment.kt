@@ -1,32 +1,34 @@
 package com.nanioi.closetapplication.styling
 
 import android.annotation.SuppressLint
+import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
-import androidx.core.view.isGone
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import com.google.firebase.ktx.Firebase
 import com.nanioi.closetapplication.R
+import com.nanioi.closetapplication.R.layout
+import com.nanioi.closetapplication.User.utils.LoginUserData
 import com.nanioi.closetapplication.closet.*
-import com.nanioi.closetapplication.databinding.FragmentClosetBinding
+import com.nanioi.closetapplication.databinding.BottomSheetBinding
 import com.nanioi.closetapplication.databinding.FragmentStylingBinding
+import com.nanioi.closetapplication.styling.recommend.RecommendItemListAdapter
+import com.nanioi.closetapplication.styling.recommend.RecommendItemModel
+import com.nanioi.closetapplication.styling.recommend.parsingData
+import com.nanioi.closetapplication.styling.recommend.readFeed
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
 import java.lang.Exception
 import java.net.Socket
 
-class StylingFragment: Fragment(R.layout.fragment_styling) {
+class StylingFragment: Fragment(layout.fragment_styling) {
 
     private val topItemAdapter = stylingItemAdapter {
         viewModel.selectPhoto(it)
@@ -50,6 +52,12 @@ class StylingFragment: Fragment(R.layout.fragment_styling) {
 
     private lateinit var binding: FragmentStylingBinding
 
+    private val auth: FirebaseAuth by lazy {
+        Firebase.auth
+    }
+    // bottomSheet 추천리스트
+    private val recyclerAdapter = RecommendItemListAdapter()
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -60,8 +68,29 @@ class StylingFragment: Fragment(R.layout.fragment_styling) {
         initViews()
         viewModel.fetchData()
         observeState()
-    }
 
+        val recommendItemRecyclerView = view.findViewById<RecyclerView>(R.id.recyclerView)
+        recommendItemRecyclerView?.apply {
+            adapter = recyclerAdapter
+            layoutManager = LinearLayoutManager(requireContext())
+        }
+        XmlParsingTask().execute()
+    }
+    inner class XmlParsingTask() : AsyncTask<Any?, Any?, List<RecommendItemModel>>() {
+        override fun onPostExecute(result: List<RecommendItemModel>) {
+            super.onPostExecute(result)
+            recyclerAdapter.submitList(result)
+        }
+        override fun doInBackground(vararg params: Any?): List<RecommendItemModel> { // xml 파싱할때 여기서 데이터 받아와 reedFeed 부분은 저 XmlParsingTask 파일보면 있으
+            var keyword : String = "의류"
+            when(LoginUserData.gender){
+                "남자" -> keyword = "남성의류"
+                "여자" -> keyword = "여성의류"
+            }
+
+            return readFeed(parsingData(keyword))
+        }
+    }
     private fun initViews() {
         binding.selectItemTap.visibility = View.INVISIBLE
 
