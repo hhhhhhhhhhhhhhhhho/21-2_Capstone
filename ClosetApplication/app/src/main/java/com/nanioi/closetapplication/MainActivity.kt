@@ -1,5 +1,6 @@
 package com.nanioi.closetapplication
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -17,16 +18,22 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 import com.nanioi.closetapplication.User.SignInActivity
 import com.nanioi.closetapplication.User.utils.LoginUserData
 import com.nanioi.closetapplication.closet.ClosetFragment
+import com.nanioi.closetapplication.closet.ItemModel
 import com.nanioi.closetapplication.home.HomeFragment
 import com.nanioi.closetapplication.mypage.MyPageFragment
 import com.nanioi.closetapplication.styling.StylingFragment
+import kotlinx.coroutines.tasks.await
 
 class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelectedListener{
 
     private var auth : FirebaseAuth = FirebaseAuth.getInstance()
+    val db = FirebaseFirestore.getInstance()
 
     private var toolbar: Toolbar? = null
     private var drawerLayout: DrawerLayout? = null
@@ -52,6 +59,7 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
     }
 
     //by 나연. Main 페이지 뷰 툴바, drawerLayout, navigationView 초기화 (21.09.24)
+    @SuppressLint("SetTextI18n")
     private fun initViews() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
@@ -88,16 +96,6 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
         tvHeaderKg?.text = "몸무게 : ${LoginUserData.kg}kg"
         replaceFragment(homeFragment)
     }
-//    // todo by 준승. 뭔함수인지
-//    override fun onPostCreate(savedInstanceState: Bundle?) {
-//        super.onPostCreate(savedInstanceState)
-//        drawerToggle?.syncState()
-//    }
-//    // todo by 준승. 뭔함수인지
-//    override fun onConfigurationChanged(newConfig: Configuration) {
-//        super.onConfigurationChanged(newConfig)
-//        drawerToggle?.onConfigurationChanged(newConfig)
-//    }
 
     //by 나연. 툴바 메뉴 버튼 클릭 시 실행 함수 (21.09.24)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

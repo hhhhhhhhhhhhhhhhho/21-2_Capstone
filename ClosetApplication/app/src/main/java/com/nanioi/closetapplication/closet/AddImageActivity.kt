@@ -45,11 +45,9 @@ class AddImageActivity : AppCompatActivity() {
     val db = Firebase.firestore
     private lateinit var curPhotoPath:String
     private var imageUri: Uri? = null
-    private lateinit var photoFile:File
     private var itemId :Long = 0
     private val auth: FirebaseAuth by lazy { Firebase.auth }
     private val storage: FirebaseStorage by lazy { Firebase.storage }
-    private val userDB: DatabaseReference by lazy { Firebase.database.reference.child(DB_USERS) }
 
     companion object {
         const val PERMISSION_REQUEST_CODE = 1000
@@ -128,9 +126,8 @@ class AddImageActivity : AppCompatActivity() {
     private fun uploadItem(userId: String, categoryNumber: Int, uri: String) {
         //todo itemId 어케할건지 회의
         val model = ItemModel(userId, itemId, categoryNumber, uri,false)
-        userDB.child(userId).child(DB_ITEM).push().setValue(model) // DB에 모델을 넣어줌
         auth.currentUser?.let {
-            db.collection(DB_USERS).document(it.uid).collection(DBkey.DB_ITEM).document(itemId.toString()).set(model)
+            db.collection(DB_USERS).document(it.uid).collection(DB_ITEM).document(itemId.toString()).set(model)
                 .addOnSuccessListener { Log.d("aaaa","모델 업로드 성공") }
                 .addOnFailureListener { e -> Log.d("aaaa","Error writing document",e) }
         }

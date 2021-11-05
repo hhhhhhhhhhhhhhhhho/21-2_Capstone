@@ -108,13 +108,11 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
             context?.let {
                 if (auth.currentUser != null) {
                     val intent = Intent(it, AddImageActivity::class.java)
-                    Log.d("bb", "add ")
                     startActivity(intent)
                 } else {
                     Snackbar.make(view, "로그인 후 사용해주세요", Snackbar.LENGTH_LONG).show()
                 }
             }
-            Log.d("bb", "add 후")
         }
         //todo 선택이미지 삭제기능
         fragmentClosetBinding.deleteItemButton.setOnClickListener {
@@ -150,7 +148,6 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
         Log.d("bb", "observe loading")
         this!!.progressBar.isVisible = true
     }
-
     private fun handleSuccess(state: ItemState.Success) = with(binding) {
         this!!.progressBar.isGone = true
         initList()
@@ -169,14 +166,13 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
         shoesItemAdapter.setPhotoList(shoesItemList)
 
     }
-
     private fun handleConfirm(state: ItemState.Confirm) {
         Log.d("bb", "observe confirm")
 
         connect()
     }
 
-    // 로그인 정보 db에 넣어주고 연결시켜야 함.
+    //by 나연. 데이터 소켓통신 함수 (21.11.04)
     fun connect() {
         mHandler = Handler()
         Log.w("connect", "연결 하는중")
@@ -205,9 +201,6 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
 //                val input: closetObject = instream.readObject() as closetObject
 //                Log.d("ClientThread", "Received data: $input")
 //                //todo 받은거 스타일링 탭 전송
-//            } catch (e: Exception) {
-//                e.printStackTrace()
-//            }
                     dos = DataOutputStream(socket!!.getOutputStream()) // output에 보낼꺼 넣음
                     dis = DataInputStream(socket!!.getInputStream()) // input에 받을꺼 넣어짐
                     dos!!.writeUTF("안드로이드에서 서버로 연결요청")
