@@ -74,6 +74,8 @@ fun readEntry(parser: XmlPullParser): RecommendItemModel {
     var ProductPrice: String? = null
     var ProductImage: String? = null
     var Seller: String? = null
+    var DetailPageUrl: String? = null
+    var SalePrice: String? = null
 
     while (parser.next() != XmlPullParser.END_TAG) { // 태그들 보며 이동하면서 원하는 태그들에 데이터 뽑아오는 부
         if (parser.eventType != XmlPullParser.START_TAG) {
@@ -85,11 +87,14 @@ fun readEntry(parser: XmlPullParser): RecommendItemModel {
             "ProductPrice" -> ProductPrice = readProductPrice(parser)
             "ProductImage" -> ProductImage = readProductImage(parser)
             "Seller" -> Seller = readSeller(parser)
+            "DetailPageUrl" -> DetailPageUrl = readDetailPageUrl(parser)
+            "SalePrice" -> SalePrice = readSalePrice(parser)
             else -> skip(parser)
         }
     }
-    return RecommendItemModel(ProductCode,ProductName, ProductPrice, ProductImage, Seller) // 클래스에 데이터 넣어서 반환
+    return RecommendItemModel(ProductCode,ProductName, ProductPrice, ProductImage, Seller,DetailPageUrl,SalePrice) // 클래스에 데이터 넣어서 반환
 }
+
 // Processes title tags in the feed.
 @Throws(IOException::class, XmlPullParserException::class)
 fun readProductCode(parser: XmlPullParser): String {
@@ -135,6 +140,22 @@ fun readSeller(parser: XmlPullParser): String {
     val seller = readText(parser)
     parser.require(XmlPullParser.END_TAG, ns, "Seller")
     return seller
+}
+// Processes link tags in the feed.
+@Throws(IOException::class, XmlPullParserException::class)
+fun readDetailPageUrl(parser: XmlPullParser): String {
+    parser.require(XmlPullParser.START_TAG, ns, "DetailPageUrl")
+    val detailPageUrl = readText(parser)
+    parser.require(XmlPullParser.END_TAG, ns, "DetailPageUrl")
+    return detailPageUrl
+}
+// Processes link tags in the feed.
+@Throws(IOException::class, XmlPullParserException::class)
+fun readSalePrice(parser: XmlPullParser): String {
+    parser.require(XmlPullParser.START_TAG, ns, "SalePrice")
+    val salePrice = readText(parser)
+    parser.require(XmlPullParser.END_TAG, ns, "SalePrice")
+    return salePrice
 }
 
 // For the tags title and summary, extracts their text values.

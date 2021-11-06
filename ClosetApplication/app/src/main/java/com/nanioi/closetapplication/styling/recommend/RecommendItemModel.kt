@@ -5,5 +5,7 @@ data class RecommendItemModel(
     val ProductName: String?,
     val ProductPrice: String?,
     val ProductImage: String?,
-    val Seller: String?
+    val Seller: String?,
+    val DetailPageUrl: String?,
+    val SalePrice: String?
 )

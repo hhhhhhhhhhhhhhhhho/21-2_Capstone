@@ -2,6 +2,7 @@ package com.nanioi.closetapplication.styling
 
 import android.annotation.SuppressLint
 import android.content.Intent
+import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
@@ -58,7 +59,10 @@ class StylingFragment: Fragment(layout.fragment_styling) {
         Firebase.auth
     }
     // bottomSheet 추천리스트
-    private val recyclerAdapter = RecommendItemListAdapter()
+    private val recyclerAdapter = RecommendItemListAdapter(itemClicked ={ item ->
+        var intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.DetailPageUrl))
+        startActivity(intent)
+    })
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -86,8 +90,8 @@ class StylingFragment: Fragment(layout.fragment_styling) {
         override fun doInBackground(vararg params: Any?): List<RecommendItemModel> { // xml 파싱할때 여기서 데이터 받아와 reedFeed 부분은 저 XmlParsingTask 파일보면 있으
             var keyword : String = "의류"
             when(LoginUserData.gender){
-                "남자" -> keyword = "남성의류"
-                "여자" -> keyword = "여성의류"
+                "남자" -> keyword = "20대 남성의류"
+                "여자" -> keyword = "20대 여성의류"
             }
 
             return readFeed(parsingData(keyword))
