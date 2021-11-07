@@ -7,5 +7,5 @@ import java.io.File
 object closetObject {
     var userId: String? = null
     var photoList : List<ItemModel> ?= emptyList()
-    //var body : String? = null
+    var body : String? = null
 }
