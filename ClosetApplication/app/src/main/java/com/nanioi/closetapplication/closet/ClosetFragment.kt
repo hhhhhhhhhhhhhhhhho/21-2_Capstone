@@ -1,7 +1,6 @@
 package com.nanioi.closetapplication.closet
 
 import android.content.Intent
-import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -17,22 +16,14 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.databinding.FragmentClosetBinding
-import java.io.DataInputStream
-import java.io.DataOutputStream
-import java.io.IOException
-import java.lang.Exception
+import java.io.*
 import java.net.Socket
-import java.net.UnknownHostException
 
 
 class ClosetFragment : Fragment(R.layout.fragment_closet) {
 
     // 소켓통신에 필요한것
-    private val html = ""
     private var mHandler: Handler? = null
-    private var socket: Socket? = null
-    private var dos: DataOutputStream? = null
-    private var dis: DataInputStream? = null
     private val ip = "127.0.0.1" // IP 번호
     private val port = 12345 // port 번호
 
@@ -148,6 +139,7 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
         Log.d("bb", "observe loading")
         this!!.progressBar.isVisible = true
     }
+
     private fun handleSuccess(state: ItemState.Success) = with(binding) {
         this!!.progressBar.isGone = true
         initList()
@@ -166,6 +158,7 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
         shoesItemAdapter.setPhotoList(shoesItemList)
 
     }
+
     private fun handleConfirm(state: ItemState.Confirm) {
         Log.d("bb", "observe confirm")
 
@@ -179,53 +172,29 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
         // 받아오는거
         val checkUpdate: Thread = object : Thread() {
             override fun run() {
+                try {
+                    val socket = Socket(ip, port)
+                    Log.w("connect", "서버 접속됨")
+                    try {
+                        val outstream = ObjectOutputStream(socket.getOutputStream())
+                        outstream.writeObject("hello")
+                        outstream.flush()
+                        Log.d("connect", "Sent to server.")
 
-                try {
-                    socket = Socket(ip, port)
-                    Log.w("서버 접속됨", "서버 접속됨")
-                } catch (e1: IOException) {
-                    Log.w("서버접속못함", "서버접속못함")
-                    e1.printStackTrace()
-                }
-                Log.w("edit 넘어가야 할 값 : ", "안드로이드에서 서버로 연결요청")
-                try {
-                    //            //OutputStream에 전송할 데이터를 담아 보낸 뒤, InputStream을 통해 데이터를 읽
-//            try {
-//                val socket = Socket(host, port)
-//                val outstream = ObjectOutputStream(socket.getOutputStream())
-//                outstream.writeObject("hello")
-//                outstream.flush()
-//                Log.d("ClientStream", "Sent to server.")
-//
-//                val instream = ObjectInputStream(socket.getInputStream())
-//                val input: closetObject = instream.readObject() as closetObject
-//                Log.d("ClientThread", "Received data: $input")
-//                //todo 받은거 스타일링 탭 전송
-                    dos = DataOutputStream(socket!!.getOutputStream()) // output에 보낼꺼 넣음
-                    dis = DataInputStream(socket!!.getInputStream()) // input에 받을꺼 넣어짐
-                    dos!!.writeUTF("안드로이드에서 서버로 연결요청")
+                        val instream = ObjectInputStream(socket.getInputStream())
+                        val input: closetObject = instream.readObject() as closetObject
+                        Log.d("connect", "Received data: $input")
+
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                        Log.w("connect", "버퍼생성 잘못됨")
+                    }
                 } catch (e: IOException) {
                     e.printStackTrace()
-                    Log.w("버퍼", "버퍼생성 잘못됨")
-                }
-                Log.w("버퍼", "버퍼생성 잘됨")
-
-// 서버에서 계속 받아옴 - 한번은 문자, 한번은 숫자를 읽음. 순서 맞춰줘야 함.
-                try {
-                    var line = ""
-                    var line2: Int
-                    while (true) {
-                        line = dis!!.readUTF() as String
-                        line2 = dis!!.read()
-                        Log.w("서버에서 받아온 값 ", "" + line)
-                        Log.w("서버에서 받아온 값 ", "" + line2)
-                    }
-                } catch (e: Exception) {
+                    Log.w("connect", "서버접속못함")
                 }
             }
         }
-        // 소켓 접속 시도, 버퍼생성
-        checkUpdate.start()
     }
 
     override fun onResume() {

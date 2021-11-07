@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
@@ -25,6 +26,11 @@ import com.nanioi.closetapplication.DBkey.Companion.DB_USERS
 import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.User.utils.LoginUserData
+import com.nanioi.closetapplication.closet.closetObject
+import java.io.IOException
+import java.io.ObjectInputStream
+import java.io.ObjectOutputStream
+import java.net.Socket
 
 
 class SignInActivity : AppCompatActivity() {
@@ -35,6 +41,11 @@ class SignInActivity : AppCompatActivity() {
     private var firebaseAuth: FirebaseAuth? = null //파이어 베이스 인스턴스 변수 선언
     private val userDB : FirebaseDatabase by lazy { Firebase.database}
    // val db = FirebaseFirestore.getInstance()
+
+    //소켓통신
+    private var mHandler: Handler? = null
+    private val ip = "127.0.0.1" // IP 번호
+    private val port = 12345 // port 번호
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,6 +91,46 @@ class SignInActivity : AppCompatActivity() {
                                             dataSnapshot.child("kg").value.toString()
                                         LoginUserData.faceImageUri = Uri.parse(dataSnapshot.child("faceImageUri").value.toString())
                                         LoginUserData.bodyImageUri = Uri.parse(dataSnapshot.child("bodyImageUri").value.toString())
+
+                                        // todo 아바타 생성 소켓통신
+                                        // todo userObject 정보 저장
+
+                                        var userOb = userObject
+                                        userOb.userId = user
+                                        userOb.faceImage = dataSnapshot.child("faceImageUri").value.toString()
+                                        userOb.bodyImage = dataSnapshot.child("bodyImageUri").value.toString()
+
+                                        fun connect() {
+                                            mHandler = Handler()
+                                            Log.w("connect", "연결 하는중")
+                                            // 받아오는거
+                                            val checkUpdate: Thread = object : Thread() {
+                                                override fun run() {
+                                                    try {
+                                                        val socket = Socket(ip, port)
+                                                        Log.w("connect", "서버 접속됨")
+                                                        try {
+                                                            val outstream = ObjectOutputStream(socket.getOutputStream())
+                                                            outstream.writeObject(userOb)
+                                                            outstream.flush()
+                                                            Log.d("connect", "Sent to server.")
+
+                                                            val instream = ObjectInputStream(socket.getInputStream())
+                                                            val input: userObject = instream.readObject() as userObject
+                                                            Log.d("connect", "Received data: $input")
+
+                                                        } catch (e: IOException) {
+                                                            e.printStackTrace()
+                                                            Log.w("connect", "버퍼생성 잘못됨")
+                                                        }
+                                                    } catch (e: IOException) {
+                                                        e.printStackTrace()
+                                                        Log.w("connect", "서버접속못함")
+                                                    }
+                                                }
+                                            }
+                                        }
+
                                         if (LoginUserData.name != null) {
                                             Toast.makeText(
                                                 this@SignInActivity,
