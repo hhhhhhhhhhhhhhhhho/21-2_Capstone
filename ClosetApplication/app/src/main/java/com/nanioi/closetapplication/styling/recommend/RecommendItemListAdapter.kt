@@ -36,7 +36,7 @@ class RecommendItemListAdapter(val itemClicked:(RecommendItemModel)->Unit) : Lis
             productPrice.text = "${item.ProductPrice}원 "
             productPrice.apply {
                 paintFlags = paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
-                setTypeface(null, Typeface.ITALIC)
+                //setTypeface(null, Typeface.ITALIC)
             }
             productSalePrice.text = "${item.SalePrice}원"
             productSeller.text = "판매자 : ${item.Seller}"

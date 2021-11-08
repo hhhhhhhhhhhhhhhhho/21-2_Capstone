@@ -25,6 +25,8 @@ import com.nanioi.closetapplication.User.SignInActivity
 import com.nanioi.closetapplication.User.utils.LoginUserData
 import com.nanioi.closetapplication.closet.ClosetFragment
 import com.nanioi.closetapplication.closet.ItemModel
+import com.nanioi.closetapplication.databinding.ActivityAddImageBinding
+import com.nanioi.closetapplication.databinding.ActivityMainBinding
 import com.nanioi.closetapplication.home.HomeFragment
 import com.nanioi.closetapplication.mypage.MyPageFragment
 import com.nanioi.closetapplication.styling.StylingFragment
@@ -33,7 +35,8 @@ import kotlinx.coroutines.tasks.await
 class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelectedListener{
 
     private var auth : FirebaseAuth = FirebaseAuth.getInstance()
-    val db = FirebaseFirestore.getInstance()
+
+    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
     private var toolbar: Toolbar? = null
     private var drawerLayout: DrawerLayout? = null
@@ -42,6 +45,7 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
     private var navHeaderView: View? = null
     private var tvHeaderName: TextView? = null
     private var tvHeaderEmail: TextView? = null
+    private var tvHeaderGender: TextView? = null
     private var tvHeaderCm: TextView? = null
     private var tvHeaderKg: TextView? = null
 
@@ -52,7 +56,7 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
 
         initViews()
 
@@ -60,20 +64,19 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
 
     //by 나연. Main 페이지 뷰 툴바, drawerLayout, navigationView 초기화 (21.09.24)
     @SuppressLint("SetTextI18n")
-    private fun initViews() {
+    private fun initViews() = with(binding) {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24) // 홈버튼 이미지 변경
         supportActionBar?.setDisplayShowTitleEnabled(false) // 툴바에 타이틀 안보이게
 
-
-        drawerLayout = findViewById(R.id.main_drawer_layout)
-        navView = findViewById(R.id.main_navigationView)
-        navView?.setNavigationItemSelectedListener(this) //navigation 리스너
+        drawerLayout = binding.mainDrawerLayout
+        navView = binding.mainNavigationView
+        navView?.setNavigationItemSelectedListener(this@MainActivity) //navigation 리스너
 
         drawerToggle = ActionBarDrawerToggle(
-            this,
+            this@MainActivity,
             drawerLayout,
             toolbar,
             R.string.navigation_drawer_open,
@@ -81,17 +84,19 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
         )
         supportActionBar?.setDisplayShowTitleEnabled(false)
         drawerLayout?.addDrawerListener(drawerToggle!!)
-        navView?.setNavigationItemSelectedListener(this)
+        navView?.setNavigationItemSelectedListener(this@MainActivity)
 
         navHeaderView = navView?.getHeaderView(0)
 
-        tvHeaderName = navHeaderView!!.findViewById(R.id.tv_header_email)
+        tvHeaderName = navHeaderView!!.findViewById(R.id.tv_header_name)
         tvHeaderEmail = navHeaderView!!.findViewById(R.id.tv_header_email)
+        tvHeaderGender = navHeaderView!!.findViewById(R.id.tv_header_gender)
         tvHeaderCm = navHeaderView!!.findViewById(R.id.tv_header_cm)
         tvHeaderKg = navHeaderView!!.findViewById(R.id.tv_header_kg)
 
-        tvHeaderName?.text = LoginUserData.name
+        tvHeaderName?.text = "이름 : ${LoginUserData.name}"
         tvHeaderEmail?.text = LoginUserData.email
+        tvHeaderGender?.text = "성별 : ${LoginUserData.gender}"
         tvHeaderCm?.text = "키 : ${LoginUserData.cm}cm"
         tvHeaderKg?.text = "몸무게 : ${LoginUserData.kg}kg"
         replaceFragment(homeFragment)

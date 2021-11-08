@@ -34,18 +34,17 @@ class MyPageFragment : Fragment(R.layout.fragment_mypage){
         val fragmentMypageBinding = FragmentMypageBinding.bind(view)
         binding = fragmentMypageBinding
 
-        binding.nameTextView.text = LoginUserData.name
+        binding.nameTextView.text = "이름 : ${LoginUserData.name}"
         binding.emailTextView.text = LoginUserData.email
-        binding.height.text = "키 : " + LoginUserData.cm + "cm"
-        binding.weight.text = "몸무게 : " + LoginUserData.kg + "kg"
+        binding.gender.text = "성별 : ${LoginUserData.gender}"
+        binding.height.text = "키 : ${LoginUserData.cm} cm"
+        binding.weight.text = "몸무게 : ${LoginUserData.kg} kg"
 
-        Glide.with(view)
-            .load(LoginUserData.faceImageUri)
-            .into(binding.mypageFaceImageView)
+        //아바타 사진 넣기
+//        Glide.with(view)
+//            .load(LoginUserData.faceImageUri)
+//            .into(binding.mypagaAvatarImageView)
 
-        Glide.with(view)
-            .load(LoginUserData.bodyImageUri)
-            .into(binding.mypageBodyImageView)
 
         //by 나연. 프로필 수정 버튼 클릭 시 activity이동 (21.09.27)
         binding.editProfileButton.setOnClickListener {
