@@ -192,7 +192,6 @@ class StylingFragment: Fragment(layout.fragment_styling) {
 //            putExtra(URI_LIST_KEY, ArrayList(state.photoList.map { it.uri }))
 //        })
 //        finish()
-        val auth = FirebaseAuth.getInstance()
 
         stylingObject.item =state.photo
         stylingObject.userId = auth.currentUser?.uid.toString()

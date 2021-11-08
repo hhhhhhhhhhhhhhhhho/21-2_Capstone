@@ -22,7 +22,7 @@
     <item
         android:id="@+id/myPage"
         android:icon="@drawable/ic_edit"
-        android:title="EDIT" />
+        android:title="MYPAGE" />
 
     <item
         android:id="@+id/logout"

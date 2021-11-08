@@ -16,6 +16,7 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.databinding.FragmentClosetBinding
+import com.nanioi.closetapplication.styling.stylingObject
 import java.io.*
 import java.net.Socket
 
@@ -162,6 +163,9 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
     private fun handleConfirm(state: ItemState.Confirm) {
         Log.d("bb", "observe confirm")
 
+        closetObject.photoList =state.photoList
+        closetObject.userId = auth.currentUser?.uid.toString()
+        //closetObject.body =
         connect()
     }
 

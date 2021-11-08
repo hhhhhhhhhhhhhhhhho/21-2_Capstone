@@ -94,42 +94,42 @@ class SignInActivity : AppCompatActivity() {
 
                                         // todo 아바타 생성 소켓통신
                                         // todo userObject 정보 저장
-
-                                        var userOb = userObject
-                                        userOb.userId = user
-                                        userOb.faceImage = dataSnapshot.child("faceImageUri").value.toString()
-                                        userOb.bodyImage = dataSnapshot.child("bodyImageUri").value.toString()
-
-                                        fun connect() {
-                                            mHandler = Handler()
-                                            Log.w("connect", "연결 하는중")
-                                            // 받아오는거
-                                            val checkUpdate: Thread = object : Thread() {
-                                                override fun run() {
-                                                    try {
-                                                        val socket = Socket(ip, port)
-                                                        Log.w("connect", "서버 접속됨")
-                                                        try {
-                                                            val outstream = ObjectOutputStream(socket.getOutputStream())
-                                                            outstream.writeObject(userOb)
-                                                            outstream.flush()
-                                                            Log.d("connect", "Sent to server.")
-
-                                                            val instream = ObjectInputStream(socket.getInputStream())
-                                                            val input: userObject = instream.readObject() as userObject
-                                                            Log.d("connect", "Received data: $input")
-
-                                                        } catch (e: IOException) {
-                                                            e.printStackTrace()
-                                                            Log.w("connect", "버퍼생성 잘못됨")
-                                                        }
-                                                    } catch (e: IOException) {
-                                                        e.printStackTrace()
-                                                        Log.w("connect", "서버접속못함")
-                                                    }
-                                                }
-                                            }
-                                        }
+//
+//                                        var userOb = userObject
+//                                        userOb.userId = user
+//                                        userOb.faceImage = dataSnapshot.child("faceImageUri").value.toString()
+//                                        userOb.bodyImage = dataSnapshot.child("bodyImageUri").value.toString()
+//
+//                                        fun connect() {
+//                                            mHandler = Handler()
+//                                            Log.w("connect", "연결 하는중")
+//                                            // 받아오는거
+//                                            val checkUpdate: Thread = object : Thread() {
+//                                                override fun run() {
+//                                                    try {
+//                                                        val socket = Socket(ip, port)
+//                                                        Log.w("connect", "서버 접속됨")
+//                                                        try {
+//                                                            val outstream = ObjectOutputStream(socket.getOutputStream())
+//                                                            outstream.writeObject(userOb)
+//                                                            outstream.flush()
+//                                                            Log.d("connect", "Sent to server.")
+//
+//                                                            val instream = ObjectInputStream(socket.getInputStream())
+//                                                            val input: userObject = instream.readObject() as userObject
+//                                                            Log.d("connect", "Received data: $input")
+//
+//                                                        } catch (e: IOException) {
+//                                                            e.printStackTrace()
+//                                                            Log.w("connect", "버퍼생성 잘못됨")
+//                                                        }
+//                                                    } catch (e: IOException) {
+//                                                        e.printStackTrace()
+//                                                        Log.w("connect", "서버접속못함")
+//                                                    }
+//                                                }
+//                                            }
+//                                        }
 
                                         if (LoginUserData.name != null) {
                                             Toast.makeText(
