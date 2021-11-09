@@ -49,6 +49,9 @@ def test_gmm_etri(opt, test_loader, model, board):
 
     base_name = os.path.basename(opt.checkpoint)
     save_dir = os.path.join(opt.result_dir, base_name, opt.datamode)
+
+    ###FIXME " TOM 시작 부분."
+
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     warp_cloth_dir = os.path.join(save_dir, 'warp-cloth')
