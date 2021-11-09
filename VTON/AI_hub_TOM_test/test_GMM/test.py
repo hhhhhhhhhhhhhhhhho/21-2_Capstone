@@ -7,6 +7,7 @@ import argparse
 import os
 import time
 from etri_dataset import ETRIDataset, ETRIDataLoader
+#from etri_dataset import ETRIDataset, ETRIDataLoader
 from networks import GMM_ETRI, UnetGenerator, load_checkpoint, UnetRefinement
 
 from tensorboardX import SummaryWriter
@@ -18,7 +19,8 @@ import cv2
 
 def get_opt():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--name", default = "GMM")
+    #parser.add_argument("--name", default = "GMM")
+    parser.add_argument("--name", default = "TOM")
     parser.add_argument("--gpu_ids", default = "")
     parser.add_argument('-j', '--workers', type=int, default=1)
     parser.add_argument('-b', '--batch-size', type=int, default=1)
@@ -26,14 +28,16 @@ def get_opt():
     parser.add_argument("--front_or_back", default = 0)
     parser.add_argument("--dataroot", default = "data")
     parser.add_argument("--datamode", default = "test")
-    parser.add_argument("--stage", default = "GMM_ETRI")
+    #parser.add_argument("--stage", default = "GMM_ETRI")
+    parser.add_argument("--stage", default = "TOM_ETRI")
     parser.add_argument("--fine_width", type=int, default = 384)
     parser.add_argument("--fine_height", type=int, default = 512)
     parser.add_argument("--radius", type=int, default = 5)
     parser.add_argument("--grid_size", type=int, default = 5)
     parser.add_argument('--tensorboard_dir', type=str, default='tensorboard', help='save tensorboard infos')
     parser.add_argument('--result_dir', type=str, default='result', help='save result infos')
-    parser.add_argument('--checkpoint', type=str, default='checkpoints/GMM_final_test/step_005000.pth', help='model checkpoint for test')
+    #parser.add_argument('--checkpoint', type=str, default='checkpoints/GMM_final_test/step_005000.pth', help='model checkpoint for test')
+    parser.add_argument('--checkpoint', type=str, default='checkpoints/TOM_final_test/step_005000.pth', help='model checkpoint for test')
     parser.add_argument('--checkpointR', type=str, default='', help='model checkpoint for test')
     parser.add_argument("--display_count", type=int, default = 1)
     parser.add_argument("--shuffle", action='store_true', help='shuffle input data')
@@ -49,9 +53,6 @@ def test_gmm_etri(opt, test_loader, model, board):
 
     base_name = os.path.basename(opt.checkpoint)
     save_dir = os.path.join(opt.result_dir, base_name, opt.datamode)
-
-    ###FIXME " TOM 시작 부분."
-
     if not os.path.exists(save_dir):
         os.makedirs(save_dir)
     warp_cloth_dir = os.path.join(save_dir, 'warp-cloth')
@@ -172,11 +173,12 @@ def main():
 
     # create dataset
     train_dataset = ETRIDataset(opt)
-
+    
     # create dataloader
     train_loader = ETRIDataLoader(opt, train_dataset)
-
+    
     # visualization
+    
     if not os.path.exists(opt.tensorboard_dir):
         os.makedirs(opt.tensorboard_dir)
     board = SummaryWriter(log_dir = os.path.join(opt.tensorboard_dir, opt.name))
@@ -202,7 +204,9 @@ def main():
         print('*********checkpoint',opt.checkpoint)
         with torch.no_grad():
             test_tom(opt, train_loader, model, board)
-    elif opt.stage == 'TOM_SNPATCH_ETRI':
+    #elif opt.stage == 'TOM_SNPATCH_ETRI':
+    
+    elif opt.stage == 'TOM_ETRI':
         Gmodel = UnetGenerator(26, 4, 7, ngf=64, norm_layer=nn.InstanceNorm2d)
         Gmodel = torch.nn.DataParallel(Gmodel)
         #Dmodel = SNPatchDiscriminator()

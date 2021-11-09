@@ -11,7 +11,8 @@ import numpy as np
 import json
 import copy
 
-import cv2
+#import cv2
+from google.colab.patches import cv2
 
 class ETRIDataset(data.Dataset):
     """Dataset for 2021 AI DATA(65)."""
@@ -57,36 +58,42 @@ class ETRIDataset(data.Dataset):
         if self.stage == 'GMM_ETRI' or self.stage == 'GMMBODY_ETRI':
             Item_Image_file = osp.join(self.root, self.datamode, 'Item-Image', ann['main_top']+'_F.jpg')
             Item_Parse_file = osp.join(self.root, self.datamode, 'Item-Parse_p', ann['main_top']+'_F.png')
-        elif self.stage == 'TOM_SNPATCH_ETRI':
+        #elif self.stage == 'TOM_SNPATCH_ETRI':
+        elif self.stage == 'TOM_ETRI':
             Item_Image_file = osp.join(self.root, self.datamode, 'Item-Image'+self.opt.posfix_warp, ann['main_top'] + '_F' + '__' + s_file)
-            Item_Parse_file = osp.join(self.root, self.datamode, 'Item-Parse_p'+self.opt.posfix_warp, ann['main_top'] + '_F' + '__' + s_file[:-3] + 'png')
+            #Item_Image_file = osp.join(self.root, self.datamode, 'wrap_cloth'+self.opt.posfix_warp, ann['main_top'] + '_F' + '__' + s_file)
+            Item_Parse_file = osp.join(self.root, self.datamode, 'Item-Parse_p'+self.opt.posfix_warp, ann['main_top'] + '_F' + '__' + s_file[:-3] +'png')
+            #Item_Parse_file = osp.join(self.root, self.datamode, 'wrap_mask'+self.opt.posfix_warp, ann['main_top'] + '_F' + '__' + s_file[:-3] + 'png')
 
         Keypoints_file = osp.join(self.root, self.datamode, 'Model-Pose_f', s_file[:-4] + '.json')
 
         if not osp.isfile(Model_Image_file):
             print('MODEL_IMAGE FILE: ', Model_Image_file, ' DOES NOT EXIST')
             exit(0)
+
         if not osp.isfile(Model_Parse_file):
             print('MODEL_PARSE FILE: ', Model_Parse_file, ' DOES NOT EXIST')
             exit(0)
+            
         if not osp.isfile(Item_Image_file):
             print('ITEM_IMAGE FILE: ', Item_Image_file, ' DOES NOT EXIST')
             exit(0)
+            
         if not osp.isfile(Item_Parse_file):
             print('ITEM_PARSE FILE: ', Item_Parse_file, ' DOES NOT EXIST')
             exit(0)
+            
         if not osp.isfile(Keypoints_file):
             print('ITEM_PARSE FILE: ', Keypoints_file, ' DOES NOT EXIST')
             exit(0)
-
+        
         c_ori = cv2.cvtColor(cv2.imread(Item_Image_file),cv2.COLOR_BGR2RGB)
-
         cm = cv2.cvtColor(cv2.imread(Item_Parse_file),cv2.COLOR_BGR2RGB)[:,:,0]
         cm = cm[:,:,None]
-
+        
         c_parse = copy.deepcopy(cm).astype(np.float32)
         c_parse = c_parse.transpose(2,0,1)
-
+        
         if self.stage=='GMMBODY_ETRI' and self.datamode == 'train':
             mask_c = (cm>0).astype(np.uint8)
             mask_hidden = (cm==6).astype(np.uint8)
@@ -112,7 +119,8 @@ class ETRIDataset(data.Dataset):
             c = c_ori*mask_c  + (mask_b*mask_v)
             c_ori = c_ori*mask_c + (mask_b*255)
 
-        elif self.stage == 'TOM_SNPATCH_ETRI':
+        #elif self.stage == 'TOM_SNPATCH_ETRI':
+        elif self.stage == 'TOM_ETRI':
             cm = (cm>0).astype(np.float32)
             c = c_ori
         
