@@ -203,8 +203,8 @@ class StylingFragment: Fragment(layout.fragment_styling) {
         override fun run() {
             super.run()
 
-            val host = "localhost"
-            val port = 5001
+            val host = "192.168.144.226"
+            val port = 12345
 
             //OutputStream에 전송할 데이터를 담아 보낸 뒤, InputStream을 통해 데이터를 읽
             try {

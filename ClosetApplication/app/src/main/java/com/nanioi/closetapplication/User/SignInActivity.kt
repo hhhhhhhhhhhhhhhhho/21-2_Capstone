@@ -15,6 +15,8 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.text.htmlEncode
+import com.bumptech.glide.load.engine.bitmap_recycle.ByteArrayAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
@@ -27,9 +29,10 @@ import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.User.utils.LoginUserData
 import com.nanioi.closetapplication.closet.closetObject
-import java.io.IOException
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
+import com.nanioi.closetapplication.styling.StylingFragment
+import com.nanioi.closetapplication.styling.stylingObject
+import java.io.*
+import java.lang.Exception
 import java.net.Socket
 
 
@@ -42,10 +45,6 @@ class SignInActivity : AppCompatActivity() {
     private val userDB : FirebaseDatabase by lazy { Firebase.database}
    // val db = FirebaseFirestore.getInstance()
 
-    //소켓통신
-    private var mHandler: Handler? = null
-    private val ip = "127.0.0.1" // IP 번호
-    private val port = 12345 // port 번호
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,45 +90,35 @@ class SignInActivity : AppCompatActivity() {
                                             dataSnapshot.child("kg").value.toString()
                                         LoginUserData.faceImageUri = Uri.parse(dataSnapshot.child("faceImageUri").value.toString())
                                         LoginUserData.bodyImageUri = Uri.parse(dataSnapshot.child("bodyImageUri").value.toString())
-
+                                        Log.w("aaaaaaaaa","LoginUserData : " + LoginUserData.faceImageUri.toString())
                                         // todo 아바타 생성 소켓통신
                                         // todo userObject 정보 저장
+
+                                        val host = "192.168.144.226"
+                                        val port = 12345
+
+                                        //val userOb = userObject
+                                        userObject.userId = LoginUserData.uid
+                                        userObject.faceImage = LoginUserData.faceImageUri.toString()
+                                        userObject.bodyImage = LoginUserData.bodyImageUri.toString()
+
+                                        //OutputStream에 전송할 데이터를 담아 보낸 뒤, InputStream을 통해 데이터를 읽
+//                                        try {
+//                                            val socket = Socket(host, port)
+//                                            val outstream = ObjectOutputStream(socket.getOutputStream())
+//                                            outstream.writeObject(userObject)
+//                                            outstream.flush()
+//                                            Log.w("aaaaaaaaa", "Sent to server.")
 //
-//                                        var userOb = userObject
-//                                        userOb.userId = user
-//                                        userOb.faceImage = dataSnapshot.child("faceImageUri").value.toString()
-//                                        userOb.bodyImage = dataSnapshot.child("bodyImageUri").value.toString()
-//
-//                                        fun connect() {
-//                                            mHandler = Handler()
-//                                            Log.w("connect", "연결 하는중")
-//                                            // 받아오는거
-//                                            val checkUpdate: Thread = object : Thread() {
-//                                                override fun run() {
-//                                                    try {
-//                                                        val socket = Socket(ip, port)
-//                                                        Log.w("connect", "서버 접속됨")
-//                                                        try {
-//                                                            val outstream = ObjectOutputStream(socket.getOutputStream())
-//                                                            outstream.writeObject(userOb)
-//                                                            outstream.flush()
-//                                                            Log.d("connect", "Sent to server.")
-//
-//                                                            val instream = ObjectInputStream(socket.getInputStream())
-//                                                            val input: userObject = instream.readObject() as userObject
-//                                                            Log.d("connect", "Received data: $input")
-//
-//                                                        } catch (e: IOException) {
-//                                                            e.printStackTrace()
-//                                                            Log.w("connect", "버퍼생성 잘못됨")
-//                                                        }
-//                                                    } catch (e: IOException) {
-//                                                        e.printStackTrace()
-//                                                        Log.w("connect", "서버접속못함")
-//                                                    }
-//                                                }
-//                                            }
+//                                            val instream = ObjectInputStream(socket.getInputStream())
+//                                            val input: userObject = instream.readObject() as userObject
+//                                            Log.d("aaaaaaaaa", "Received data: $input")
+//                                            //todo 받은거 스타일링 탭 전송
+//                                        } catch (e: Exception) {
+//                                            Log.w("aaaaaaaaa", "error: " +e.toString())
+//                                            e.printStackTrace()
 //                                        }
+                                        ClientThread().start()
 
                                         if (LoginUserData.name != null) {
                                             Toast.makeText(
@@ -177,6 +166,70 @@ class SignInActivity : AppCompatActivity() {
         signUpText.movementMethod = LinkMovementMethod.getInstance()
 
     }
+    class ClientThread() : Thread() {
+        override fun run() {
+            super.run()
+            Log.w("aaaaaaaaa","clientThread")
+            //소켓통신
+//            private var mHandler: Handler? = null
+//            private val ip = "192.168.144.226" // IP 번호
+//            private val port = 12345 // port 번호
+            val host = "192.168.144.226"
+            val port = 9999
+
+            //OutputStream에 전송할 데이터를 담아 보낸 뒤, InputStream을 통해 데이터를 읽
+            try {
+                val socket = Socket(host, port)
+                val outstream = DataOutputStream(socket.getOutputStream())
+                Log.w("aaaaaaaaa",userObject.faceImage.toString())
+                val test : String = userObject.faceImage.toString()
+                outstream.writeUTF(test)
+
+                outstream.flush()
+                Log.w("aaaaaaaaa", "Sent to server.")
+
+                val instream = ObjectInputStream(socket.getInputStream())
+                val input: userObject = instream.readObject() as userObject
+                Log.w("aaaaaaaaa", "Received data: $input")
+                //todo 받은거 스타일링 탭 전송
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.w("aaaaaaaaa", "error"+e.toString())
+            }
+            //handler.post(Runnable { textView.setText(input.toString()) })
+
+        }
+    }
+//    fun connect(userOb : userObject) {
+//        mHandler = Handler()
+//        Log.w("connect", "연결 하는중")
+//        // 받아오는거
+//        val checkUpdate: Thread = object : Thread() {
+//            override fun run() {
+//                try {
+//                    val socket = Socket(ip, port)
+//                    Log.w("connect", "서버 접속됨")
+//                    try {
+//                        val outstream = ObjectOutputStream(socket.getOutputStream())
+//                        outstream.writeObject(userOb)
+//                        outstream.flush()
+//                        Log.d("connect", "Sent to server.")
+//
+//                        val instream = ObjectInputStream(socket.getInputStream())
+//                        val input: userObject = instream.readObject() as userObject
+//                        Log.d("connect", "Received data: $input")
+//
+//                    } catch (e: IOException) {
+//                        e.printStackTrace()
+//                        Log.w("connect", "버퍼생성 잘못됨")
+//                    }
+//                } catch (e: IOException) {
+//                    e.printStackTrace()
+//                    Log.w("connect", "서버접속못함")
+//                }
+//            }
+//        }
+//    }
 
 //    private fun getPermission() {
 //        if ((ActivityCompat.checkSelfPermission(

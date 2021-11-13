@@ -29,6 +29,8 @@ import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import com.nanioi.closetapplication.DBkey
 import com.nanioi.closetapplication.R
+import com.nanioi.closetapplication.databinding.ActivityMainBinding
+import com.nanioi.closetapplication.databinding.ActivitySignUpBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -59,29 +61,28 @@ class SignUpActivity : AppCompatActivity() {
     private val storage: FirebaseStorage by lazy { Firebase.storage }
     private val auth: FirebaseAuth by lazy { Firebase.auth }
     private val userDB : FirebaseDatabase by lazy { Firebase.database}
-    val db = Firebase.firestore
-
+    private val binding by lazy { ActivitySignUpBinding.inflate(layoutInflater) }
 
     @SuppressLint("SimpleDateFormat")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_up)
+        setContentView(binding.root)
 
-        etSignUpName = findViewById(R.id.et_sign_up_name)
-        etSignUpEmail = findViewById(R.id.et_sign_up_email)
-        etSignUpPassword = findViewById(R.id.et_sign_up_password)
-        etSignUpPasswordCheck = findViewById(R.id.et_sign_up_password_check)
-        etSignUpCm = findViewById(R.id.et_sign_up_cm)
-        etSignUpKg = findViewById(R.id.et_sign_up_kg)
-        rgSignUpGender = findViewById(R.id.rg_sign_up_gender)
-        rbSignUpMan = findViewById(R.id.rb_sign_up_man)
-        rbSignUpWoman = findViewById(R.id.rb_sign_up_woman)
+        etSignUpName = binding.etSignUpName
+        etSignUpEmail = binding.etSignUpEmail
+        etSignUpPassword = binding.etSignUpPassword
+        etSignUpPasswordCheck =binding.etSignUpPasswordCheck
+        etSignUpCm = binding.etSignUpCm
+        etSignUpKg = binding.etSignUpKg
+        rgSignUpGender = binding.rgSignUpGender
+        rbSignUpMan = binding.rbSignUpMan
+        rbSignUpWoman = binding.rbSignUpWoman
 
-        ivSignUpFace = findViewById(R.id.iv_sign_up_face)
-        ivSignUpBody = findViewById(R.id.iv_sign_up_body)
-        btnSignUpFace = findViewById(R.id.btn_sign_up_face)
-        btnSignUpBody = findViewById(R.id.btn_sign_up_body)
-        btnSignUpPass = findViewById(R.id.btn_sign_up_pass)
+        ivSignUpFace = binding.ivSignUpFace
+        ivSignUpBody = binding.ivSignUpBody
+        btnSignUpFace = binding.btnSignUpFace
+        btnSignUpBody = binding.btnSignUpBody
+        btnSignUpPass = binding.btnSignUpPass
 
         rgSignUpGender?.check(R.id.rb_sign_up_man) //아무것도 체크가 되어있지 않으면 안되니 기본적으로 남자로 체크되어 있음
 
