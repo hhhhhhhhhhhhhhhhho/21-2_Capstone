@@ -6,11 +6,13 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.provider.MediaStore
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -29,8 +31,15 @@ import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.User.utils.LoginUserData
 import com.nanioi.closetapplication.closet.closetObject
+import com.nanioi.closetapplication.closetApplication
 import com.nanioi.closetapplication.styling.StylingFragment
 import com.nanioi.closetapplication.styling.stylingObject
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.io.*
 import java.lang.Exception
 import java.net.Socket
@@ -43,8 +52,6 @@ class SignInActivity : AppCompatActivity() {
     private var btnSignSignIn: Button? = null //로그인 버튼 변수 선언
     private var firebaseAuth: FirebaseAuth? = null //파이어 베이스 인스턴스 변수 선언
     private val userDB : FirebaseDatabase by lazy { Firebase.database}
-   // val db = FirebaseFirestore.getInstance()
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,34 +98,43 @@ class SignInActivity : AppCompatActivity() {
                                         LoginUserData.faceImageUri = Uri.parse(dataSnapshot.child("faceImageUri").value.toString())
                                         LoginUserData.bodyImageUri = Uri.parse(dataSnapshot.child("bodyImageUri").value.toString())
                                         Log.w("aaaaaaaaa","LoginUserData : " + LoginUserData.faceImageUri.toString())
-                                        // todo 아바타 생성 소켓통신
-                                        // todo userObject 정보 저장
 
-                                        val host = "192.168.144.226"
-                                        val port = 12345
+                                        // //by나연. mysql통신 이미지 보내기 (21.11.14)
+                                        val faceImageUri =  LoginUserData.faceImageUri
+                                        val bodyImageUri = LoginUserData.bodyImageUri
 
-                                        //val userOb = userObject
-                                        userObject.userId = LoginUserData.uid
-                                        userObject.faceImage = LoginUserData.faceImageUri.toString()
-                                        userObject.bodyImage = LoginUserData.bodyImageUri.toString()
+                                        val faceImageFile = File(getImageFilePath(faceImageUri!!))
+                                        val fileFaceRequestBody = RequestBody.create(MediaType.parse("image/*"),faceImageFile)
+                                        val userFace = MultipartBody.Part.createFormData("image",faceImageFile.name,fileFaceRequestBody)
 
-                                        //OutputStream에 전송할 데이터를 담아 보낸 뒤, InputStream을 통해 데이터를 읽
-//                                        try {
-//                                            val socket = Socket(host, port)
-//                                            val outstream = ObjectOutputStream(socket.getOutputStream())
-//                                            outstream.writeObject(userObject)
-//                                            outstream.flush()
-//                                            Log.w("aaaaaaaaa", "Sent to server.")
-//
-//                                            val instream = ObjectInputStream(socket.getInputStream())
-//                                            val input: userObject = instream.readObject() as userObject
-//                                            Log.d("aaaaaaaaa", "Received data: $input")
-//                                            //todo 받은거 스타일링 탭 전송
-//                                        } catch (e: Exception) {
-//                                            Log.w("aaaaaaaaa", "error: " +e.toString())
-//                                            e.printStackTrace()
-//                                        }
-                                        ClientThread().start()
+                                        val bodyImageFile = File(getImageFilePath(bodyImageUri!!))
+                                        val fileBodyRequestBody = RequestBody.create(MediaType.parse("image/*"),bodyImageFile)
+                                        val userBody = MultipartBody.Part.createFormData("image",faceImageFile.name,fileBodyRequestBody)
+
+                                        (application as closetApplication).service.createAvatar(userFace,userBody).enqueue(
+                                            object : Callback<User>{
+                                                override fun onResponse(
+                                                    call: Call<User>,
+                                                    response: Response<User>
+                                                ) {
+                                                    if(response.isSuccessful) {
+                                                        val avatar = response.body()
+                                                        LoginUserData.avatarImageUri = Uri.parse(avatar!!.userAvatarImage)
+                                                    }
+                                                }
+
+                                                override fun onFailure(
+                                                    call: Call<User>,
+                                                    t: Throwable
+                                                ) {
+                                                    Log.w("aaa", "실패  : "+ t.toString())
+                                                }
+
+                                            }
+                                        )
+
+                                        //mysql안되면시도
+                                        //ClientThread(userFace,userBody).start()
 
                                         if (LoginUserData.name != null) {
                                             Toast.makeText(
@@ -166,10 +182,26 @@ class SignInActivity : AppCompatActivity() {
         signUpText.movementMethod = LinkMovementMethod.getInstance()
 
     }
-    class ClientThread() : Thread() {
+    //by나연. 이미지 파일 절대경로 알아내기 (21.11.14)
+    fun getImageFilePath(contentUri: Uri):String{
+        var columnIndex = 0
+        val projection = arrayOf(MediaStore.Images.Media.DATA) // 걸러내기
+        val cursor = contentResolver.query(contentUri,projection,null,null,null)
+        // list index 가르키기 , content 관리하는 resolver에 검색(query) 부탁
+        if( cursor!!.moveToFirst()){
+            columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        }
+        return cursor.getString(columnIndex)
+    }
+
+    //한번시도해보기
+    class ClientThread(
+        val userFaceImage : MultipartBody.Part,
+        val userBodyImage : MultipartBody.Part
+    ) : Thread() {
         override fun run() {
             super.run()
-            Log.w("aaaaaaaaa","clientThread")
+            Log.w("aaaaaaaaa", "clientThread")
             //소켓통신
 //            private var mHandler: Handler? = null
 //            private val ip = "192.168.144.226" // IP 번호
@@ -181,9 +213,7 @@ class SignInActivity : AppCompatActivity() {
             try {
                 val socket = Socket(host, port)
                 val outstream = DataOutputStream(socket.getOutputStream())
-                Log.w("aaaaaaaaa",userObject.faceImage.toString())
-                val test : String = userObject.faceImage.toString()
-                outstream.writeUTF(test)
+                outstream.writeUTF(userFaceImage.toString())
 
                 outstream.flush()
                 Log.w("aaaaaaaaa", "Sent to server.")
@@ -194,114 +224,8 @@ class SignInActivity : AppCompatActivity() {
                 //todo 받은거 스타일링 탭 전송
             } catch (e: Exception) {
                 e.printStackTrace()
-                Log.w("aaaaaaaaa", "error"+e.toString())
+                Log.w("aaaaaaaaa", "error" + e.toString())
             }
-            //handler.post(Runnable { textView.setText(input.toString()) })
-
         }
     }
-//    fun connect(userOb : userObject) {
-//        mHandler = Handler()
-//        Log.w("connect", "연결 하는중")
-//        // 받아오는거
-//        val checkUpdate: Thread = object : Thread() {
-//            override fun run() {
-//                try {
-//                    val socket = Socket(ip, port)
-//                    Log.w("connect", "서버 접속됨")
-//                    try {
-//                        val outstream = ObjectOutputStream(socket.getOutputStream())
-//                        outstream.writeObject(userOb)
-//                        outstream.flush()
-//                        Log.d("connect", "Sent to server.")
-//
-//                        val instream = ObjectInputStream(socket.getInputStream())
-//                        val input: userObject = instream.readObject() as userObject
-//                        Log.d("connect", "Received data: $input")
-//
-//                    } catch (e: IOException) {
-//                        e.printStackTrace()
-//                        Log.w("connect", "버퍼생성 잘못됨")
-//                    }
-//                } catch (e: IOException) {
-//                    e.printStackTrace()
-//                    Log.w("connect", "서버접속못함")
-//                }
-//            }
-//        }
-//    }
-
-//    private fun getPermission() {
-//        if ((ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.CAMERA
-//            ) != PackageManager.PERMISSION_GRANTED) ||
-//            (ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.READ_EXTERNAL_STORAGE
-//            ) != PackageManager.PERMISSION_GRANTED) ||
-//            (ActivityCompat.checkSelfPermission(
-//                this,
-//                Manifest.permission.WRITE_EXTERNAL_STORAGE
-//            ) != PackageManager.PERMISSION_GRANTED)
-//        ) {
-//            if (ActivityCompat.shouldShowRequestPermissionRationale(
-//                    this,
-//                    Manifest.permission.CAMERA
-//                ) ||
-//                ActivityCompat.shouldShowRequestPermissionRationale(
-//                    this,
-//                    Manifest.permission.READ_EXTERNAL_STORAGE
-//                ) ||
-//                ActivityCompat.shouldShowRequestPermissionRationale(
-//                    this,
-//                    Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                )
-//            ) {
-//                Toast.makeText(this, "권한이 설정되지 않았습니다.", Toast.LENGTH_LONG).show()
-//                ActivityCompat.requestPermissions(
-//                    this,
-//                    arrayOf(
-//                        Manifest.permission.CAMERA,
-//                        Manifest.permission.READ_EXTERNAL_STORAGE,
-//                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                    ),
-//                    101
-//                )
-//            } else {
-//                ActivityCompat.requestPermissions(
-//                    this,
-//                    arrayOf(
-//                        Manifest.permission.CAMERA,
-//                        Manifest.permission.READ_EXTERNAL_STORAGE,
-//                        Manifest.permission.WRITE_EXTERNAL_STORAGE
-//                    ),
-//                    101
-//                )
-//                //권한 확인 완료
-//            }
-//        } else {
-//            //권한 확인 완료
-//        }
-//    }
-
-//    override fun onRequestPermissionsResult(
-//        requestCode: Int,
-//        permissions: Array<out String>,
-//        grantResults: IntArray
-//    ) {
-//        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-//        if (requestCode == 101) {
-//            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-//                Toast.makeText(this, "앱 실행을 위한 권한이 설정 되었습니다.", Toast.LENGTH_LONG).show()
-//            } else {
-//                Toast.makeText(
-//                    this,
-//                    "권한이 허용되지 않을 경우 앱 사용이 불가합니다.\n시스템 설정에서 권한을 허용 해 주세요.",
-//                    Toast.LENGTH_LONG
-//                ).show()
-//                finish()
-//            }
-//        }
-//    }
 }

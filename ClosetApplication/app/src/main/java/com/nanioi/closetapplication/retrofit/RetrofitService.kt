@@ -22,9 +22,11 @@ interface RetrofitService {
 
 
     //라이브러리사용
+    @Multipart
     @POST("")
     fun createAvatar(
-        @Body params: UserFromServer
+        @Part faceImage : MultipartBody.Part,
+        @Part bodyImage : MultipartBody.Part
     ): Call<User>
 
     //로그인
