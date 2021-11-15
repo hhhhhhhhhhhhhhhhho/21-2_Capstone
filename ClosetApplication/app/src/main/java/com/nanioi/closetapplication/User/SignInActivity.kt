@@ -98,44 +98,11 @@ class SignInActivity : AppCompatActivity() {
                                         LoginUserData.faceImageUri = Uri.parse(dataSnapshot.child("faceImageUri").value.toString())
                                         LoginUserData.bodyImageUri = Uri.parse(dataSnapshot.child("bodyImageUri").value.toString())
                                         Log.w("aaaaaaaaa","LoginUserData : " + LoginUserData.faceImageUri.toString())
-
-                                        // //by나연. mysql통신 이미지 보내기 (21.11.14)
-                                        val faceImageUri =  LoginUserData.faceImageUri
-                                        val bodyImageUri = LoginUserData.bodyImageUri
-
-                                        val faceImageFile = File(getImageFilePath(faceImageUri!!))
-                                        val fileFaceRequestBody = RequestBody.create(MediaType.parse("image/*"),faceImageFile)
-                                        val userFace = MultipartBody.Part.createFormData("image",faceImageFile.name,fileFaceRequestBody)
-
-                                        val bodyImageFile = File(getImageFilePath(bodyImageUri!!))
-                                        val fileBodyRequestBody = RequestBody.create(MediaType.parse("image/*"),bodyImageFile)
-                                        val userBody = MultipartBody.Part.createFormData("image",faceImageFile.name,fileBodyRequestBody)
-
-                                        (application as closetApplication).service.createAvatar(userFace,userBody).enqueue(
-                                            object : Callback<User>{
-                                                override fun onResponse(
-                                                    call: Call<User>,
-                                                    response: Response<User>
-                                                ) {
-                                                    if(response.isSuccessful) {
-                                                        val avatar = response.body()
-                                                        LoginUserData.avatarImageUri = Uri.parse(avatar!!.userAvatarImage)
-                                                    }
-                                                }
-
-                                                override fun onFailure(
-                                                    call: Call<User>,
-                                                    t: Throwable
-                                                ) {
-                                                    Log.w("aaa", "실패  : "+ t.toString())
-                                                }
-
-                                            }
-                                        )
-
-                                        //mysql안되면시도
-                                        //ClientThread(userFace,userBody).start()
-
+                                        Log.w("aaaaaaaaa","LoginUserData : " + LoginUserData.bodyImageUri.toString())
+                                        var f1 : String = getImageFilePath(LoginUserData.faceImageUri!!)
+                                        Log.w("aaaaaaaaa","f1 : " + f1)
+                                        var f2 : String = getImageFilePath(LoginUserData.bodyImageUri!!)
+                                        Log.w("aaaaaaaaa","f2 : " + f2)
                                         if (LoginUserData.name != null) {
                                             Toast.makeText(
                                                 this@SignInActivity,
@@ -183,49 +150,14 @@ class SignInActivity : AppCompatActivity() {
 
     }
     //by나연. 이미지 파일 절대경로 알아내기 (21.11.14)
-    fun getImageFilePath(contentUri: Uri):String{
+    fun getImageFilePath(contentUri: Uri): String {
         var columnIndex = 0
         val projection = arrayOf(MediaStore.Images.Media.DATA) // 걸러내기
-        val cursor = contentResolver.query(contentUri,projection,null,null,null)
+        val cursor = contentResolver.query(contentUri, projection, null, null, null)
         // list index 가르키기 , content 관리하는 resolver에 검색(query) 부탁
-        if( cursor!!.moveToFirst()){
+        if (cursor!!.moveToFirst()) {
             columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
         }
         return cursor.getString(columnIndex)
-    }
-
-    //한번시도해보기
-    class ClientThread(
-        val userFaceImage : MultipartBody.Part,
-        val userBodyImage : MultipartBody.Part
-    ) : Thread() {
-        override fun run() {
-            super.run()
-            Log.w("aaaaaaaaa", "clientThread")
-            //소켓통신
-//            private var mHandler: Handler? = null
-//            private val ip = "192.168.144.226" // IP 번호
-//            private val port = 12345 // port 번호
-            val host = "192.168.144.226"
-            val port = 9999
-
-            //OutputStream에 전송할 데이터를 담아 보낸 뒤, InputStream을 통해 데이터를 읽
-            try {
-                val socket = Socket(host, port)
-                val outstream = DataOutputStream(socket.getOutputStream())
-                outstream.writeUTF(userFaceImage.toString())
-
-                outstream.flush()
-                Log.w("aaaaaaaaa", "Sent to server.")
-
-                val instream = ObjectInputStream(socket.getInputStream())
-                val input: userObject = instream.readObject() as userObject
-                Log.w("aaaaaaaaa", "Received data: $input")
-                //todo 받은거 스타일링 탭 전송
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.w("aaaaaaaaa", "error" + e.toString())
-            }
-        }
     }
 }

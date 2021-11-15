@@ -38,7 +38,7 @@ class closetApplication : Application() {
             .build()
 
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://mellowcode.org/")
+            .baseUrl("http://asgeas~~~~~")
             .addConverterFactory(GsonConverterFactory.create())
             .client(client)
             .build()

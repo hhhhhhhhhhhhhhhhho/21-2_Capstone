@@ -78,20 +78,20 @@ class RetrofitActivity : AppCompatActivity() {
 //        })
 
         //POST 요청(2)
-        val user = UserFromServer(userId ="asffasges", faceImage = "asfefhkaus ", bodyImage= "asfesgas")
-        service.createAvatar(user).enqueue(object : Callback<User> {
-            override fun onResponse(
-                call: Call<User>,
-                response: Response<User>
-            ) {
-                if (response.isSuccessful) {
-                    val person = response.body()
-                    Log.d("retrofitt", " name : " + person?.userAvatarImage)
-                }
-            }
-
-            override fun onFailure(call: Call<User>, t: Throwable) {
-            }
-        })
+//        val user = UserFromServer(userId ="asffasges", faceImage = "asfefhkaus ", bodyImage= "asfesgas")
+//        service.createAvatar(user).enqueue(object : Callback<User> {
+//            override fun onResponse(
+//                call: Call<User>,
+//                response: Response<User>
+//            ) {
+//                if (response.isSuccessful) {
+//                    val person = response.body()
+//                    Log.d("retrofitt", " name : " + person?.userAvatarImage)
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<User>, t: Throwable) {
+//            }
+//        })
     }
 }
