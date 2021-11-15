@@ -1,8 +1,10 @@
 package com.nanioi.closetapplication.closet
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
+import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import androidx.core.view.isGone
@@ -15,18 +17,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import com.nanioi.closetapplication.R
+import com.nanioi.closetapplication.User.userObject
 import com.nanioi.closetapplication.databinding.FragmentClosetBinding
 import com.nanioi.closetapplication.styling.stylingObject
 import java.io.*
+import java.lang.Exception
 import java.net.Socket
 
 
 class ClosetFragment : Fragment(R.layout.fragment_closet) {
-
-    // 소켓통신에 필요한것
-    private var mHandler: Handler? = null
-    private val ip = "127.0.0.1" // IP 번호
-    private val port = 12345 // port 번호
 
     private var binding: FragmentClosetBinding? = null
 
@@ -54,6 +53,8 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
     private val auth: FirebaseAuth by lazy {
         Firebase.auth
     }
+
+    lateinit var itemList : List<ItemModel>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -163,44 +164,51 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
     private fun handleConfirm(state: ItemState.Confirm) {
         Log.d("bb", "observe confirm")
 
-        closetObject.photoList =state.photoList
-        closetObject.userId = auth.currentUser?.uid.toString()
-        //closetObject.body =
-        connect()
+        itemList = state.photoList
+        ClientThread().start()
     }
 
-    //by 나연. 데이터 소켓통신 함수 (21.11.04)
-    fun connect() {
-        mHandler = Handler()
-        Log.w("connect", "연결 하는중")
-        // 받아오는거
-        val checkUpdate: Thread = object : Thread() {
-            override fun run() {
+    //소켓통신
+    inner class ClientThread() : Thread() {
+        override fun run() {
+            super.run()
+            Log.w("aaaaaaaaa", "clientThread")
+
+            val host = "172.30.1.55"
+            val port = 9999
+
+            for ( item in itemList ) {
                 try {
-                    val socket = Socket(ip, port)
-                    Log.w("connect", "서버 접속됨")
-                    try {
-                        val outstream = ObjectOutputStream(socket.getOutputStream())
-                        outstream.writeObject("hello")
-                        outstream.flush()
-                        Log.d("connect", "Sent to server.")
+                    val socket = Socket(host, port)
+                    val outstream = DataOutputStream(socket.getOutputStream())
+                    val file : File = File(getImageFilePath(Uri.parse(item.imageUrl)))
+                    outstream.writeUTF(file.toString())
 
-                        val instream = ObjectInputStream(socket.getInputStream())
-                        val input: closetObject = instream.readObject() as closetObject
-                        Log.d("connect", "Received data: $input")
+                    outstream.flush()
+                    Log.w("aaaaaaaaa", "Sent to server.")
 
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                        Log.w("connect", "버퍼생성 잘못됨")
-                    }
-                } catch (e: IOException) {
+                    val instream = ObjectInputStream(socket.getInputStream())
+                    val input: userObject = instream.readObject() as userObject
+                    Log.w("aaaaaaaaa", "Received data: $input")
+                    //todo 받은거 스타일링 탭 전송
+                } catch (e: Exception) {
                     e.printStackTrace()
-                    Log.w("connect", "서버접속못함")
+                    Log.w("aaaaaaaaa", "error" + e.toString())
                 }
             }
         }
     }
-
+    //by나연. 이미지 파일 절대경로 알아내기 (21.11.14)
+    fun getImageFilePath(contentUri: Uri): String {
+        var columnIndex = 0
+        val projection = arrayOf(MediaStore.Images.Media.DATA) // 걸러내기
+        val cursor = context?.contentResolver?.query(contentUri, projection, null, null, null)
+        // list index 가르키기 , content 관리하는 resolver에 검색(query) 부탁
+        if (cursor!!.moveToFirst()) {
+            columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        }
+        return cursor.getString(columnIndex)
+    }
     override fun onResume() {
         super.onResume()
 
