@@ -99,10 +99,10 @@ class SignInActivity : AppCompatActivity() {
                                         LoginUserData.bodyImageUri = Uri.parse(dataSnapshot.child("bodyImageUri").value.toString())
                                         Log.w("aaaaaaaaa","LoginUserData : " + LoginUserData.faceImageUri.toString())
                                         Log.w("aaaaaaaaa","LoginUserData : " + LoginUserData.bodyImageUri.toString())
-                                        var f1 : String = getImageFilePath(LoginUserData.faceImageUri!!)
-                                        Log.w("aaaaaaaaa","f1 : " + f1)
-                                        var f2 : String = getImageFilePath(LoginUserData.bodyImageUri!!)
-                                        Log.w("aaaaaaaaa","f2 : " + f2)
+//                                        var f1 : String = getImageFilePath(LoginUserData.faceImageUri!!)
+//                                        Log.w("aaaaaaaaa","f1 : " + f1)
+//                                        var f2 : String = getImageFilePath(LoginUserData.bodyImageUri!!)
+//                                        Log.w("aaaaaaaaa","f2 : " + f2)
                                         if (LoginUserData.name != null) {
                                             Toast.makeText(
                                                 this@SignInActivity,
