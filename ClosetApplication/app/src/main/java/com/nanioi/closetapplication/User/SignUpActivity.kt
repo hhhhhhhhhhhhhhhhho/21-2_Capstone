@@ -2,15 +2,15 @@ package com.nanioi.closetapplication.User
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ContentUris
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.ImageDecoder
+import android.media.MediaScannerConnection
 import android.net.Uri
-import android.os.Build
+import android.os.*
 import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.*
@@ -29,6 +29,7 @@ import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import com.nanioi.closetapplication.DBkey
 import com.nanioi.closetapplication.R
+import com.nanioi.closetapplication.User.utils.PathUtil
 import com.nanioi.closetapplication.closetApplication
 import com.nanioi.closetapplication.databinding.ActivityMainBinding
 import com.nanioi.closetapplication.databinding.ActivitySignUpBinding
@@ -41,10 +42,7 @@ import okhttp3.RequestBody
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.io.DataOutputStream
-import java.io.File
-import java.io.IOException
-import java.io.ObjectInputStream
+import java.io.*
 import java.lang.Exception
 import java.net.Socket
 import java.text.SimpleDateFormat
@@ -467,71 +465,59 @@ class SignUpActivity : AppCompatActivity() {
 
     //by 나연. 카메라 실행 함수 (21.10.23)
     private fun startCameraCapture(imageType: Int) {
-        //기본 카메라 앱 실행
-        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-            takePictureIntent.resolveActivity(packageManager)?.also {
-                val photoFile: File? = try {
-                    createImageFile()
-                } catch (ex: IOException) {
-                    null
-                }
-                photoFile?.also {
-                    val photoURI: Uri = FileProvider.getUriForFile(
-                        this,
-                        "$packageName.fileprovider",
-                        it
-                    )
-                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                    if (imageType == 1) {
-                        faceImageUri = photoURI
-                        startActivityForResult(
-                            takePictureIntent,
-                            FACE_CAMERA_REQUEST_CODE
+        val state = Environment.getExternalStorageState()
+        if(Environment.MEDIA_MOUNTED.equals(state)){
+            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+                takePictureIntent.resolveActivity(packageManager)?.also {
+                    val photoFile: File? = try {
+                        createImageFile()
+                    } catch (ex: IOException) {
+                        null
+                    }
+                    photoFile?.also {
+                        val photoURI: Uri = FileProvider.getUriForFile(
+                            this,
+                            "$packageName.fileprovider",
+                            it
                         )
-                    } else {
-                        bodyImageUri = photoURI
-                        startActivityForResult(
-                            takePictureIntent,
-                            BODY_CAMERA_REQUEST_CODE
-                        )
+                        Log.w ( "aaaaaaaaa", "photoURI" + photoURI.toString())
+                        Log.w ( "aaaaaaaaa", "photoFile" + photoFile.toString())
+                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                        if (imageType == 1) {
+                            faceImageUri = photoURI
+                            startActivityForResult(
+                                takePictureIntent,
+                                FACE_CAMERA_REQUEST_CODE
+                            )
+                        } else {
+                            bodyImageUri = photoURI
+                            startActivityForResult(
+                                takePictureIntent,
+                                BODY_CAMERA_REQUEST_CODE
+                            )
+                        }
                     }
                 }
             }
+        }else{
+            Log.w ( "aaaaaaa", "저장공간에 접근 불가능")
         }
+        //기본 카메라 앱 실행
+
     }
 
     //by 나연. 이미지 파일 생성 함수 (21.10.23)
     private fun createImageFile(): File? {
-//        val timestamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-//        val storageDir: File? = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-//        Log.w("aaaaaaaaa", "storageDir : $storageDir")
-//        return File.createTempFile(timestamp, ".jpg", storageDir)
-//            .apply { curPhotoPath = absolutePath }
-
-//        val photoFile = File(
-//            getOutputDirectory(this),
-//            SimpleDateFormat(
-//                "yyyyMMdd_HHmmss", Locale.KOREA
-//            ).format(System.currentTimeMillis()) + ".jpg"
-//
-//        )  // 현재 시간 기준으로 파일명 넣어주기
-
-        return File.createTempFile(
-            SimpleDateFormat(
-                "yyyyMMdd_HHmmss", Locale.KOREA
-            ).format(System.currentTimeMillis()), ".jpg", getOutputDirectory(this)
-        )
-            .apply { curPhotoPath = absolutePath }
-    }
-
-    // 액티비티를 받아 그 액티비티의 externalMediaDir에 접근해 null이 아니면 파일에
-    // 외장 디렉토리 폴더 앱이름으로된 폴더를 만들어 파일을 넣어
-    fun getOutputDirectory(activity: Activity): File = with(activity) {
-        val mediaDir = externalMediaDirs.firstOrNull()?.let {
-            File(it, getString(R.string.app_name)).apply { mkdirs() }
+        val timestamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        var imageFile : File ? =null
+        val storageDir: File? = File(Environment.getExternalStorageDirectory(),"DCIM/CameraCaptures")
+        if (!storageDir!!.exists()) {
+            storageDir!!.mkdirs()
         }
-        return if (mediaDir != null && mediaDir.exists())
-            mediaDir else filesDir
+        imageFile = File(storageDir, timestamp)
+        curPhotoPath = imageFile.getAbsolutePath()
+
+        return imageFile
     }
 
     // by 나연. 앨범에서 선택한 이미지 받아오기 함수 (21.10.16)
@@ -539,7 +525,6 @@ class SignUpActivity : AppCompatActivity() {
         val intent = Intent(Intent.ACTION_PICK)
         intent.setData(MediaStore.Images.Media.EXTERNAL_CONTENT_URI) // 외부저장소로 가겠다.
         intent.setType("image/*") // 이미지만 보여지게
-        Log.w("aaaaaaaaa", "intent : $intent")
         if (imageType == 1) {
             startActivityForResult(
                 intent,
@@ -620,41 +605,13 @@ class SignUpActivity : AppCompatActivity() {
                     ivSignUpFace!!.setImageURI(uri)
                     faceImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
                     faceImageFilePath = File(getImageFilePath(uri))
-                    Log.w(
-                        "aaaaaaaaa",
-                        "faceImageUri : " + faceImageUri.toString()
-                    )
-                    Log.w(
-                        "aaaaaaaaa",
-                        "faceImageFilePath : " + faceImageFilePath
-                    )
-
                 } else {
                     Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
             FACE_CAMERA_REQUEST_CODE -> {
-                //startActivityForResult를 통해 기본카메라 앱으로 부터 받아온 사진 결과값
-                val bitmap: Bitmap
                 faceImageFilePath = File(curPhotoPath)
-                Log.w(
-                    "aaaaaaaaa",
-                    "faceFile : " + faceImageFilePath
-                )
-                if (Build.VERSION.SDK_INT < 28) { // 안드로이드 9.0(Pie)버전보다 낮은 경우
-                    bitmap = MediaStore.Images.Media.getBitmap(
-                        contentResolver,
-                        Uri.fromFile(faceImageFilePath)
-                    )
-                    ivSignUpFace!!.setImageBitmap(bitmap)
-                } else {
-                    val decode = ImageDecoder.createSource(
-                        this.contentResolver,
-                        Uri.fromFile(faceImageFilePath)
-                    )
-                    bitmap = ImageDecoder.decodeBitmap(decode)
-                    ivSignUpFace!!.setImageBitmap(bitmap)
-                }
+                ivSignUpFace!!.setImageURI(faceImageUri)
             }
             BODY_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
                 val uri = data?.data
@@ -662,36 +619,13 @@ class SignUpActivity : AppCompatActivity() {
                     ivSignUpBody!!.setImageURI(uri)
                     bodyImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
                     bodyImageFilePath = File(getImageFilePath(uri))
-                    Log.w(
-                        "aaaaaaaaa",
-                        "bodyImageUri : " + bodyImageUri.toString()
-                    )
-                    Log.w(
-                        "aaaaaaaaa",
-                        "bodyImageFilePath : " + bodyImageFilePath
-                    )
                 } else {
                     Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
             BODY_CAMERA_REQUEST_CODE -> {
-                //startActivityForResult를 통해 기본카메라 앱으로 부터 받아온 사진 결과값
-                val bitmap: Bitmap
                 bodyImageFilePath = File(curPhotoPath)
-                if (Build.VERSION.SDK_INT < 28) { // 안드로이드 9.0(Pie)버전보다 낮은 경우
-                    bitmap = MediaStore.Images.Media.getBitmap(
-                        contentResolver,
-                        Uri.fromFile(bodyImageFilePath)
-                    )
-                    ivSignUpBody!!.setImageBitmap(bitmap)
-                } else {
-                    val decode = ImageDecoder.createSource(
-                        this.contentResolver,
-                        Uri.fromFile(bodyImageFilePath)
-                    )
-                    bitmap = ImageDecoder.decodeBitmap(decode)
-                    ivSignUpBody!!.setImageBitmap(bitmap)
-                }
+                ivSignUpBody!!.setImageURI(bodyImageUri)
             }
             else -> {
                 Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
@@ -708,6 +642,5 @@ class SignUpActivity : AppCompatActivity() {
         const val BODY_GALLERY_REQUEST_CODE = 2001
         const val BODY_CAMERA_REQUEST_CODE = 2002
     }
-
 }
 
