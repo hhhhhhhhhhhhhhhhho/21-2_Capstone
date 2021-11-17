@@ -42,7 +42,7 @@
 
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="com.nanioi.closetapplication.fileprovider"
+            android:authorities="com.nanioi.closetapplication"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
