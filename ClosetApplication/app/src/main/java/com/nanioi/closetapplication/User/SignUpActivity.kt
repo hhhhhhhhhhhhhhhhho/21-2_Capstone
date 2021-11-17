@@ -2,12 +2,8 @@ package com.nanioi.closetapplication.User
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ContentUris
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.ImageDecoder
-import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.*
 import androidx.appcompat.app.AppCompatActivity
@@ -17,11 +13,9 @@ import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
@@ -29,19 +23,10 @@ import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import com.nanioi.closetapplication.DBkey
 import com.nanioi.closetapplication.R
-import com.nanioi.closetapplication.User.utils.PathUtil
-import com.nanioi.closetapplication.closetApplication
-import com.nanioi.closetapplication.databinding.ActivityMainBinding
 import com.nanioi.closetapplication.databinding.ActivitySignUpBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.*
 import java.lang.Exception
 import java.net.Socket
@@ -209,6 +194,8 @@ class SignUpActivity : AppCompatActivity() {
                                                                     userInfo.bodyImageUri =
                                                                         bodyImageUri.toString()
 
+//todo 서버 보내기
+
 //                                                                    val fileBodyRequestBody =
 //                                                                        RequestBody.create(
 //                                                                            MediaType.parse("image/*"),
@@ -262,6 +249,7 @@ class SignUpActivity : AppCompatActivity() {
 //
 //                                                                        }
 //                                                                    )
+
                                                                     userDB.reference.child(DBkey.DB_USERS)
                                                                         .child(userUid)
                                                                         .setValue(userInfo)
@@ -462,7 +450,6 @@ class SignUpActivity : AppCompatActivity() {
             )
             .check()
     }
-
     //by 나연. 카메라 실행 함수 (21.10.23)
     private fun startCameraCapture(imageType: Int) {
         val state = Environment.getExternalStorageState()
@@ -477,11 +464,13 @@ class SignUpActivity : AppCompatActivity() {
                     photoFile?.also {
                         val photoURI: Uri = FileProvider.getUriForFile(
                             this,
-                            "$packageName.fileprovider",
+                            "$packageName",
                             it
                         )
-                        Log.w ( "aaaaaaaaa", "photoURI" + photoURI.toString())
-                        Log.w ( "aaaaaaaaa", "photoFile" + photoFile.toString())
+                        takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                        takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                        Log.w ( "aaaaaaaaa", "photoURI : " + photoURI.toString())
+                        Log.w ( "aaaaaaaaa", "photoFile : " + photoFile.toString())
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                         if (imageType == 1) {
                             faceImageUri = photoURI
@@ -605,6 +594,8 @@ class SignUpActivity : AppCompatActivity() {
                     ivSignUpFace!!.setImageURI(uri)
                     faceImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
                     faceImageFilePath = File(getImageFilePath(uri))
+                    Log.w ( "aaaaaaaaa", "faceImageUri : " + faceImageUri.toString())
+                    Log.w ( "aaaaaaaaa", "faceImageFilePath : " + faceImageFilePath.toString())
                 } else {
                     Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
                 }
@@ -619,6 +610,8 @@ class SignUpActivity : AppCompatActivity() {
                     ivSignUpBody!!.setImageURI(uri)
                     bodyImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
                     bodyImageFilePath = File(getImageFilePath(uri))
+                    Log.w ( "aaaaaaaaa", "bodyImageUri : " + bodyImageUri.toString())
+                    Log.w ( "aaaaaaaaa", "bodyImageFilePath : " + bodyImageFilePath.toString())
                 } else {
                     Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
                 }

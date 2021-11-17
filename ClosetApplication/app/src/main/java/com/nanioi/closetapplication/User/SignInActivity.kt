@@ -1,49 +1,28 @@
 package com.nanioi.closetapplication.User
 
-import android.Manifest
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
 import android.provider.MediaStore
 import android.text.Spannable
 import android.text.Spanned
 import android.text.method.LinkMovementMethod
 import android.text.style.ClickableSpan
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.text.htmlEncode
-import com.bumptech.glide.load.engine.bitmap_recycle.ByteArrayAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.database
-import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
-import com.nanioi.closetapplication.DBkey
 import com.nanioi.closetapplication.DBkey.Companion.DB_USERS
 import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.User.utils.LoginUserData
-import com.nanioi.closetapplication.closet.closetObject
-import com.nanioi.closetapplication.closetApplication
-import com.nanioi.closetapplication.styling.StylingFragment
-import com.nanioi.closetapplication.styling.stylingObject
-import okhttp3.MediaType
-import okhttp3.MultipartBody
-import okhttp3.RequestBody
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.*
-import java.lang.Exception
-import java.net.Socket
-
+import android.widget.Toast
 
 class SignInActivity : AppCompatActivity() {
 
@@ -97,12 +76,7 @@ class SignInActivity : AppCompatActivity() {
                                             dataSnapshot.child("kg").value.toString()
                                         LoginUserData.faceImageUri = Uri.parse(dataSnapshot.child("faceImageUri").value.toString())
                                         LoginUserData.bodyImageUri = Uri.parse(dataSnapshot.child("bodyImageUri").value.toString())
-                                        Log.w("aaaaaaaaa","LoginUserData : " + LoginUserData.faceImageUri.toString())
-                                        Log.w("aaaaaaaaa","LoginUserData : " + LoginUserData.bodyImageUri.toString())
-//                                        var f1 : String = getImageFilePath(LoginUserData.faceImageUri!!)
-//                                        Log.w("aaaaaaaaa","f1 : " + f1)
-//                                        var f2 : String = getImageFilePath(LoginUserData.bodyImageUri!!)
-//                                        Log.w("aaaaaaaaa","f2 : " + f2)
+
                                         if (LoginUserData.name != null) {
                                             Toast.makeText(
                                                 this@SignInActivity,
@@ -160,4 +134,5 @@ class SignInActivity : AppCompatActivity() {
         }
         return cursor.getString(columnIndex)
     }
+
 }
