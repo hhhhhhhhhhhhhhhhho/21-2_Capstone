@@ -10,9 +10,7 @@ import os.path as osp
 import numpy as np
 import json
 import copy
-
-#import cv2
-from google.colab.patches import cv2
+import cv2
 
 class ETRIDataset(data.Dataset):
     """Dataset for 2021 AI DATA(65)."""
