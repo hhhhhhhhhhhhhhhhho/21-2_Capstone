@@ -19,6 +19,10 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonParser
+import com.google.gson.JsonSerializer
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import com.nanioi.closetapplication.DBkey
@@ -194,65 +198,11 @@ class SignUpActivity : AppCompatActivity() {
                                                                     userInfo.bodyImageUri =
                                                                         bodyImageUri.toString()
 
-//todo 서버 보내기
-
-//                                                                    val fileBodyRequestBody =
-//                                                                        RequestBody.create(
-//                                                                            MediaType.parse("image/*"),
-//                                                                            bodyImageFilePath
-//                                                                        )
-//                                                                    val userBody =
-//                                                                        MultipartBody.Part.createFormData(
-//                                                                            "image",
-//                                                                            bodyImageFilePath.name,
-//                                                                            fileBodyRequestBody
-//                                                                        )
-//
-//                                                                    val fileFaceRequestBody =
-//                                                                        RequestBody.create(
-//                                                                            MediaType.parse("image/*"),
-//                                                                            faceImageFilePath
-//                                                                        )
-//                                                                    val userFace =
-//                                                                        MultipartBody.Part.createFormData(
-//                                                                            "image",
-//                                                                            faceImageFilePath.name,
-//                                                                            fileFaceRequestBody
-//                                                                        )
-//                                                                    ClientThread().start()
-
-//                                                                    (application as closetApplication).service.createAvatar(
-//                                                                        userFace,
-//                                                                        userBody
-//                                                                    ).enqueue(
-//                                                                        object : Callback<User> {
-//                                                                            override fun onResponse(
-//                                                                                call: Call<User>,
-//                                                                                response: Response<User>
-//                                                                            ) {
-//                                                                                if (response.isSuccessful) {
-//                                                                                    val avatar =
-//                                                                                        response.body()
-//                                                                                    userInfo.avatarImageUri = avatar!!.userAvatarImage
-//                                                                                }
-//                                                                            }
-//
-//                                                                            override fun onFailure(
-//                                                                                call: Call<User>,
-//                                                                                t: Throwable
-//                                                                            ) {
-//                                                                                Log.w(
-//                                                                                    "aaa",
-//                                                                                    "실패  : " + t.toString()
-//                                                                                )
-//                                                                            }
-//
-//                                                                        }
-//                                                                    )
-
                                                                     userDB.reference.child(DBkey.DB_USERS)
                                                                         .child(userUid)
                                                                         .setValue(userInfo)
+
+                                                                    ClientThread().start()
 
                                                                 }
                                                                 runOnUiThread {
@@ -347,21 +297,19 @@ class SignUpActivity : AppCompatActivity() {
             super.run()
             Log.w("aaaaaaaaa", "clientThread")
 
-            val host = "172.30.1.55"
-            val port = 9999
+            val host = "172.30.1.29"
+            val port = 12345
+
+            val user = auth.currentUser!!.uid
 
             try {
                 val socket = Socket(host, port)
                 val outstream = DataOutputStream(socket.getOutputStream())
-                outstream.writeUTF(faceImageFilePath.toString())
+                outstream.writeUTF(user)
 
                 outstream.flush()
-                Log.w("aaaaaaaaa", "Sent to server.")
+                Log.w("aaaaaaaaa", "Sent to server. user : " + user)
 
-                val instream = ObjectInputStream(socket.getInputStream())
-                val input: userObject = instream.readObject() as userObject
-                Log.w("aaaaaaaaa", "Received data: $input")
-                //todo 받은거 스타일링 탭 전송
             } catch (e: Exception) {
                 e.printStackTrace()
                 Log.w("aaaaaaaaa", "error" + e.toString())

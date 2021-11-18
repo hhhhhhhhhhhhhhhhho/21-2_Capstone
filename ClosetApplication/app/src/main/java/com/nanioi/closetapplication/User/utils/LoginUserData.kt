@@ -14,6 +14,6 @@ object LoginUserData {
     var kg: String? = null
     var faceImageUri: Uri? = null
     var bodyImageUri: Uri? = null
-    var avatarImageUri : Uri? = null
+    var avatarImageUri : String? = null
 }
 //todo avartar 사진 받아서 저장

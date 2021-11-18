@@ -38,8 +38,11 @@ import com.nanioi.closetapplication.User.utils.LoginUserData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import java.io.DataOutputStream
 import java.io.File
 import java.io.IOException
+import java.lang.Exception
+import java.net.Socket
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -301,13 +304,7 @@ class EditProfileActivity : AppCompatActivity() {
                     }
                 }
 
-            LoginUserData.email = tvEditUserDataEmail!!.text.toString()
-            LoginUserData.name = etEditUserDataName!!.text.toString()
-            LoginUserData.gender = if (rbEditUserDataMan?.isChecked == true) "남자" else "여자"
-            LoginUserData.cm = etEditUserDataCm!!.text.toString()
-            LoginUserData.kg = etEditUserDataKg!!.text.toString()
-            LoginUserData.faceImageUri = editFaceImageUri
-            LoginUserData.bodyImageUri = editBodyImageUri
+            ClientThread().start()
 
             val userModel = userModel()
             userModel.uid = userUid
@@ -318,6 +315,14 @@ class EditProfileActivity : AppCompatActivity() {
             userModel.kg = etEditUserDataKg!!.text.toString()
             userModel.faceImageUri = editFaceImageUri.toString()
             userModel.bodyImageUri = editBodyImageUri.toString()
+
+            LoginUserData.email = tvEditUserDataEmail!!.text.toString()
+            LoginUserData.name = etEditUserDataName!!.text.toString()
+            LoginUserData.gender = if (rbEditUserDataMan?.isChecked == true) "남자" else "여자"
+            LoginUserData.cm = etEditUserDataCm!!.text.toString()
+            LoginUserData.kg = etEditUserDataKg!!.text.toString()
+            LoginUserData.faceImageUri = editFaceImageUri
+            LoginUserData.bodyImageUri = editBodyImageUri
 
             userDB.reference.child(DB_USERS).child(userUid!!).removeValue()
             userDB.reference.child(DB_USERS).child(userUid!!).setValue(userModel).addOnCompleteListener {
@@ -667,7 +672,31 @@ class EditProfileActivity : AppCompatActivity() {
         const val BODY_CAMERA_REQUEST_CODE = 2002
     }
 
+    //소켓통신
+    inner class ClientThread() : Thread() {
+        override fun run() {
+            super.run()
+            Log.w("aaaaaaaaa", "clientThread")
 
+            val host = "172.30.1.29"
+            val port = 12345
+
+            val user = auth.currentUser!!.uid
+
+            try {
+                val socket = Socket(host, port)
+                val outstream = DataOutputStream(socket.getOutputStream())
+                outstream.writeUTF(user)
+
+                outstream.flush()
+                Log.w("aaaaaaaaa", "Sent to server.")
+
+            } catch (e: Exception) {
+                e.printStackTrace()
+                Log.w("aaaaaaaaa", "error" + e.toString())
+            }
+        }
+    }
 
     override fun onBackPressed() {
         super.onBackPressed()
