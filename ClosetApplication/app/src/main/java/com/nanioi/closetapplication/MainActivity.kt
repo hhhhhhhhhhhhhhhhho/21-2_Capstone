@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -16,6 +17,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -48,6 +50,7 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
     private var tvHeaderGender: TextView? = null
     private var tvHeaderCm: TextView? = null
     private var tvHeaderKg: TextView? = null
+    private var imgHeaderProfile : ImageView ?=null
 
     val homeFragment = HomeFragment()
     val stylingFragment = StylingFragment()
@@ -93,12 +96,16 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
         tvHeaderGender = navHeaderView!!.findViewById(R.id.tv_header_gender)
         tvHeaderCm = navHeaderView!!.findViewById(R.id.tv_header_cm)
         tvHeaderKg = navHeaderView!!.findViewById(R.id.tv_header_kg)
+        imgHeaderProfile = navHeaderView!!.findViewById(R.id.img_header_profile)
+
 
         tvHeaderName?.text = "이름 : ${LoginUserData.name}"
         tvHeaderEmail?.text = LoginUserData.email
         tvHeaderGender?.text = "성별 : ${LoginUserData.gender}"
         tvHeaderCm?.text = "키 : ${LoginUserData.cm}cm"
         tvHeaderKg?.text = "몸무게 : ${LoginUserData.kg}kg"
+        Glide.with(navHeaderView!!).load(LoginUserData.avatarImageUri).into(imgHeaderProfile!!)
+
         replaceFragment(homeFragment)
     }
 
@@ -158,6 +165,9 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
             LoginUserData.gender = null
             LoginUserData.cm = null
             LoginUserData.kg = null
+            LoginUserData.bodyImageUri = null
+            LoginUserData.faceImageUri = null
+            LoginUserData.avatarImageUri = null
 
             dialog.dismiss()
             startActivity(Intent(context, SignInActivity::class.java))

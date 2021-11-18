@@ -16,7 +16,9 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+import com.google.gson.Gson
 import com.nanioi.closetapplication.R
+import com.nanioi.closetapplication.User.UserFromServer
 import com.nanioi.closetapplication.User.userObject
 import com.nanioi.closetapplication.databinding.FragmentClosetBinding
 import com.nanioi.closetapplication.styling.stylingObject
@@ -176,6 +178,9 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
 
             val host = "172.30.1.55"
             val port = 9999
+
+            val gson = Gson()
+            //var jsonString = gson.toJson())
 
             for ( item in itemList ) {
                 try {

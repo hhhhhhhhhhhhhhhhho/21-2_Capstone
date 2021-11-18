@@ -23,6 +23,9 @@ import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.User.utils.LoginUserData
 import java.io.*
 import android.widget.Toast
+import com.bumptech.glide.Glide
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.ktx.storage
 
 class SignInActivity : AppCompatActivity() {
 
@@ -31,6 +34,7 @@ class SignInActivity : AppCompatActivity() {
     private var btnSignSignIn: Button? = null //로그인 버튼 변수 선언
     private var firebaseAuth: FirebaseAuth? = null //파이어 베이스 인스턴스 변수 선언
     private val userDB : FirebaseDatabase by lazy { Firebase.database}
+    private val storage : FirebaseStorage by lazy { Firebase.storage }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,6 +80,8 @@ class SignInActivity : AppCompatActivity() {
                                             dataSnapshot.child("kg").value.toString()
                                         LoginUserData.faceImageUri = Uri.parse(dataSnapshot.child("faceImageUri").value.toString())
                                         LoginUserData.bodyImageUri = Uri.parse(dataSnapshot.child("bodyImageUri").value.toString())
+                                        LoginUserData.avatarImageUri = dataSnapshot.child("avatarImageUri").value.toString()
+
 
                                         if (LoginUserData.name != null) {
                                             Toast.makeText(
@@ -123,16 +129,4 @@ class SignInActivity : AppCompatActivity() {
         signUpText.movementMethod = LinkMovementMethod.getInstance()
 
     }
-    //by나연. 이미지 파일 절대경로 알아내기 (21.11.14)
-    fun getImageFilePath(contentUri: Uri): String {
-        var columnIndex = 0
-        val projection = arrayOf(MediaStore.Images.Media.DATA) // 걸러내기
-        val cursor = contentResolver.query(contentUri, projection, null, null, null)
-        // list index 가르키기 , content 관리하는 resolver에 검색(query) 부탁
-        if (cursor!!.moveToFirst()) {
-            columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        }
-        return cursor.getString(columnIndex)
-    }
-
 }

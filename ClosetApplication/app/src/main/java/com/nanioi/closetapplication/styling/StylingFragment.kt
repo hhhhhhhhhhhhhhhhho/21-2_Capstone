@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -107,6 +108,10 @@ class StylingFragment : Fragment(layout.fragment_styling) {
     }
 
     private fun initViews() {
+        Glide.with(this)
+            .load(LoginUserData.avatarImageUri)
+            .into(binding.personImage)
+
         binding.selectItemTap.visibility = View.INVISIBLE
 
         //by 나연. 각 카테고리 버튼 클릭 시 item들 보여주는 RecyclerView 창 보여주기 (21.10.12)

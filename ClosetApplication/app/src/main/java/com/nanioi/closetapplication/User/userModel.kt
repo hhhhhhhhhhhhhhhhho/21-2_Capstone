@@ -8,8 +8,7 @@ data class userModel(
     var cm: String?,
     var kg: String?,
     var faceImageUri: String?,
-    var bodyImageUri: String?,
-    var avatarImageUri: String?
+    var bodyImageUri: String?
 ) {
-    constructor() : this(null,null,null,null,null,null,null,null,null)
+    constructor() : this(null,null,null,null,null,null,null,null)
 }

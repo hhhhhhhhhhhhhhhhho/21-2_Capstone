@@ -41,9 +41,9 @@ class MyPageFragment : Fragment(R.layout.fragment_mypage){
         binding.weight.text = "몸무게 : ${LoginUserData.kg} kg"
 
         //아바타 사진 넣기
-//        Glide.with(view)
-//            .load(LoginUserData.faceImageUri)
-//            .into(binding.mypagaAvatarImageView)
+        Glide.with(view)
+            .load(LoginUserData.avatarImageUri)
+            .into(binding.mypagaAvatarImageView)
 
 
         //by 나연. 프로필 수정 버튼 클릭 시 activity이동 (21.09.27)
@@ -76,6 +76,7 @@ class MyPageFragment : Fragment(R.layout.fragment_mypage){
                     dataSnapshot.child("kg").value.toString()
                 LoginUserData.faceImageUri = Uri.parse(dataSnapshot.child("faceImageUri").value.toString())
                 LoginUserData.bodyImageUri = Uri.parse(dataSnapshot.child("bodyImageUri").value.toString())
+                LoginUserData.avatarImageUri = dataSnapshot.child("avatarImageUri").value.toString()
             }
 
             override fun onCancelled(error: DatabaseError) {
