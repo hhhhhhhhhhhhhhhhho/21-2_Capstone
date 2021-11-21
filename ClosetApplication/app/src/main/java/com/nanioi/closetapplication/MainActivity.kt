@@ -23,8 +23,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.nanioi.closetapplication.User.LoginUserData
 import com.nanioi.closetapplication.User.SignInActivity
-import com.nanioi.closetapplication.User.utils.LoginUserData
 import com.nanioi.closetapplication.closet.ClosetFragment
 import com.nanioi.closetapplication.closet.ItemModel
 import com.nanioi.closetapplication.databinding.ActivityAddImageBinding

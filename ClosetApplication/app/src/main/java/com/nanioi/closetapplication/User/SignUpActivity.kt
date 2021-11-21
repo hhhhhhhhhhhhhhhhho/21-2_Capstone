@@ -47,10 +47,10 @@ class SignUpActivity : AppCompatActivity() {
     private var rgSignUpGender: RadioGroup? = null //성별 선택 그룹 변수 선언
     private var rbSignUpMan: RadioButton? = null //남자 선택 변수 선언
     private var rbSignUpWoman: RadioButton? = null //여자 선택 변수 선언
-    private var ivSignUpFace: ImageView? = null //얼굴 사진 뷰 변수 선언
-    private var ivSignUpBody: ImageView? = null //전신 사진 뷰 변수 선언
-    private var btnSignUpFace: Button? = null //얼굴 사진 버튼 변수 선언
-    private var btnSignUpBody: Button? = null //전신 사진 버튼 변수 선언
+    private var ivSignUpBody1: ImageView? = null //얼굴 사진 뷰 변수 선언
+    private var ivSignUpBody2: ImageView? = null //전신 사진 뷰 변수 선언
+    private var btnSignUpBody1: Button? = null //얼굴 사진 버튼 변수 선언
+    private var btnSignUpBody2: Button? = null //전신 사진 버튼 변수 선언
     private var btnSignUpPass: Button? = null //회원가입 완료 버튼 변수 선언
 
     private var faceImageUri: Uri? = null
@@ -79,10 +79,10 @@ class SignUpActivity : AppCompatActivity() {
         rbSignUpMan = binding.rbSignUpMan
         rbSignUpWoman = binding.rbSignUpWoman
 
-        ivSignUpFace = binding.ivSignUpFace
-        ivSignUpBody = binding.ivSignUpBody
-        btnSignUpFace = binding.btnSignUpFace
-        btnSignUpBody = binding.btnSignUpBody
+        ivSignUpBody1 = binding.ivSignUpBody1
+        ivSignUpBody2 = binding.ivSignUpBody2
+        btnSignUpBody1 = binding.btnSignUpBody1
+        btnSignUpBody2 = binding.btnSignUpBody2
         btnSignUpPass = binding.btnSignUpPass
 
         rgSignUpGender?.check(R.id.rb_sign_up_man) //아무것도 체크가 되어있지 않으면 안되니 기본적으로 남자로 체크되어 있음
@@ -282,11 +282,11 @@ class SignUpActivity : AppCompatActivity() {
                 ).show()
         }
 
-        btnSignUpFace?.setOnClickListener {
+        btnSignUpBody1?.setOnClickListener {
             showPictureUploadDialog(1)
         }
 
-        btnSignUpBody?.setOnClickListener {
+        btnSignUpBody2?.setOnClickListener {
             showPictureUploadDialog(2)
         }
     }
@@ -539,7 +539,7 @@ class SignUpActivity : AppCompatActivity() {
             FACE_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
                 val uri = data?.data
                 if (uri != null) {
-                    ivSignUpFace!!.setImageURI(uri)
+                    ivSignUpBody1!!.setImageURI(uri)
                     faceImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
                     faceImageFilePath = File(getImageFilePath(uri))
                     Log.w ( "aaaaaaaaa", "faceImageUri : " + faceImageUri.toString())
@@ -550,12 +550,12 @@ class SignUpActivity : AppCompatActivity() {
             }
             FACE_CAMERA_REQUEST_CODE -> {
                 faceImageFilePath = File(curPhotoPath)
-                ivSignUpFace!!.setImageURI(faceImageUri)
+                ivSignUpBody1!!.setImageURI(faceImageUri)
             }
             BODY_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
                 val uri = data?.data
                 if (uri != null) {
-                    ivSignUpBody!!.setImageURI(uri)
+                    ivSignUpBody2!!.setImageURI(uri)
                     bodyImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
                     bodyImageFilePath = File(getImageFilePath(uri))
                     Log.w ( "aaaaaaaaa", "bodyImageUri : " + bodyImageUri.toString())
@@ -566,7 +566,7 @@ class SignUpActivity : AppCompatActivity() {
             }
             BODY_CAMERA_REQUEST_CODE -> {
                 bodyImageFilePath = File(curPhotoPath)
-                ivSignUpBody!!.setImageURI(bodyImageUri)
+                ivSignUpBody2!!.setImageURI(bodyImageUri)
             }
             else -> {
                 Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()

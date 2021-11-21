@@ -1,10 +1,7 @@
 package com.nanioi.closetapplication.closet
 
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import androidx.core.view.isGone
@@ -15,16 +12,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
-import com.google.gson.Gson
+import com.nanioi.closetapplication.DBkey
+import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
-import com.nanioi.closetapplication.User.UserFromServer
-import com.nanioi.closetapplication.User.userObject
 import com.nanioi.closetapplication.databinding.FragmentClosetBinding
-import com.nanioi.closetapplication.styling.stylingObject
+import com.nanioi.closetapplication.styling.StylingFragment
 import java.io.*
-import java.lang.Exception
-import java.net.Socket
 
 
 class ClosetFragment : Fragment(R.layout.fragment_closet) {
@@ -45,7 +40,6 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
     }
 
     private val viewModel by viewModels<itemViewModel>()
-    //private val viewModel by lazy { ViewModelProvider(this).get(itemViewModel::class.java) }
 
     private val topItemList = mutableListOf<ItemModel>()
     private val pantsItemList = mutableListOf<ItemModel>()
@@ -55,7 +49,7 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
     private val auth: FirebaseAuth by lazy {
         Firebase.auth
     }
-
+    val db = FirebaseFirestore.getInstance()
     lateinit var itemList : List<ItemModel>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -68,7 +62,7 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
 
         Log.d("bb", "onViewCreated")
         initViews(view, fragmentClosetBinding)
-//        viewModel.fetchData()
+        viewModel.fetchData()
         observeState()
     }
 
@@ -167,52 +161,25 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
         Log.d("bb", "observe confirm")
 
         itemList = state.photoList
-        ClientThread().start()
-    }
-
-    //소켓통신
-    inner class ClientThread() : Thread() {
-        override fun run() {
-            super.run()
-            Log.w("aaaaaaaaa", "clientThread")
-
-            val host = "172.30.1.55"
-            val port = 9999
-
-            val gson = Gson()
-            //var jsonString = gson.toJson())
-
-            for ( item in itemList ) {
-                try {
-                    val socket = Socket(host, port)
-                    val outstream = DataOutputStream(socket.getOutputStream())
-                    val file : File = File(getImageFilePath(Uri.parse(item.imageUrl)))
-                    outstream.writeUTF(file.toString())
-
-                    outstream.flush()
-                    Log.w("aaaaaaaaa", "Sent to server.")
-
-                    val instream = ObjectInputStream(socket.getInputStream())
-                    val input: userObject = instream.readObject() as userObject
-                    Log.w("aaaaaaaaa", "Received data: $input")
-                    //todo 받은거 스타일링 탭 전송
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                    Log.w("aaaaaaaaa", "error" + e.toString())
+        val userId = auth.currentUser!!.uid
+        for ( item in itemList ) {
+            db.collection(DBkey.DB_SELECTED_ITEM).document(item.itemId.toString()).set(item)
+                .addOnSuccessListener { Log.d("aaaa", "모델 업로드 성공") }
+                .addOnFailureListener { e ->
+                    Log.d("aaaa", "Error writing document", e)
                 }
+        }
+        db.collection("Styling").addSnapshotListener{ snapshots,e->
+            // 오류 발생 시
+            if (e != null) {
+                Log.w("ClosetFragment", "Listen failed: $e")
+                return@addSnapshotListener
+            }
+            snapshots?.documentChanges?.forEach { doc ->
+                //LoginUserData.avatarImageUri = doc.~~~
+                (activity as MainActivity).replaceFragment(StylingFragment())
             }
         }
-    }
-    //by나연. 이미지 파일 절대경로 알아내기 (21.11.14)
-    fun getImageFilePath(contentUri: Uri): String {
-        var columnIndex = 0
-        val projection = arrayOf(MediaStore.Images.Media.DATA) // 걸러내기
-        val cursor = context?.contentResolver?.query(contentUri, projection, null, null, null)
-        // list index 가르키기 , content 관리하는 resolver에 검색(query) 부탁
-        if (cursor!!.moveToFirst()) {
-            columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        }
-        return cursor.getString(columnIndex)
     }
     override fun onResume() {
         super.onResume()

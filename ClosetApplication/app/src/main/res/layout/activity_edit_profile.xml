@@ -36,7 +36,7 @@
             android:gravity="center_vertical|end"
             android:maxLines="1"
             android:textColor="@color/black"
-            android:textSize="15sp"
+            android:textSize="17sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="@+id/userEmail"
             tools:text="nanioi2121121@naver.com" />
@@ -233,18 +233,18 @@
             tools:ignore="HardcodedText" />
 
         <ImageView
-            android:id="@+id/iv_edit_user_data_face"
+            android:id="@+id/iv_edit_user_data_body1"
             android:layout_width="180dp"
             android:layout_height="250dp"
             android:layout_marginTop="30dp"
             android:layout_marginEnd="5dp"
             android:background="@drawable/shadow2"
-            app:layout_constraintEnd_toStartOf="@+id/iv_edit_user_data_body"
+            app:layout_constraintEnd_toStartOf="@+id/iv_edit_user_data_body2"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/kg" />
 
         <Button
-            android:id="@+id/btn_edit_user_data_face"
+            android:id="@+id/btn_edit_user_data_body1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
@@ -252,33 +252,33 @@
             android:text="얼굴 사진 수정"
             android:textStyle="bold"
             android:layout_marginHorizontal="20dp"
-            app:layout_constraintEnd_toEndOf="@id/iv_edit_user_data_face"
-            app:layout_constraintStart_toStartOf="@id/iv_edit_user_data_face"
-            app:layout_constraintTop_toBottomOf="@id/iv_edit_user_data_face"
+            app:layout_constraintEnd_toEndOf="@id/iv_edit_user_data_body1"
+            app:layout_constraintStart_toStartOf="@id/iv_edit_user_data_body1"
+            app:layout_constraintTop_toBottomOf="@id/iv_edit_user_data_body1"
             tools:ignore="HardcodedText" />
 
         <ImageView
-            android:id="@+id/iv_edit_user_data_body"
+            android:id="@+id/iv_edit_user_data_body2"
             android:layout_width="180dp"
             android:layout_height="250dp"
             android:layout_marginStart="5dp"
             android:background="@drawable/shadow2"
-            app:layout_constraintBottom_toBottomOf="@id/iv_edit_user_data_face"
+            app:layout_constraintBottom_toBottomOf="@id/iv_edit_user_data_body1"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/iv_edit_user_data_face" />
+            app:layout_constraintStart_toEndOf="@id/iv_edit_user_data_body1" />
 
 
         <Button
-            android:id="@+id/btn_edit_user_data_body"
+            android:id="@+id/btn_edit_user_data_body2"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:backgroundTint="@color/main_color_2"
             android:text="전신 사진 수정"
             android:textStyle="bold"
             android:layout_marginHorizontal="20dp"
-            app:layout_constraintEnd_toEndOf="@id/iv_edit_user_data_body"
-            app:layout_constraintStart_toStartOf="@id/iv_edit_user_data_body"
-            app:layout_constraintTop_toTopOf="@+id/btn_edit_user_data_face"
+            app:layout_constraintEnd_toEndOf="@id/iv_edit_user_data_body2"
+            app:layout_constraintStart_toStartOf="@id/iv_edit_user_data_body2"
+            app:layout_constraintTop_toTopOf="@+id/btn_edit_user_data_body1"
             tools:ignore="HardcodedText" />
 
 
@@ -294,7 +294,7 @@
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/btn_edit_user_data_body"
+            app:layout_constraintTop_toBottomOf="@id/btn_edit_user_data_body2"
             tools:ignore="HardcodedText" />
 
         <androidx.appcompat.widget.AppCompatButton

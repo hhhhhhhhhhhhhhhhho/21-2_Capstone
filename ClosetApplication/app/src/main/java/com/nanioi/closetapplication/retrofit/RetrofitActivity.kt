@@ -4,8 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import com.nanioi.closetapplication.User.User
-import com.nanioi.closetapplication.User.UserFromServer
-import com.nanioi.closetapplication.databinding.ActivityMainBinding
 import com.nanioi.closetapplication.databinding.ActivityRetrofitBinding
 import retrofit2.Call
 import retrofit2.Callback
