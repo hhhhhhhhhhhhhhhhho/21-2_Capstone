@@ -34,7 +34,7 @@ import com.nanioi.closetapplication.DBkey.Companion.DB_USERS
 import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.User.SignInActivity
 import com.nanioi.closetapplication.User.userModel
-import com.nanioi.closetapplication.User.utils.LoginUserData
+import com.nanioi.closetapplication.User.LoginUserData
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -59,10 +59,10 @@ class EditProfileActivity : AppCompatActivity() {
     private var rgEditUserDataGender: RadioGroup? = null //성별 선택 그룹 변수 선언
     private var rbEditUserDataMan: RadioButton? = null //남자 선택 변수 선언
     private var rbEditUserDataWoman: RadioButton? = null //여자 선택 변수 선언
-    private var ivEditUserDataFace: ImageView? = null //얼굴 사진 뷰 변수 선언
-    private var ivEditUserDataBody: ImageView? = null //전신 사진 뷰 변수 선언
-    private var btnEditUserDataFace: Button? = null //얼굴 사진 버튼 변수 선언
-    private var btnEditUserDataBody: Button? = null //전신 사진 버튼 변수 선언
+    private var ivEditUserDataBody1: ImageView? = null //얼굴 사진 뷰 변수 선언
+    private var ivEditUserDataBody2: ImageView? = null //전신 사진 뷰 변수 선언
+    private var btnEditUserDataBody1: Button? = null //얼굴 사진 버튼 변수 선언
+    private var btnEditUserDataBody2: Button? = null //전신 사진 버튼 변수 선언
     private var btnEditUserDataPass: Button? = null //회원정보 수정 버튼 변수 선언
     private var btnEditUserDataSignOut: Button? = null //회원탈퇴 버튼 변수 선언
 
@@ -88,10 +88,10 @@ class EditProfileActivity : AppCompatActivity() {
         rgEditUserDataGender = findViewById(R.id.rg_edit_user_data_gender)
         rbEditUserDataMan = findViewById(R.id.rb_edit_user_data_man)
         rbEditUserDataWoman = findViewById(R.id.rb_edit_user_data_woman)
-        ivEditUserDataFace = findViewById(R.id.iv_edit_user_data_face)
-        ivEditUserDataBody = findViewById(R.id.iv_edit_user_data_body)
-        btnEditUserDataFace = findViewById(R.id.btn_edit_user_data_face)
-        btnEditUserDataBody = findViewById(R.id.btn_edit_user_data_body)
+        ivEditUserDataBody1 = findViewById(R.id.iv_edit_user_data_body1)
+        ivEditUserDataBody2 = findViewById(R.id.iv_edit_user_data_body2)
+        btnEditUserDataBody1 = findViewById(R.id.btn_edit_user_data_body1)
+        btnEditUserDataBody2 = findViewById(R.id.btn_edit_user_data_body2)
         btnEditUserDataPass = findViewById(R.id.btn_edit_user_data_pass)
         btnEditUserDataSignOut = findViewById(R.id.btn_edit_user_data_sign_out)
 
@@ -113,11 +113,11 @@ class EditProfileActivity : AppCompatActivity() {
 
         Glide.with(this@EditProfileActivity)
             .load(LoginUserData.faceImageUri)
-            .into(ivEditUserDataFace!!)
+            .into(ivEditUserDataBody1!!)
 
         Glide.with(this@EditProfileActivity)
             .load(LoginUserData.bodyImageUri)
-            .into(ivEditUserDataBody!!)
+            .into(ivEditUserDataBody2!!)
 
 
         btnEditUserDataPass?.setOnClickListener {
@@ -161,11 +161,11 @@ class EditProfileActivity : AppCompatActivity() {
             deleteUserData()
         }
 
-        btnEditUserDataFace?.setOnClickListener {
+        btnEditUserDataBody1?.setOnClickListener {
             showPictureUploadDialog(1)
         }
 
-        btnEditUserDataBody?.setOnClickListener {
+        btnEditUserDataBody2?.setOnClickListener {
             showPictureUploadDialog(2)
         }
     }
@@ -603,7 +603,7 @@ class EditProfileActivity : AppCompatActivity() {
             FACE_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
                 val uri = data?.data
                 if (uri != null) {
-                    ivEditUserDataFace!!.setImageURI(uri)
+                    ivEditUserDataBody1!!.setImageURI(uri)
                     editFaceImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
                 } else {
                     Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
@@ -618,20 +618,20 @@ class EditProfileActivity : AppCompatActivity() {
                         contentResolver,
                         Uri.fromFile(file)
                     )
-                    ivEditUserDataFace!!.setImageBitmap(bitmap)
+                    ivEditUserDataBody1!!.setImageBitmap(bitmap)
                 } else {
                     val decode = ImageDecoder.createSource(
                         this.contentResolver,
                         Uri.fromFile(file)
                     )
                     bitmap = ImageDecoder.decodeBitmap(decode)
-                    ivEditUserDataFace!!.setImageBitmap(bitmap)
+                    ivEditUserDataBody1!!.setImageBitmap(bitmap)
                 }
             }
             BODY_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
                 val uri = data?.data
                 if (uri != null) {
-                    ivEditUserDataBody!!.setImageURI(uri)
+                    ivEditUserDataBody2!!.setImageURI(uri)
                     editBodyImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
                 } else {
                     Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
@@ -646,14 +646,14 @@ class EditProfileActivity : AppCompatActivity() {
                         contentResolver,
                         Uri.fromFile(file)
                     )
-                    ivEditUserDataBody!!.setImageBitmap(bitmap)
+                    ivEditUserDataBody2!!.setImageBitmap(bitmap)
                 } else {
                     val decode = ImageDecoder.createSource(
                         this.contentResolver,
                         Uri.fromFile(file)
                     )
                     bitmap = ImageDecoder.decodeBitmap(decode)
-                    ivEditUserDataBody!!.setImageBitmap(bitmap)
+                    ivEditUserDataBody2!!.setImageBitmap(bitmap)
                 }
             }
             else -> {

@@ -19,7 +19,7 @@ import com.google.firebase.database.ValueEventListener
 import com.nanioi.closetapplication.DBkey
 import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
-import com.nanioi.closetapplication.User.utils.LoginUserData
+import com.nanioi.closetapplication.User.LoginUserData
 import com.nanioi.closetapplication.databinding.FragmentClosetBinding
 import com.nanioi.closetapplication.databinding.FragmentMypageBinding
 import com.nanioi.closetapplication.databinding.FragmentStylingBinding

@@ -1,7 +1,6 @@
 package com.nanioi.closetapplication.retrofit
 
 import com.nanioi.closetapplication.User.User
-import com.nanioi.closetapplication.User.UserFromServer
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import retrofit2.Call

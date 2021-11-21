@@ -5,36 +5,28 @@ import android.content.Intent
 import android.net.Uri
 import android.os.AsyncTask
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.nanioi.closetapplication.DBkey
 import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.R.layout
-import com.nanioi.closetapplication.User.userObject
-import com.nanioi.closetapplication.User.utils.LoginUserData
+import com.nanioi.closetapplication.User.LoginUserData
 import com.nanioi.closetapplication.closet.*
-import com.nanioi.closetapplication.databinding.BottomSheetBinding
 import com.nanioi.closetapplication.databinding.FragmentStylingBinding
 import com.nanioi.closetapplication.styling.recommend.RecommendItemListAdapter
 import com.nanioi.closetapplication.styling.recommend.RecommendItemModel
 import com.nanioi.closetapplication.styling.recommend.parsingData
 import com.nanioi.closetapplication.styling.recommend.readFeed
-import java.io.DataOutputStream
-import java.io.File
-import java.io.ObjectInputStream
-import java.io.ObjectOutputStream
-import java.lang.Exception
-import java.net.Socket
 
 class StylingFragment : Fragment(layout.fragment_styling) {
 
@@ -59,11 +51,11 @@ class StylingFragment : Fragment(layout.fragment_styling) {
     private lateinit var shoesItemList: List<ItemModel>
 
     private lateinit var binding: FragmentStylingBinding
-
+    var keyword: String = "의류"
     private val auth: FirebaseAuth by lazy {
         Firebase.auth
     }
-
+    val db = FirebaseFirestore.getInstance()
     // bottomSheet 추천리스트
     private val recyclerAdapter = RecommendItemListAdapter(itemClicked = { item ->
         var intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.DetailPageUrl))
@@ -87,6 +79,10 @@ class StylingFragment : Fragment(layout.fragment_styling) {
             adapter = recyclerAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
+        when (LoginUserData.gender) {
+            "남자" -> keyword = "20대 남성의류"
+            "여자" -> keyword = "20대 여성의류"
+        }
         XmlParsingTask().execute()
     }
 
@@ -97,12 +93,6 @@ class StylingFragment : Fragment(layout.fragment_styling) {
         }
 
         override fun doInBackground(vararg params: Any?): List<RecommendItemModel> { // xml 파싱할때 여기서 데이터 받아와 reedFeed 부분은 저 XmlParsingTask 파일보면 있으
-            var keyword: String = "의류"
-            when (LoginUserData.gender) {
-                "남자" -> keyword = "20대 남성의류"
-                "여자" -> keyword = "20대 여성의류"
-            }
-
             return readFeed(parsingData(keyword))
         }
     }
@@ -120,6 +110,11 @@ class StylingFragment : Fragment(layout.fragment_styling) {
                 binding.selectItemTap.visibility = View.VISIBLE
                 initRecyclerView(0)
             }
+            when (LoginUserData.gender) {
+                "남자" -> keyword = "20대 남성 상의"
+                "여자" -> keyword = "20대 여성 상의"
+            }
+            XmlParsingTask().execute()
         }
         binding.pantsButton.setOnClickListener {
             Log.d("aaa", "pantButton")
@@ -127,18 +122,33 @@ class StylingFragment : Fragment(layout.fragment_styling) {
                 initRecyclerView(1)
                 binding.selectItemTap.visibility = View.VISIBLE
             }
+            when (LoginUserData.gender) {
+                "남자" -> keyword = "20대 남성 하의"
+                "여자" -> keyword = "20대 여성 하의"
+            }
+            XmlParsingTask().execute()
         }
         binding.accessoryButton.setOnClickListener {
             activity?.let {
                 initRecyclerView(2)
                 binding.selectItemTap.visibility = View.VISIBLE
             }
+            when (LoginUserData.gender) {
+                "남자" -> keyword = "20대 남성 액세서리"
+                "여자" -> keyword = "20대 여성 액세서리"
+            }
+            XmlParsingTask().execute()
         }
         binding.shoesButton.setOnClickListener {
             activity?.let {
                 binding.selectItemTap.visibility = View.VISIBLE
                 initRecyclerView(3)
             }
+            when (LoginUserData.gender) {
+                "남자" -> keyword = "20대 남성 신발"
+                "여자" -> keyword = "20대 여성 신발"
+            }
+            XmlParsingTask().execute()
         }
         binding.backButton.setOnClickListener {
             activity?.let {
@@ -204,55 +214,37 @@ class StylingFragment : Fragment(layout.fragment_styling) {
 
     private fun handleConfirm(state: stylingState.Confirm) {
         Log.d("aaa", "observe confirm")
-//        setResult(Activity.RESULT_OK, Intent().apply {
-//            putExtra(URI_LIST_KEY, ArrayList(state.photoList.map { it.uri }))
-//        })
-//        finish()
+
         selectedItem = state.photo
-        ClientThread().start()
-    }
+        val userId = auth.currentUser!!.uid
 
-    //소켓통신
-    inner class ClientThread() : Thread() {
-        override fun run() {
-            super.run()
-            Log.w("aaaaaaaaa", "clientThread")
-
-            val host = "172.30.1.55"
-            val port = 9999
-
-            try {
-                val socket = Socket(host, port)
-                val outstream = DataOutputStream(socket.getOutputStream())
-                val file: File = File(getImageFilePath(Uri.parse(selectedItem.imageUrl)))
-                outstream.writeUTF(file.toString())
-
-                outstream.flush()
-                Log.w("aaaaaaaaa", "Sent to server.")
-
-                val instream = ObjectInputStream(socket.getInputStream())
-                val input: userObject = instream.readObject() as userObject
-                Log.w("aaaaaaaaa", "Received data: $input")
-                //todo 받은거 스타일링 탭 전송
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.w("aaaaaaaaa", "error" + e.toString())
+        db.collection(DBkey.DB_SELECTED_ITEM).document(selectedItem.itemId.toString()).set(selectedItem)
+            .addOnSuccessListener { Log.d("aaaa", "모델 업로드 성공")
+                showProgress()}
+            .addOnFailureListener { e ->
+                Log.d("aaaa", "Error writing document", e)
             }
+
+        db.collection("Styling").addSnapshotListener { snapshots, e ->
+
+            // 오류 발생 시
+            if (e != null) {
+                Log.w("StylingFragment", "Listen failed: $e")
+                return@addSnapshotListener
+            }
+            snapshots?.documentChanges?.forEach { doc ->
+                //LoginUserData.avatarImageUri = doc.~~~
+                hideProgress()
+            }
+
         }
     }
-
-    //by나연. 이미지 파일 절대경로 알아내기 (21.11.14)
-    fun getImageFilePath(contentUri: Uri): String {
-        var columnIndex = 0
-        val projection = arrayOf(MediaStore.Images.Media.DATA) // 걸러내기
-        val cursor = context?.contentResolver?.query(contentUri, projection, null, null, null)
-        // list index 가르키기 , content 관리하는 resolver에 검색(query) 부탁
-        if (cursor!!.moveToFirst()) {
-            columnIndex = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        }
-        return cursor.getString(columnIndex)
+    private fun showProgress() {
+        binding.progressBar.isVisible = true
     }
-
+    private fun hideProgress() {
+        binding.progressBar.isVisible = false
+    }
     override fun onResume() {
         super.onResume()
         viewModel.fetchData()

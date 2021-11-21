@@ -20,7 +20,6 @@ import com.google.firebase.ktx.Firebase
 import com.nanioi.closetapplication.DBkey.Companion.DB_USERS
 import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
-import com.nanioi.closetapplication.User.utils.LoginUserData
 import java.io.*
 import android.widget.Toast
 import com.bumptech.glide.Glide
