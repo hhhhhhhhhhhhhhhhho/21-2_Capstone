@@ -25,6 +25,16 @@ import android.widget.Toast
 import com.bumptech.glide.Glide
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
+import com.nanioi.closetapplication.User.userDBkey.*
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_AVATAR_FRONT
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_BODY_BACK
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_BODY_FRONT
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_EMAIL
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_GENDER
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_HEIGHT
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_NAME
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_UID
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_WEIGHT
 
 class SignInActivity : AppCompatActivity() {
 
@@ -33,7 +43,6 @@ class SignInActivity : AppCompatActivity() {
     private var btnSignSignIn: Button? = null //로그인 버튼 변수 선언
     private var firebaseAuth: FirebaseAuth? = null //파이어 베이스 인스턴스 변수 선언
     private val userDB : FirebaseDatabase by lazy { Firebase.database}
-    private val storage : FirebaseStorage by lazy { Firebase.storage }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,21 +75,20 @@ class SignInActivity : AppCompatActivity() {
                                 userDB.reference.child(DB_USERS).child(user).addValueEventListener(object : ValueEventListener {
                                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                                         LoginUserData.uid =
-                                            dataSnapshot.child("uid").value.toString()
+                                            dataSnapshot.child(DB_UID).value.toString()
                                         LoginUserData.email =
-                                            dataSnapshot.child("email").value.toString()
+                                            dataSnapshot.child(DB_EMAIL).value.toString()
                                         LoginUserData.name =
-                                            dataSnapshot.child("name").value.toString()
+                                            dataSnapshot.child(DB_NAME).value.toString()
                                         LoginUserData.gender =
-                                            dataSnapshot.child("gender").value.toString()
+                                            dataSnapshot.child(DB_GENDER).value.toString()
                                         LoginUserData.cm =
-                                            dataSnapshot.child("cm").value.toString()
+                                            dataSnapshot.child(DB_HEIGHT).value.toString()
                                         LoginUserData.kg =
-                                            dataSnapshot.child("kg").value.toString()
-                                        LoginUserData.faceImageUri = Uri.parse(dataSnapshot.child("faceImageUri").value.toString())
-                                        LoginUserData.bodyImageUri = Uri.parse(dataSnapshot.child("bodyImageUri").value.toString())
-                                        LoginUserData.avatarImageUri = dataSnapshot.child("avatarImageUri").value.toString()
-
+                                            dataSnapshot.child(DB_WEIGHT).value.toString()
+                                        LoginUserData.body_front_ImageUri = Uri.parse(dataSnapshot.child(DB_BODY_FRONT).value.toString())
+                                        LoginUserData.body_back_ImageUri = Uri.parse(dataSnapshot.child(DB_BODY_BACK).value.toString())
+                                        LoginUserData.avatar_back_ImageUri = dataSnapshot.child(DB_AVATAR_FRONT).value.toString()
 
                                         if (LoginUserData.name != null) {
                                             Toast.makeText(

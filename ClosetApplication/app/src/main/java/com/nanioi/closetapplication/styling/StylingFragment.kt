@@ -99,7 +99,7 @@ class StylingFragment : Fragment(layout.fragment_styling) {
 
     private fun initViews() {
         Glide.with(this)
-            .load(LoginUserData.avatarImageUri)
+            .load(LoginUserData.avatar_front_ImageUri)
             .into(binding.personImage)
 
         binding.selectItemTap.visibility = View.INVISIBLE

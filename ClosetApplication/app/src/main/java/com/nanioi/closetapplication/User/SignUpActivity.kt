@@ -27,6 +27,8 @@ import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import com.nanioi.closetapplication.DBkey
 import com.nanioi.closetapplication.R
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_BODY_BACK
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_BODY_FRONT
 import com.nanioi.closetapplication.databinding.ActivitySignUpBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -53,12 +55,14 @@ class SignUpActivity : AppCompatActivity() {
     private var btnSignUpBody2: Button? = null //전신 사진 버튼 변수 선언
     private var btnSignUpPass: Button? = null //회원가입 완료 버튼 변수 선언
 
-    private var faceImageUri: Uri? = null
-    private var bodyImageUri: Uri? = null
-    lateinit var faceImageFilePath: File
-    lateinit var bodyImageFilePath: File
-
+    private var body1ImageUri: Uri? = null
+    private var body2ImageUri: Uri? = null
+    private var body_front_uri: Uri? = null
+    private var body_back_uri: Uri? = null
+    lateinit var body1ImageFilePath: File
+    lateinit var body2ImageFilePath: File
     private lateinit var curPhotoPath: String
+
     private val storage: FirebaseStorage by lazy { Firebase.storage }
     private val auth: FirebaseAuth by lazy { Firebase.auth }
     private val userDB: FirebaseDatabase by lazy { Firebase.database }
@@ -95,8 +99,8 @@ class SignUpActivity : AppCompatActivity() {
                             if (etSignUpPassword!!.text.toString() == etSignUpPasswordCheck?.text.toString())
                                 if (etSignUpCm?.text!!.isNotEmpty())
                                     if (etSignUpKg?.text!!.isNotEmpty())
-                                        if (faceImageUri != null)
-                                            if (bodyImageUri != null) {
+                                        if (body1ImageUri != null)
+                                            if (body2ImageUri != null) {
                                                 Toast.makeText(
                                                     this@SignUpActivity,
                                                     "회원가입 중...",
@@ -112,98 +116,39 @@ class SignUpActivity : AppCompatActivity() {
                                                                 val user = auth.currentUser
                                                                 user?.let {
                                                                     val userUid = user.uid
-                                                                    //uploadImage(userUid)
-                                                                    val faceImageFileName =
-                                                                        userUid + "_img_face.jpg"
-                                                                    val bodyImageFileName =
-                                                                        userUid + "_img_body.jpg"
-                                                                    storage.reference.child("user/face")
-                                                                        .child(faceImageFileName)
-                                                                        .putFile(faceImageUri!!)
-                                                                        .addOnCompleteListener { // 성공했는지 확인 리스너
-                                                                            if (it.isSuccessful) { // 성공시 -> 업로드 완료
-                                                                                storage.reference.child(
-                                                                                    "user/face"
-                                                                                ).child(
-                                                                                    faceImageFileName
-                                                                                )
-                                                                                    .downloadUrl
-                                                                                    .addOnSuccessListener {
-                                                                                        Toast.makeText(
-                                                                                            this@SignUpActivity,
-                                                                                            "얼굴사진 업로드 성공",
-                                                                                            Toast.LENGTH_SHORT
-                                                                                        ).show()
-                                                                                    }
-                                                                                    .addOnFailureListener {
-                                                                                        Log.d(
-                                                                                            "aaaa",
-                                                                                            "얼굴사진 업로드 실패"
-                                                                                        )
-                                                                                    }
-                                                                            } else { // 업로드 실패
-                                                                                Toast.makeText(
-                                                                                    this@SignUpActivity,
-                                                                                    "얼굴사진 업로드에 실패했습니다.",
-                                                                                    Toast.LENGTH_SHORT
-                                                                                ).show()
-                                                                            }
-                                                                        }
-                                                                    storage.reference.child("user/body")
-                                                                        .child(bodyImageFileName)
-                                                                        .putFile(bodyImageUri!!)
-                                                                        .addOnCompleteListener { // 성공했는지 확인 리스너
-                                                                            if (it.isSuccessful) { // 성공시 -> 업로드 완료
-                                                                                storage.reference.child(
-                                                                                    "user/body"
-                                                                                ).child(
-                                                                                    bodyImageFileName
-                                                                                )
-                                                                                    .downloadUrl
-                                                                                    .addOnSuccessListener {
-                                                                                        Toast.makeText(
-                                                                                            this@SignUpActivity,
-                                                                                            "전신사진 업로드 성공",
-                                                                                            Toast.LENGTH_SHORT
-                                                                                        ).show()
-                                                                                    }
-                                                                                    .addOnFailureListener {
-                                                                                        Toast.makeText(
-                                                                                            this@SignUpActivity,
-                                                                                            "전신사진 업로드에 실패했습니다.",
-                                                                                            Toast.LENGTH_SHORT
-                                                                                        ).show()
-                                                                                    }
-                                                                            } else { // 업로드 실패
-                                                                                Toast.makeText(
-                                                                                    this@SignUpActivity,
-                                                                                    "전신사진 업로드에 실패했습니다.",
-                                                                                    Toast.LENGTH_SHORT
-                                                                                ).show()
-                                                                            }
-                                                                        }
-                                                                    val userInfo = userModel()
-                                                                    userInfo.uid = userUid
-                                                                    userInfo.email = user!!.email
-                                                                    userInfo.name =
-                                                                        etSignUpName!!.text.toString()
-                                                                    userInfo.gender =
-                                                                        if (rbSignUpMan?.isChecked == true) "남자" else "여자"
-                                                                    userInfo.cm =
-                                                                        etSignUpCm!!.text.toString()
-                                                                    userInfo.kg =
-                                                                        etSignUpKg!!.text.toString()
-                                                                    userInfo.faceImageUri =
-                                                                        faceImageUri.toString()
-                                                                    userInfo.bodyImageUri =
-                                                                        bodyImageUri.toString()
 
-                                                                    userDB.reference.child(DBkey.DB_USERS)
-                                                                        .child(userUid)
-                                                                        .setValue(userInfo)
+                                                                    val body1ImageFileName =
+                                                                        userUid + "_img_body1.jpg"
+                                                                    val  body2ImageFileName =
+                                                                        userUid + "_img_body2.jpg"
 
-                                                                    ClientThread().start()
+                                                                    uploadImage(body2ImageFileName,
+                                                                        body2ImageUri,2,
+                                                                        successHandler = { uri ->
+                                                                            body2ImageUri  = Uri.parse(uri)
+                                                                        },
+                                                                        errorHandler = {
+                                                                            Toast.makeText(
+                                                                                this@SignUpActivity,
+                                                                                "전신 사진(앞) 업로드에 실패했습니다.",
+                                                                                Toast.LENGTH_SHORT
+                                                                            )
+                                                                                .show()
+                                                                        })
 
+                                                                    uploadImage(body1ImageFileName,
+                                                                        body1ImageUri,1,
+                                                                        successHandler = { uri ->
+                                                                            uploadUserDB(userUid, user.email,uri)
+                                                                        },
+                                                                        errorHandler = {
+                                                                            Toast.makeText(
+                                                                                this@SignUpActivity,
+                                                                                "전신 사진(앞) 업로드에 실패했습니다.",
+                                                                                Toast.LENGTH_SHORT
+                                                                            )
+                                                                                .show()
+                                                                        })
                                                                 }
                                                                 runOnUiThread {
                                                                     Toast.makeText(
@@ -228,13 +173,13 @@ class SignUpActivity : AppCompatActivity() {
                                             } else
                                                 Toast.makeText(
                                                     this@SignUpActivity,
-                                                    "전신 사진을 업로드 해 주세요.",
+                                                    "전신 사진(뒤)을 업로드 해 주세요.",
                                                     Toast.LENGTH_SHORT
                                                 ).show()
                                         else
                                             Toast.makeText(
                                                 this@SignUpActivity,
-                                                "얼굴 사진을 업로드 해 주세요.",
+                                                "전신 사진(앞)을 업로드 해 주세요.",
                                                 Toast.LENGTH_SHORT
                                             ).show()
                                     else
@@ -291,30 +236,68 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    //소켓통신
-    inner class ClientThread() : Thread() {
-        override fun run() {
-            super.run()
-            Log.w("aaaaaaaaa", "clientThread")
+    private fun uploadUserDB(userUid: String, email: String?, uri: String) {
+        val userInfo = userModel()
+        userInfo.uid = userUid
+        userInfo.email = email
+        userInfo.name =
+            etSignUpName!!.text.toString()
+        userInfo.gender =
+            if (rbSignUpMan?.isChecked == true) "남자" else "여자"
+        userInfo.cm =
+            etSignUpCm!!.text.toString()
+        userInfo.kg =
+            etSignUpKg!!.text.toString()
+        userInfo.body_front_imageUri = uri
+        userInfo.body_back_imageUri = body2ImageUri.toString()
 
-            val host = "172.30.1.29"
-            val port = 12345
-
-            val user = auth.currentUser!!.uid
-
-            try {
-                val socket = Socket(host, port)
-                val outstream = DataOutputStream(socket.getOutputStream())
-                outstream.writeUTF(user)
-
-                outstream.flush()
-                Log.w("aaaaaaaaa", "Sent to server. user : " + user)
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.w("aaaaaaaaa", "error" + e.toString())
+        userDB.reference.child(DBkey.DB_USERS)
+            .child(userUid)
+            .setValue(userInfo)
+            .addOnCompleteListener {
+                Log.w(
+                    "aaaaaaaaa",
+                    "user정보 업로드 성공! "
+                )
+            }.addOnFailureListener {
+                Log.w(
+                    "aaaaaaaaa",
+                    "user정보 업로드 실패! " + it.toString()
+                )
             }
-        }
+    }
+
+    private fun uploadImage(
+        fileName: String,
+        ImageUri: Uri?,
+        type : Int,
+        successHandler: (String) -> Unit,
+        errorHandler: () -> Unit
+    ) {
+        var path : String ? =null
+        if(type==1)
+            path = "user/body1"
+        else
+            path = "user/body2"
+        storage.reference.child( path)
+            .child(fileName)
+            .putFile(ImageUri!!)
+            .addOnCompleteListener { // 성공했는지 확인 리스너
+                if (it.isSuccessful) { // 성공시 -> 업로드 완료
+                    storage.reference.child( path).child(
+                        fileName
+                    )
+                        .downloadUrl
+                        .addOnSuccessListener { uri ->
+                            successHandler(uri.toString())
+                        }
+                        .addOnFailureListener {
+                            errorHandler()
+                        }
+                } else { // 업로드 실패
+                    errorHandler()
+                }
+            }
     }
 
     //by나연. 이미지 파일 절대경로 알아내기 (21.11.14)
@@ -363,12 +346,12 @@ class SignUpActivity : AppCompatActivity() {
                 if (imageType == 1) {
                     requestPermissions(
                         arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                        FACE_PERMISSION_REQUEST_CODE
+                        BODY1_PERMISSION_REQUEST_CODE
                     )
                 } else {
                     requestPermissions(
                         arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                        BODY_PERMISSION_REQUEST_CODE
+                        BODY2_PERMISSION_REQUEST_CODE
                     )
                 }
             }
@@ -398,10 +381,11 @@ class SignUpActivity : AppCompatActivity() {
             )
             .check()
     }
+
     //by 나연. 카메라 실행 함수 (21.10.23)
     private fun startCameraCapture(imageType: Int) {
         val state = Environment.getExternalStorageState()
-        if(Environment.MEDIA_MOUNTED.equals(state)){
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
             Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
                 takePictureIntent.resolveActivity(packageManager)?.also {
                     val photoFile: File? = try {
@@ -417,27 +401,27 @@ class SignUpActivity : AppCompatActivity() {
                         )
                         takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                         takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                        Log.w ( "aaaaaaaaa", "photoURI : " + photoURI.toString())
-                        Log.w ( "aaaaaaaaa", "photoFile : " + photoFile.toString())
+                        Log.w("aaaaaaaaa", "photoURI : " + photoURI.toString())
+                        Log.w("aaaaaaaaa", "photoFile : " + photoFile.toString())
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                         if (imageType == 1) {
-                            faceImageUri = photoURI
+                            body1ImageUri = photoURI
                             startActivityForResult(
                                 takePictureIntent,
-                                FACE_CAMERA_REQUEST_CODE
+                                BODY1_CAMERA_REQUEST_CODE
                             )
                         } else {
-                            bodyImageUri = photoURI
+                            body2ImageUri = photoURI
                             startActivityForResult(
                                 takePictureIntent,
-                                BODY_CAMERA_REQUEST_CODE
+                                BODY2_CAMERA_REQUEST_CODE
                             )
                         }
                     }
                 }
             }
-        }else{
-            Log.w ( "aaaaaaa", "저장공간에 접근 불가능")
+        } else {
+            Log.w("aaaaaaa", "저장공간에 접근 불가능")
         }
         //기본 카메라 앱 실행
 
@@ -446,8 +430,9 @@ class SignUpActivity : AppCompatActivity() {
     //by 나연. 이미지 파일 생성 함수 (21.10.23)
     private fun createImageFile(): File? {
         val timestamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        var imageFile : File ? =null
-        val storageDir: File? = File(Environment.getExternalStorageDirectory(),"DCIM/CameraCaptures")
+        var imageFile: File? = null
+        val storageDir: File? =
+            File(Environment.getExternalStorageDirectory(), "DCIM/CameraCaptures")
         if (!storageDir!!.exists()) {
             storageDir!!.mkdirs()
         }
@@ -465,12 +450,12 @@ class SignUpActivity : AppCompatActivity() {
         if (imageType == 1) {
             startActivityForResult(
                 intent,
-                FACE_GALLERY_REQUEST_CODE
+                BODY1_GALLERY_REQUEST_CODE
             )
         } else {
             startActivityForResult(
                 intent,
-                BODY_GALLERY_REQUEST_CODE
+                BODY2_GALLERY_REQUEST_CODE
             )
         }
     }
@@ -484,12 +469,12 @@ class SignUpActivity : AppCompatActivity() {
                 if (imageType == 1) {
                     requestPermissions(
                         arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                        FACE_PERMISSION_REQUEST_CODE
+                        BODY1_PERMISSION_REQUEST_CODE
                     )
                 } else {
                     requestPermissions(
                         arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                        BODY_PERMISSION_REQUEST_CODE
+                        BODY2_PERMISSION_REQUEST_CODE
                     )
                 }
             }
@@ -505,7 +490,7 @@ class SignUpActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         when (requestCode) {
-            FACE_PERMISSION_REQUEST_CODE ->
+            BODY1_PERMISSION_REQUEST_CODE ->
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) { // 승낙된경우
                     startContentProvider(1)
                 } else {
@@ -515,7 +500,7 @@ class SignUpActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-            BODY_PERMISSION_REQUEST_CODE ->
+            BODY2_PERMISSION_REQUEST_CODE ->
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) { // 승낙된경우
                     startContentProvider(2)
                 } else {
@@ -536,37 +521,37 @@ class SignUpActivity : AppCompatActivity() {
         }
 
         when (requestCode) {
-            FACE_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
+            BODY1_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
                 val uri = data?.data
                 if (uri != null) {
                     ivSignUpBody1!!.setImageURI(uri)
-                    faceImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
-                    faceImageFilePath = File(getImageFilePath(uri))
-                    Log.w ( "aaaaaaaaa", "faceImageUri : " + faceImageUri.toString())
-                    Log.w ( "aaaaaaaaa", "faceImageFilePath : " + faceImageFilePath.toString())
+                    body1ImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
+                    body1ImageFilePath = File(getImageFilePath(uri))
+                    Log.w("aaaaaaaaa", "body1ImageUri : " + body1ImageUri.toString())
+                    Log.w("aaaaaaaaa", "body1ImageFilePath : " + body1ImageFilePath.toString())
                 } else {
                     Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
-            FACE_CAMERA_REQUEST_CODE -> {
-                faceImageFilePath = File(curPhotoPath)
-                ivSignUpBody1!!.setImageURI(faceImageUri)
+            BODY1_CAMERA_REQUEST_CODE -> {
+                body1ImageFilePath = File(curPhotoPath)
+                ivSignUpBody1!!.setImageURI(body1ImageUri)
             }
-            BODY_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
+            BODY2_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
                 val uri = data?.data
                 if (uri != null) {
                     ivSignUpBody2!!.setImageURI(uri)
-                    bodyImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
-                    bodyImageFilePath = File(getImageFilePath(uri))
-                    Log.w ( "aaaaaaaaa", "bodyImageUri : " + bodyImageUri.toString())
-                    Log.w ( "aaaaaaaaa", "bodyImageFilePath : " + bodyImageFilePath.toString())
+                    body2ImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
+                    body2ImageFilePath = File(getImageFilePath(uri))
+                    Log.w("aaaaaaaaa", "body2ImageUri : " + body2ImageUri.toString())
+                    Log.w("aaaaaaaaa", "body2ImageFilePath : " + body2ImageFilePath.toString())
                 } else {
                     Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
-            BODY_CAMERA_REQUEST_CODE -> {
-                bodyImageFilePath = File(curPhotoPath)
-                ivSignUpBody2!!.setImageURI(bodyImageUri)
+            BODY2_CAMERA_REQUEST_CODE -> {
+                body2ImageFilePath = File(curPhotoPath)
+                ivSignUpBody2!!.setImageURI(body2ImageUri)
             }
             else -> {
                 Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
@@ -575,13 +560,13 @@ class SignUpActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val FACE_PERMISSION_REQUEST_CODE = 1000
-        const val FACE_GALLERY_REQUEST_CODE = 1001
-        const val FACE_CAMERA_REQUEST_CODE = 1002
+        const val BODY1_PERMISSION_REQUEST_CODE = 1000
+        const val BODY1_GALLERY_REQUEST_CODE = 1001
+        const val BODY1_CAMERA_REQUEST_CODE = 1002
 
-        const val BODY_PERMISSION_REQUEST_CODE = 2000
-        const val BODY_GALLERY_REQUEST_CODE = 2001
-        const val BODY_CAMERA_REQUEST_CODE = 2002
+        const val BODY2_PERMISSION_REQUEST_CODE = 2000
+        const val BODY2_GALLERY_REQUEST_CODE = 2001
+        const val BODY2_CAMERA_REQUEST_CODE = 2002
     }
 }
 
