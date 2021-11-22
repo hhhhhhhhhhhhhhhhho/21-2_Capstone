@@ -42,7 +42,7 @@ class MyPageFragment : Fragment(R.layout.fragment_mypage){
 
         //아바타 사진 넣기
         Glide.with(view)
-            .load(LoginUserData.avatarImageUri)
+            .load(LoginUserData.avatar_front_ImageUri)
             .into(binding.mypagaAvatarImageView)
 
 
@@ -74,9 +74,10 @@ class MyPageFragment : Fragment(R.layout.fragment_mypage){
                     dataSnapshot.child("cm").value.toString()
                 LoginUserData.kg =
                     dataSnapshot.child("kg").value.toString()
-                LoginUserData.faceImageUri = Uri.parse(dataSnapshot.child("faceImageUri").value.toString())
-                LoginUserData.bodyImageUri = Uri.parse(dataSnapshot.child("bodyImageUri").value.toString())
-                LoginUserData.avatarImageUri = dataSnapshot.child("avatarImageUri").value.toString()
+                LoginUserData.body_front_ImageUri = Uri.parse(dataSnapshot.child("body_front_ImageUri").value.toString())
+                LoginUserData.body_back_ImageUri = Uri.parse(dataSnapshot.child("body_back_ImageUri").value.toString())
+                LoginUserData.avatar_front_ImageUri = dataSnapshot.child("avatar_front_ImageUri").value.toString()
+                LoginUserData.avatar_back_ImageUri = dataSnapshot.child("avatar_back_ImageUri").value.toString()
             }
 
             override fun onCancelled(error: DatabaseError) {

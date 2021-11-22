@@ -12,8 +12,9 @@ object LoginUserData {
     var gender: String? = null
     var cm: String? = null
     var kg: String? = null
-    var faceImageUri: Uri? = null
-    var bodyImageUri: Uri? = null
-    var avatarImageUri : String? = null
+    var body_front_ImageUri: Uri? = null
+    var body_back_ImageUri: Uri? = null
+    var avatar_front_ImageUri : String? = null // 누끼 딴 이미지 앞면
+    var avatar_back_ImageUri : String? = null// 누끼 뒷면
 }
 //todo avartar 사진 받아서 저장

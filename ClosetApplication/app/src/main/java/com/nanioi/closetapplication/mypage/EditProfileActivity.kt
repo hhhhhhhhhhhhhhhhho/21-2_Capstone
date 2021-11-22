@@ -66,12 +66,19 @@ class EditProfileActivity : AppCompatActivity() {
     private var btnEditUserDataPass: Button? = null //회원정보 수정 버튼 변수 선언
     private var btnEditUserDataSignOut: Button? = null //회원탈퇴 버튼 변수 선언
 
-    private var editFaceImageUri: Uri? = null
-    private var editBodyImageUri: Uri? = null
+    private var editBody1ImageUri: Uri? = null
+    private var editBody2ImageUri: Uri? = null
+    lateinit var body1ImageFilePath: File
+    lateinit var body2ImageFilePath: File
     private lateinit var curPhotoPath: String
+
     private val storage: FirebaseStorage by lazy { Firebase.storage }
     private val auth: FirebaseAuth by lazy { Firebase.auth }
     private val userDB : FirebaseDatabase by lazy { Firebase.database}
+
+    var body1ImageFileName : String ? =null
+    var body2ImageFileName  : String ? =null
+    var userID : String ?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -95,6 +102,12 @@ class EditProfileActivity : AppCompatActivity() {
         btnEditUserDataPass = findViewById(R.id.btn_edit_user_data_pass)
         btnEditUserDataSignOut = findViewById(R.id.btn_edit_user_data_sign_out)
 
+        userID = auth.currentUser!!.uid
+        body1ImageFileName =
+            userID + "_img_body1.jpg"
+        body2ImageFileName =
+            userID + "_img_body2.jpg"
+
         cbEditUserDataPassword?.setOnCheckedChangeListener { _, isChecked ->
             if (isChecked)
                 llEditUserDataPassword?.visibility = View.VISIBLE //체크할 경우 비밀번호 수정 레이아웃을 보여줌
@@ -108,15 +121,16 @@ class EditProfileActivity : AppCompatActivity() {
         etEditUserDataKg?.setText(LoginUserData.kg)
         rgEditUserDataGender?.check(if (LoginUserData.gender == "남자") R.id.rb_edit_user_data_man else R.id.rb_edit_user_data_woman)
 
-        editFaceImageUri = LoginUserData.faceImageUri
-        editBodyImageUri = LoginUserData.bodyImageUri
+        editBody1ImageUri = LoginUserData.body_front_ImageUri
+        editBody2ImageUri = LoginUserData.body_back_ImageUri
 
         Glide.with(this@EditProfileActivity)
-            .load(LoginUserData.faceImageUri)
+            .load(LoginUserData.body_front_ImageUri)
             .into(ivEditUserDataBody1!!)
 
         Glide.with(this@EditProfileActivity)
-            .load(LoginUserData.bodyImageUri)
+        Glide.with(this@EditProfileActivity)
+            .load(LoginUserData.body_back_ImageUri)
             .into(ivEditUserDataBody2!!)
 
 
@@ -124,8 +138,8 @@ class EditProfileActivity : AppCompatActivity() {
             if (etEditUserDataName?.text!!.isNotEmpty())
                 if (etEditUserDataCm?.text!!.isNotEmpty())
                     if (etEditUserDataKg?.text!!.isNotEmpty())
-                        if (editFaceImageUri != null)
-                            if (editBodyImageUri != null)
+                        if (editBody1ImageUri != null)
+                            if (editBody2ImageUri != null)
                                 if (cbEditUserDataPassword?.isChecked == true)
                                     if (etEditUserDataChangePassword?.text!!.isNotEmpty())
                                         if (etEditUserDataChangePasswordCheck?.text!!.isNotEmpty())
@@ -169,6 +183,97 @@ class EditProfileActivity : AppCompatActivity() {
             showPictureUploadDialog(2)
         }
     }
+    //by 나연. user정보 수정 ( 21.11.05 )
+    private fun changeUserData() {
+        Toast.makeText(this@EditProfileActivity, "회원정보 수정 중...", Toast.LENGTH_SHORT).show()
+        CoroutineScope(Dispatchers.Default).launch {
+
+            deleteImage(body1ImageFileName!!,1)
+            uploadImage(body1ImageFileName!!,editBody1ImageUri,1,successHandler = { uri ->
+                uploadUserDB(uri)
+            },
+                errorHandler = {
+                    Toast.makeText(
+                        this@EditProfileActivity,
+                        "전신 사진(앞) 업로드에 실패했습니다.",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                })
+            deleteImage(body2ImageFileName!!,2)
+            uploadImage(body1ImageFileName!!,editBody1ImageUri,2,successHandler = { uri ->
+                LoginUserData.body_back_ImageUri = Uri.parse(uri)
+            },
+                errorHandler = {
+                    Toast.makeText(
+                        this@EditProfileActivity,
+                        "전신 사진(앞) 업로드에 실패했습니다.",
+                        Toast.LENGTH_SHORT
+                    )
+                        .show()
+                })
+        }
+    }
+    private fun deleteImage(fileName: String,type : Int){
+        var path : String
+        if(type == 1){
+            path = "user/body1"
+        }else{
+            path = "user/body2"
+        }
+        storage.reference.child(path).child(fileName).delete()
+    }
+    private fun uploadImage(
+        fileName: String,
+        ImageUri: Uri?,
+        type : Int,
+        successHandler: (String) -> Unit,
+        errorHandler: () -> Unit
+    ) {
+        var path : String ? =null
+        if(type==1)
+            path = "user/body1"
+        else
+            path = "user/body2"
+
+        storage.reference.child( path)
+            .child(fileName)
+            .putFile(ImageUri!!)
+            .addOnCompleteListener { // 성공했는지 확인 리스너
+                if (it.isSuccessful) { // 성공시 -> 업로드 완료
+                    storage.reference.child( path).child(
+                        fileName
+                    )
+                        .downloadUrl
+                        .addOnSuccessListener { uri ->
+                            successHandler(uri.toString())
+                        }
+                        .addOnFailureListener {
+                            errorHandler()
+                        }
+                } else { // 업로드 실패
+                    errorHandler()
+                }
+            }
+    }
+    private fun uploadUserDB( uri: String) {
+        val userModel = userModel()
+        userModel.uid = userID
+        userModel.email =tvEditUserDataEmail!!.text.toString()
+        userModel.name = etEditUserDataName!!.text.toString()
+        userModel.gender= if (rbEditUserDataMan?.isChecked == true) "남자" else "여자"
+        userModel.cm = etEditUserDataCm!!.text.toString()
+        userModel.kg = etEditUserDataKg!!.text.toString()
+        userModel.body_front_imageUri = uri
+        userModel.body_back_imageUri = editBody2ImageUri.toString()
+
+        userDB.reference.child(DB_USERS).child(userID!!).removeValue()
+        userDB.reference.child(DB_USERS).child(userID!!).setValue(userModel).addOnCompleteListener {
+            Toast.makeText(this@EditProfileActivity, "회원정보 수정 완료", Toast.LENGTH_SHORT).show()
+            finish()
+        }
+        updateLoginUserDB()
+    }
     //by 나연. user정보 삭제 ( 21.11.05 )
     private fun deleteUserData() {
         var signOutDialog: AlertDialog.Builder = AlertDialog.Builder(this@EditProfileActivity)
@@ -179,44 +284,40 @@ class EditProfileActivity : AppCompatActivity() {
             val user = auth.currentUser
             user?.let {
                 user.delete().addOnCompleteListener(this) {
-                if (it.isSuccessful) {
-                    userDB.reference.child(DB_USERS).child(user.uid).removeValue()
-                        .addOnCompleteListener(this@EditProfileActivity) { task ->
-                            if (task.isSuccessful) {
-                                CoroutineScope(Dispatchers.IO).launch {
-                                    val faceImageFileName =
-                                        user.uid + "_img_face.jpg"
-                                    val bodyImageFileName =
-                                        user.uid + "_img_body.jpg"
-                                    storage.reference.child("user/face").child(faceImageFileName).delete()
-                                    storage.reference.child("user/body").child(bodyImageFileName).delete()
+                    if (it.isSuccessful) {
+                        userDB.reference.child(DB_USERS).child(user.uid).removeValue()
+                            .addOnCompleteListener(this@EditProfileActivity) { task ->
+                                if (task.isSuccessful) {
+                                    CoroutineScope(Dispatchers.IO).launch {
+                                        storage.reference.child("user/body1").child(body1ImageFileName!!).delete()
+                                        storage.reference.child("user/body2").child(body2ImageFileName!!).delete()
 
-                                    LoginUserData.uid = null
-                                    LoginUserData.email = null
-                                    LoginUserData.name = null
-                                    LoginUserData.gender = null
-                                    LoginUserData.cm = null
-                                    LoginUserData.kg = null
+                                        LoginUserData.uid = null
+                                        LoginUserData.email = null
+                                        LoginUserData.name = null
+                                        LoginUserData.gender = null
+                                        LoginUserData.cm = null
+                                        LoginUserData.kg = null
 
-                                    Toast.makeText(
-                                        this@EditProfileActivity,
-                                        "회원 탈퇴 완료",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-
-                                    dialog.dismiss()
-                                    startActivity(
-                                        Intent(
+                                        Toast.makeText(
                                             this@EditProfileActivity,
-                                            SignInActivity::class.java
+                                            "회원 탈퇴 완료",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+
+                                        dialog.dismiss()
+                                        startActivity(
+                                            Intent(
+                                                this@EditProfileActivity,
+                                                SignInActivity::class.java
+                                            )
                                         )
-                                    )
-                                    finish()
+                                        finish()
+                                    }
                                 }
                             }
-                        }
+                    }
                 }
-            }
             }
         }
         signOutDialog.setNegativeButton("취소") { dialog, _ ->
@@ -226,187 +327,17 @@ class EditProfileActivity : AppCompatActivity() {
         signOutDialog.setCancelable(false)
         signOutDialog.show()
     }
-    //by 나연. user정보 수정 ( 21.11.05 )
-    private fun changeUserData() {
-        Toast.makeText(this@EditProfileActivity, "회원정보 수정 중...", Toast.LENGTH_SHORT).show()
-        CoroutineScope(Dispatchers.Default).launch {
-            val userUid = LoginUserData.uid
-            //uploadImage(userUid!!)
 
-            val faceImageFileName =
-                userUid + "_img_face.jpg"
-            val bodyImageFileName =
-                userUid + "_img_body.jpg"
-
-            storage.reference.child("user/face").child(faceImageFileName).delete()
-            storage.reference.child("user/face")
-                .child(faceImageFileName)
-                .putFile(editFaceImageUri!!)
-                .addOnCompleteListener { // 성공했는지 확인 리스너
-                    if (it.isSuccessful) { // 성공시 -> 업로드 완료
-                        storage.reference.child(
-                            "user/face"
-                        ).child(
-                            faceImageFileName
-                        )
-                            .downloadUrl
-                            .addOnSuccessListener {
-                                Log.d(
-                                    "aaaa",
-                                    "얼굴사진 수정 성공"
-                                )
-                            }
-                            .addOnFailureListener {
-                                Log.d(
-                                    "aaaa",
-                                    "얼굴사진 수정 실패"
-                                )
-                            }
-                    } else { // 업로드 실패
-                        Toast.makeText(
-                            this@EditProfileActivity,
-                            "얼굴사진 수정에 실패했습니다.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            storage.reference.child("user/body").child(bodyImageFileName).delete()
-            storage.reference.child("user/body")
-                .child(bodyImageFileName)
-                .putFile(editBodyImageUri!!)
-                .addOnCompleteListener { // 성공했는지 확인 리스너
-                    if (it.isSuccessful) { // 성공시 -> 업로드 완료
-                        storage.reference.child(
-                            "user/body"
-                        ).child(
-                            bodyImageFileName
-                        )
-                            .downloadUrl
-                            .addOnSuccessListener {
-                                Log.d(
-                                    "aaaa",
-                                    "전신사진 수정 성공"
-                                )
-                            }
-                            .addOnFailureListener {
-                                Toast.makeText(
-                                    this@EditProfileActivity,
-                                    "전신사진 수정에 실패했습니다.",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            }
-                    } else { // 업로드 실패
-                        Toast.makeText(
-                            this@EditProfileActivity,
-                            "전신사진 수정에 실패했습니다.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-
-            ClientThread().start()
-
-            val userModel = userModel()
-            userModel.uid = userUid
-            userModel.email =tvEditUserDataEmail!!.text.toString()
-            userModel.name = etEditUserDataName!!.text.toString()
-            userModel.gender= if (rbEditUserDataMan?.isChecked == true) "남자" else "여자"
-            userModel.cm = etEditUserDataCm!!.text.toString()
-            userModel.kg = etEditUserDataKg!!.text.toString()
-            userModel.faceImageUri = editFaceImageUri.toString()
-            userModel.bodyImageUri = editBodyImageUri.toString()
-
-            LoginUserData.email = tvEditUserDataEmail!!.text.toString()
-            LoginUserData.name = etEditUserDataName!!.text.toString()
-            LoginUserData.gender = if (rbEditUserDataMan?.isChecked == true) "남자" else "여자"
-            LoginUserData.cm = etEditUserDataCm!!.text.toString()
-            LoginUserData.kg = etEditUserDataKg!!.text.toString()
-            LoginUserData.faceImageUri = editFaceImageUri
-            LoginUserData.bodyImageUri = editBodyImageUri
-
-            userDB.reference.child(DB_USERS).child(userUid!!).removeValue()
-            userDB.reference.child(DB_USERS).child(userUid!!).setValue(userModel).addOnCompleteListener {
-                Toast.makeText(this@EditProfileActivity, "회원정보 수정 완료", Toast.LENGTH_SHORT).show()
-//                startActivity(Intent(this@EditProfileActivity, MyPageFragment::class.java))
-                finish()
-            }
-        }
+    private fun updateLoginUserDB(){
+        LoginUserData.email = tvEditUserDataEmail!!.text.toString()
+        LoginUserData.name = etEditUserDataName!!.text.toString()
+        LoginUserData.gender = if (rbEditUserDataMan?.isChecked == true) "남자" else "여자"
+        LoginUserData.cm = etEditUserDataCm!!.text.toString()
+        LoginUserData.kg = etEditUserDataKg!!.text.toString()
+        LoginUserData.body_front_ImageUri = editBody1ImageUri
+        LoginUserData.body_back_ImageUri = editBody2ImageUri
     }
 
-//    //by 나연. 수정 이미지 업로드 ( 21.11.05 )
-//    private fun uploadImage(uid: String) {
-//        val faceImageFileName =
-//            uid + "_img_face.jpg"
-//        val bodyImageFileName =
-//            uid + "_img_body.jpg"
-//
-//
-//        storage.reference.child("user/face").child(faceImageFileName).delete()
-//        storage.reference.child("user/face")
-//            .child(faceImageFileName)
-//            .putFile(editFaceImageUri!!)
-//            .addOnCompleteListener { // 성공했는지 확인 리스너
-//                if (it.isSuccessful) { // 성공시 -> 업로드 완료
-//                    storage.reference.child(
-//                        "user/face"
-//                    ).child(
-//                        faceImageFileName
-//                    )
-//                        .downloadUrl
-//                        .addOnSuccessListener {
-//                            Log.d(
-//                                "aaaa",
-//                                "얼굴사진 업로드 성공"
-//                            )
-//                        }
-//                        .addOnFailureListener {
-//                            Log.d(
-//                                "aaaa",
-//                                "얼굴사진 업로드 실패"
-//                            )
-//                        }
-//                } else { // 업로드 실패
-//                    Toast.makeText(
-//                        this@EditProfileActivity,
-//                        "얼굴사진 업로드에 실패했습니다.",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//            }
-//        storage.reference.child("user/body").child(bodyImageFileName).delete()
-//        storage.reference.child("user/body")
-//            .child(bodyImageFileName)
-//            .putFile(editBodyImageUri!!)
-//            .addOnCompleteListener { // 성공했는지 확인 리스너
-//                if (it.isSuccessful) { // 성공시 -> 업로드 완료
-//                    storage.reference.child(
-//                        "user/body"
-//                    ).child(
-//                        bodyImageFileName
-//                    )
-//                        .downloadUrl
-//                        .addOnSuccessListener {
-//                            Log.d(
-//                                "aaaa",
-//                                "전신사진 업로드 성공"
-//                            )
-//                        }
-//                        .addOnFailureListener {
-//                            Toast.makeText(
-//                                this@EditProfileActivity,
-//                                "전신사진 업로드에 실패했습니다.",
-//                                Toast.LENGTH_SHORT
-//                            ).show()
-//                        }
-//                } else { // 업로드 실패
-//                    Toast.makeText(
-//                        this@EditProfileActivity,
-//                        "전신사진 업로드에 실패했습니다.",
-//                        Toast.LENGTH_SHORT
-//                    ).show()
-//                }
-//            }
-//    }
 
     //by 나연. 사진 첨부할 방식 선택 함수 (21.10.16)
     private fun showPictureUploadDialog(imageType: Int) {
@@ -442,12 +373,12 @@ class EditProfileActivity : AppCompatActivity() {
                 if (imageType == 1) {
                     requestPermissions(
                         arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                        FACE_PERMISSION_REQUEST_CODE
+                        BODY1_PERMISSION_REQUEST_CODE
                     )
                 } else {
                     requestPermissions(
                         arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                        BODY_PERMISSION_REQUEST_CODE
+                        BODY2_PERMISSION_REQUEST_CODE
                     )
                 }
             }
@@ -496,16 +427,16 @@ class EditProfileActivity : AppCompatActivity() {
                     )
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                     if (imageType == 1) {
-                        editFaceImageUri = photoURI
+                        editBody1ImageUri = photoURI
                         startActivityForResult(
                             takePictureIntent,
-                            FACE_CAMERA_REQUEST_CODE
+                            BODY1_CAMERA_REQUEST_CODE
                         )
                     } else {
-                        editBodyImageUri = photoURI
+                        editBody2ImageUri = photoURI
                         startActivityForResult(
                             takePictureIntent,
-                            BODY_CAMERA_REQUEST_CODE
+                            BODY2_CAMERA_REQUEST_CODE
                         )
                     }
                 }
@@ -529,12 +460,12 @@ class EditProfileActivity : AppCompatActivity() {
         if (imageType == 1) {
             startActivityForResult(
                 intent,
-                FACE_GALLERY_REQUEST_CODE
+                BODY1_GALLERY_REQUEST_CODE
             )
         } else {
             startActivityForResult(
                 intent,
-                BODY_GALLERY_REQUEST_CODE
+                BODY2_GALLERY_REQUEST_CODE
             )
         }
     }
@@ -548,12 +479,12 @@ class EditProfileActivity : AppCompatActivity() {
                 if (imageType == 1) {
                     requestPermissions(
                         arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                        FACE_PERMISSION_REQUEST_CODE
+                        BODY1_PERMISSION_REQUEST_CODE
                     )
                 } else {
                     requestPermissions(
                         arrayOf(android.Manifest.permission.READ_EXTERNAL_STORAGE),
-                        BODY_PERMISSION_REQUEST_CODE
+                        BODY2_PERMISSION_REQUEST_CODE
                     )
                 }
             }
@@ -569,7 +500,7 @@ class EditProfileActivity : AppCompatActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
         when (requestCode) {
-            FACE_PERMISSION_REQUEST_CODE ->
+            BODY1_PERMISSION_REQUEST_CODE ->
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) { // 승낙된경우
                     startContentProvider(1)
                 } else {
@@ -579,7 +510,7 @@ class EditProfileActivity : AppCompatActivity() {
                         Toast.LENGTH_SHORT
                     ).show()
                 }
-            BODY_PERMISSION_REQUEST_CODE ->
+            BODY2_PERMISSION_REQUEST_CODE ->
                 if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) { // 승낙된경우
                     startContentProvider(2)
                 } else {
@@ -600,100 +531,34 @@ class EditProfileActivity : AppCompatActivity() {
         }
 
         when (requestCode) {
-            FACE_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
+            BODY1_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
                 val uri = data?.data
                 if (uri != null) {
                     ivEditUserDataBody1!!.setImageURI(uri)
-                    editFaceImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
+                    editBody1ImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
                 } else {
                     Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
-            FACE_CAMERA_REQUEST_CODE -> {
-                //startActivityForResult를 통해 기본카메라 앱으로 부터 받아온 사진 결과값
-                val bitmap: Bitmap
-                val file = File(curPhotoPath)
-                if (Build.VERSION.SDK_INT < 28) { // 안드로이드 9.0(Pie)버전보다 낮은 경우
-                    bitmap = MediaStore.Images.Media.getBitmap(
-                        contentResolver,
-                        Uri.fromFile(file)
-                    )
-                    ivEditUserDataBody1!!.setImageBitmap(bitmap)
-                } else {
-                    val decode = ImageDecoder.createSource(
-                        this.contentResolver,
-                        Uri.fromFile(file)
-                    )
-                    bitmap = ImageDecoder.decodeBitmap(decode)
-                    ivEditUserDataBody1!!.setImageBitmap(bitmap)
-                }
+            BODY1_CAMERA_REQUEST_CODE -> {
+                body1ImageFilePath = File(curPhotoPath)
+                ivEditUserDataBody1!!.setImageURI(editBody1ImageUri)
             }
-            BODY_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
+            BODY2_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
                 val uri = data?.data
                 if (uri != null) {
                     ivEditUserDataBody2!!.setImageURI(uri)
-                    editBodyImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
+                    editBody2ImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
                 } else {
                     Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
-            BODY_CAMERA_REQUEST_CODE -> {
-                //startActivityForResult를 통해 기본카메라 앱으로 부터 받아온 사진 결과값
-                val bitmap: Bitmap
-                val file = File(curPhotoPath)
-                if (Build.VERSION.SDK_INT < 28) { // 안드로이드 9.0(Pie)버전보다 낮은 경우
-                    bitmap = MediaStore.Images.Media.getBitmap(
-                        contentResolver,
-                        Uri.fromFile(file)
-                    )
-                    ivEditUserDataBody2!!.setImageBitmap(bitmap)
-                } else {
-                    val decode = ImageDecoder.createSource(
-                        this.contentResolver,
-                        Uri.fromFile(file)
-                    )
-                    bitmap = ImageDecoder.decodeBitmap(decode)
-                    ivEditUserDataBody2!!.setImageBitmap(bitmap)
-                }
+            BODY2_CAMERA_REQUEST_CODE -> {
+                body2ImageFilePath = File(curPhotoPath)
+                ivEditUserDataBody2!!.setImageURI(editBody2ImageUri)
             }
             else -> {
                 Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    companion object {
-        const val FACE_PERMISSION_REQUEST_CODE = 1000
-        const val FACE_GALLERY_REQUEST_CODE = 1001
-        const val FACE_CAMERA_REQUEST_CODE = 1002
-
-        const val BODY_PERMISSION_REQUEST_CODE = 2000
-        const val BODY_GALLERY_REQUEST_CODE = 2001
-        const val BODY_CAMERA_REQUEST_CODE = 2002
-    }
-
-    //소켓통신
-    inner class ClientThread() : Thread() {
-        override fun run() {
-            super.run()
-            Log.w("aaaaaaaaa", "clientThread")
-
-            val host = "172.30.1.29"
-            val port = 12345
-
-            val user = auth.currentUser!!.uid
-
-            try {
-                val socket = Socket(host, port)
-                val outstream = DataOutputStream(socket.getOutputStream())
-                outstream.writeUTF(user)
-
-                outstream.flush()
-                Log.w("aaaaaaaaa", "Sent to server.")
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-                Log.w("aaaaaaaaa", "error" + e.toString())
             }
         }
     }
@@ -703,5 +568,15 @@ class EditProfileActivity : AppCompatActivity() {
         Log.e("aaa", "backButton Click!")
 //        startActivity(Intent(this@EditProfileActivity, MyPageFragment::class.java))
         finish()
+    }
+
+    companion object {
+        const val BODY1_PERMISSION_REQUEST_CODE = 1000
+        const val BODY1_GALLERY_REQUEST_CODE = 1001
+        const val BODY1_CAMERA_REQUEST_CODE = 1002
+
+        const val BODY2_PERMISSION_REQUEST_CODE = 2000
+        const val BODY2_GALLERY_REQUEST_CODE = 2001
+        const val BODY2_CAMERA_REQUEST_CODE = 2002
     }
 }
