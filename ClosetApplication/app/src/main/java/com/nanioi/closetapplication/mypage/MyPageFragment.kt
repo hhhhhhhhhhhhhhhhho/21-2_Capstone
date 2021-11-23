@@ -20,6 +20,15 @@ import com.nanioi.closetapplication.DBkey
 import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.User.LoginUserData
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_AVATAR_FRONT
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_BODY_BACK
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_BODY_FRONT
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_EMAIL
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_GENDER
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_HEIGHT
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_NAME
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_UID
+import com.nanioi.closetapplication.User.userDBkey.Companion.DB_WEIGHT
 import com.nanioi.closetapplication.databinding.FragmentClosetBinding
 import com.nanioi.closetapplication.databinding.FragmentMypageBinding
 import com.nanioi.closetapplication.databinding.FragmentStylingBinding
@@ -42,7 +51,7 @@ class MyPageFragment : Fragment(R.layout.fragment_mypage){
 
         //아바타 사진 넣기
         Glide.with(view)
-            .load(LoginUserData.avatar_front_ImageUri)
+            .load(LoginUserData.avatar_front_ImageUrl)
             .into(binding.mypagaAvatarImageView)
 
 
@@ -59,30 +68,31 @@ class MyPageFragment : Fragment(R.layout.fragment_mypage){
 
         val userDB = FirebaseDatabase.getInstance().reference.child(DBkey.DB_USERS)
         val userUid = FirebaseAuth.getInstance().currentUser!!.uid
+
         userDB.child(userUid).addValueEventListener(object :
             ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 LoginUserData.uid =
-                    dataSnapshot.child("uid").value.toString()
+                    dataSnapshot.child(DB_UID).value.toString()
                 LoginUserData.email =
-                    dataSnapshot.child("email").value.toString()
+                    dataSnapshot.child(DB_EMAIL).value.toString()
                 LoginUserData.name =
-                    dataSnapshot.child("name").value.toString()
+                    dataSnapshot.child(DB_NAME).value.toString()
                 LoginUserData.gender =
-                    dataSnapshot.child("gender").value.toString()
+                    dataSnapshot.child(DB_GENDER).value.toString()
                 LoginUserData.cm =
-                    dataSnapshot.child("cm").value.toString()
+                    dataSnapshot.child(DB_HEIGHT).value.toString()
                 LoginUserData.kg =
-                    dataSnapshot.child("kg").value.toString()
-                LoginUserData.body_front_ImageUri = Uri.parse(dataSnapshot.child("body_front_ImageUri").value.toString())
-                LoginUserData.body_back_ImageUri = Uri.parse(dataSnapshot.child("body_back_ImageUri").value.toString())
-                LoginUserData.avatar_front_ImageUri = dataSnapshot.child("avatar_front_ImageUri").value.toString()
-                LoginUserData.avatar_back_ImageUri = dataSnapshot.child("avatar_back_ImageUri").value.toString()
+                    dataSnapshot.child(DB_WEIGHT).value.toString()
+                LoginUserData.body_front_ImageUrl = dataSnapshot.child(DB_BODY_FRONT).value.toString()
+                LoginUserData.body_back_ImageUrl = dataSnapshot.child(DB_BODY_BACK).value.toString()
+                LoginUserData.avatar_front_ImageUrl = dataSnapshot.child(DB_AVATAR_FRONT).value.toString()
+                //LoginUserData.avatar_back_ImageUrl = dataSnapshot.child("avatar_back_ImageUrl").value.toString()
             }
 
             override fun onCancelled(error: DatabaseError) {
                 Log.e(
-                    "SignIn",
+                    "MyPageFragment",
                     error.toException().toString()
                 )
             }

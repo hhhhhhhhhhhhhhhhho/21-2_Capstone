@@ -40,7 +40,6 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
 
     private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
 
-    private var toolbar: Toolbar? = null
     private var drawerLayout: DrawerLayout? = null
     private var navView: NavigationView? = null
     private var drawerToggle: ActionBarDrawerToggle? = null
@@ -104,7 +103,7 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
         tvHeaderGender?.text = "성별 : ${LoginUserData.gender}"
         tvHeaderCm?.text = "키 : ${LoginUserData.cm}cm"
         tvHeaderKg?.text = "몸무게 : ${LoginUserData.kg}kg"
-        Glide.with(navHeaderView!!).load(LoginUserData.avatar_front_ImageUri).into(imgHeaderProfile!!)
+        Glide.with(navHeaderView!!).load(LoginUserData.avatar_front_ImageUrl).into(imgHeaderProfile!!)
 
         replaceFragment(homeFragment)
     }
@@ -165,10 +164,10 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
             LoginUserData.gender = null
             LoginUserData.cm = null
             LoginUserData.kg = null
-            LoginUserData.body_front_ImageUri = null
-            LoginUserData.body_back_ImageUri = null
-            LoginUserData.avatar_front_ImageUri = null
-            LoginUserData.avatar_back_ImageUri = null
+            LoginUserData.body_front_ImageUrl = null
+            LoginUserData.body_back_ImageUrl = null
+            LoginUserData.avatar_front_ImageUrl = null
+            LoginUserData.avatar_back_ImageUrl = null
 
             dialog.dismiss()
             startActivity(Intent(context, SignInActivity::class.java))

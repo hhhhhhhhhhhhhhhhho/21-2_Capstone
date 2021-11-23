@@ -40,28 +40,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class SignUpActivity : AppCompatActivity() {
-    private var etSignUpName: EditText? = null //이름 입력창 변수 선언
-    private var etSignUpEmail: EditText? = null //이메일 입력창 변수 선언
-    private var etSignUpPassword: EditText? = null //비밀번호 입력창 변수 선언
-    private var etSignUpPasswordCheck: EditText? = null //비밀번호 확인 입력창 변수 선언
-    private var etSignUpCm: EditText? = null //키 입력창 변수 선언
-    private var etSignUpKg: EditText? = null //몸무게 입력창 변수 선언
-    private var rgSignUpGender: RadioGroup? = null //성별 선택 그룹 변수 선언
-    private var rbSignUpMan: RadioButton? = null //남자 선택 변수 선언
-    private var rbSignUpWoman: RadioButton? = null //여자 선택 변수 선언
-    private var ivSignUpBody1: ImageView? = null //얼굴 사진 뷰 변수 선언
-    private var ivSignUpBody2: ImageView? = null //전신 사진 뷰 변수 선언
-    private var btnSignUpBody1: Button? = null //얼굴 사진 버튼 변수 선언
-    private var btnSignUpBody2: Button? = null //전신 사진 버튼 변수 선언
-    private var btnSignUpPass: Button? = null //회원가입 완료 버튼 변수 선언
 
     private var body1ImageUri: Uri? = null
     private var body2ImageUri: Uri? = null
-    private var body_front_uri: Uri? = null
-    private var body_back_uri: Uri? = null
-    lateinit var body1ImageFilePath: File
-    lateinit var body2ImageFilePath: File
-    private lateinit var curPhotoPath: String
+ //   private lateinit var curPhotoPath: String
 
     private val storage: FirebaseStorage by lazy { Firebase.storage }
     private val auth: FirebaseAuth by lazy { Firebase.auth }
@@ -73,32 +55,16 @@ class SignUpActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        etSignUpName = binding.etSignUpName
-        etSignUpEmail = binding.etSignUpEmail
-        etSignUpPassword = binding.etSignUpPassword
-        etSignUpPasswordCheck = binding.etSignUpPasswordCheck
-        etSignUpCm = binding.etSignUpCm
-        etSignUpKg = binding.etSignUpKg
-        rgSignUpGender = binding.rgSignUpGender
-        rbSignUpMan = binding.rbSignUpMan
-        rbSignUpWoman = binding.rbSignUpWoman
+        binding.rgSignUpGender.check(R.id.rb_sign_up_man) //아무것도 체크가 되어있지 않으면 안되니 기본적으로 남자로 체크되어 있음
 
-        ivSignUpBody1 = binding.ivSignUpBody1
-        ivSignUpBody2 = binding.ivSignUpBody2
-        btnSignUpBody1 = binding.btnSignUpBody1
-        btnSignUpBody2 = binding.btnSignUpBody2
-        btnSignUpPass = binding.btnSignUpPass
-
-        rgSignUpGender?.check(R.id.rb_sign_up_man) //아무것도 체크가 되어있지 않으면 안되니 기본적으로 남자로 체크되어 있음
-
-        btnSignUpPass?.setOnClickListener {
-            if (etSignUpName?.text!!.isNotEmpty())
-                if (etSignUpEmail?.text!!.isNotEmpty())
-                    if (etSignUpPassword?.text!!.isNotEmpty())
-                        if (etSignUpPasswordCheck?.text!!.isNotEmpty())
-                            if (etSignUpPassword!!.text.toString() == etSignUpPasswordCheck?.text.toString())
-                                if (etSignUpCm?.text!!.isNotEmpty())
-                                    if (etSignUpKg?.text!!.isNotEmpty())
+        binding.btnSignUpPass.setOnClickListener {
+            if (binding.etSignUpName.text.isNotEmpty())
+                if (binding.etSignUpEmail.text.isNotEmpty())
+                    if (binding.etSignUpPassword.text.isNotEmpty())
+                        if (binding.etSignUpPasswordCheck.text.isNotEmpty())
+                            if (binding.etSignUpPassword.text.toString() == binding.etSignUpPasswordCheck.text.toString())
+                                if (binding.etSignUpCm.text.isNotEmpty())
+                                    if (binding.etSignUpKg.text.isNotEmpty())
                                         if (body1ImageUri != null)
                                             if (body2ImageUri != null) {
                                                 Toast.makeText(
@@ -108,8 +74,8 @@ class SignUpActivity : AppCompatActivity() {
                                                 ).show()
                                                 CoroutineScope(Dispatchers.IO).launch {
                                                     auth.createUserWithEmailAndPassword(
-                                                        etSignUpEmail?.text.toString(),
-                                                        etSignUpPassword?.text.toString()
+                                                        binding.etSignUpEmail.text.toString(),
+                                                        binding.etSignUpPassword.text.toString()
                                                     ) //파이어 베이스 함수 중 회원가 함수 createUserWithEmailAndPassword 사용
                                                         .addOnCompleteListener(this@SignUpActivity) { task ->
                                                             if (task.isSuccessful) {
@@ -122,32 +88,41 @@ class SignUpActivity : AppCompatActivity() {
                                                                     val  body2ImageFileName =
                                                                         userUid + "_img_body2.jpg"
 
-                                                                    uploadImage(body2ImageFileName,
-                                                                        body2ImageUri,2,
-                                                                        successHandler = { uri ->
-                                                                            body2ImageUri  = Uri.parse(uri)
-                                                                        },
-                                                                        errorHandler = {
-                                                                            Toast.makeText(
-                                                                                this@SignUpActivity,
-                                                                                "전신 사진(앞) 업로드에 실패했습니다.",
-                                                                                Toast.LENGTH_SHORT
-                                                                            )
-                                                                                .show()
-                                                                        })
-
                                                                     uploadImage(body1ImageFileName,
                                                                         body1ImageUri,1,
                                                                         successHandler = { uri ->
                                                                             uploadUserDB(userUid, user.email,uri)
                                                                         },
                                                                         errorHandler = {
-                                                                            Toast.makeText(
-                                                                                this@SignUpActivity,
-                                                                                "전신 사진(앞) 업로드에 실패했습니다.",
-                                                                                Toast.LENGTH_SHORT
+                                                                            Log.w(
+                                                                                "SignUpActivity",
+                                                                                "user정보 업로드 실패 : " + it.toString()
                                                                             )
-                                                                                .show()
+                                                                        })
+                                                                    uploadImage(body2ImageFileName,
+                                                                        body2ImageUri,2,
+                                                                        successHandler = { uri ->
+                                                                            userDB.reference.child(DBkey.DB_USERS)
+                                                                                .child(userUid)
+                                                                                .child(DB_BODY_BACK)
+                                                                                .setValue(uri)
+                                                                                .addOnCompleteListener {
+                                                                                    Log.w(
+                                                                                        "SignUpActivity",
+                                                                                        "전신 사진(뒤) 업로드 성공! "
+                                                                                    )
+                                                                                }.addOnFailureListener {
+                                                                                    Log.w(
+                                                                                        "SignUpActivity",
+                                                                                        "전신 사진(뒤) 업로드에 실패했습니다. " + it.toString()
+                                                                                    )
+                                                                                }
+                                                                        },
+                                                                        errorHandler = {
+                                                                            Log.w(
+                                                                                "SignUpActivity",
+                                                                                "전신 사진(뒤) 업로드에 실패했습니다. " + it.toString()
+                                                                            )
                                                                         })
                                                                 }
                                                                 runOnUiThread {
@@ -227,42 +202,37 @@ class SignUpActivity : AppCompatActivity() {
                 ).show()
         }
 
-        btnSignUpBody1?.setOnClickListener {
+        binding.btnSignUpBody1.setOnClickListener {
             showPictureUploadDialog(1)
         }
 
-        btnSignUpBody2?.setOnClickListener {
+        binding.btnSignUpBody2.setOnClickListener {
             showPictureUploadDialog(2)
         }
     }
 
-    private fun uploadUserDB(userUid: String, email: String?, uri: String) {
+    private fun uploadUserDB(userUid: String, email: String?, uri: String) = with(binding) {
         val userInfo = userModel()
         userInfo.uid = userUid
         userInfo.email = email
-        userInfo.name =
-            etSignUpName!!.text.toString()
-        userInfo.gender =
-            if (rbSignUpMan?.isChecked == true) "남자" else "여자"
-        userInfo.cm =
-            etSignUpCm!!.text.toString()
-        userInfo.kg =
-            etSignUpKg!!.text.toString()
-        userInfo.body_front_imageUri = uri
-        userInfo.body_back_imageUri = body2ImageUri.toString()
+        userInfo.name = binding.etSignUpName.text.toString()
+        userInfo.gender = if ( binding.rbSignUpMan.isChecked == true) "남자" else "여자"
+        userInfo.cm = binding.etSignUpCm.text.toString()
+        userInfo.kg = binding.etSignUpKg.text.toString()
+        userInfo.body_front_imageUrl = uri
 
         userDB.reference.child(DBkey.DB_USERS)
             .child(userUid)
             .setValue(userInfo)
             .addOnCompleteListener {
                 Log.w(
-                    "aaaaaaaaa",
+                    "SignUpActivity",
                     "user정보 업로드 성공! "
                 )
             }.addOnFailureListener {
                 Log.w(
-                    "aaaaaaaaa",
-                    "user정보 업로드 실패! " + it.toString()
+                    "SignUpActivity",
+                    "user정보 업로드 실패 : " + it.toString()
                 )
             }
     }
@@ -401,8 +371,6 @@ class SignUpActivity : AppCompatActivity() {
                         )
                         takePictureIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
                         takePictureIntent.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
-                        Log.w("aaaaaaaaa", "photoURI : " + photoURI.toString())
-                        Log.w("aaaaaaaaa", "photoFile : " + photoFile.toString())
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                         if (imageType == 1) {
                             body1ImageUri = photoURI
@@ -421,7 +389,7 @@ class SignUpActivity : AppCompatActivity() {
                 }
             }
         } else {
-            Log.w("aaaaaaa", "저장공간에 접근 불가능")
+            Log.w("SignUpActivity", "저장공간에 접근 불가능")
         }
         //기본 카메라 앱 실행
 
@@ -437,7 +405,7 @@ class SignUpActivity : AppCompatActivity() {
             storageDir!!.mkdirs()
         }
         imageFile = File(storageDir, timestamp)
-        curPhotoPath = imageFile.getAbsolutePath()
+        //curPhotoPath = imageFile.getAbsolutePath()
 
         return imageFile
     }
@@ -513,7 +481,7 @@ class SignUpActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) = with(binding){
         super.onActivityResult(requestCode, resultCode, data)
 
         if (resultCode != Activity.RESULT_OK) {
@@ -524,37 +492,31 @@ class SignUpActivity : AppCompatActivity() {
             BODY1_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
                 val uri = data?.data
                 if (uri != null) {
-                    ivSignUpBody1!!.setImageURI(uri)
+                    binding.ivSignUpBody1.setImageURI(uri)
                     body1ImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
-                    body1ImageFilePath = File(getImageFilePath(uri))
-                    Log.w("aaaaaaaaa", "body1ImageUri : " + body1ImageUri.toString())
-                    Log.w("aaaaaaaaa", "body1ImageFilePath : " + body1ImageFilePath.toString())
+
                 } else {
-                    Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@SignUpActivity, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
             BODY1_CAMERA_REQUEST_CODE -> {
-                body1ImageFilePath = File(curPhotoPath)
-                ivSignUpBody1!!.setImageURI(body1ImageUri)
+                binding.ivSignUpBody1.setImageURI(body1ImageUri)
             }
             BODY2_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
                 val uri = data?.data
                 if (uri != null) {
-                    ivSignUpBody2!!.setImageURI(uri)
+                    binding.ivSignUpBody2.setImageURI(uri)
                     body2ImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
-                    body2ImageFilePath = File(getImageFilePath(uri))
-                    Log.w("aaaaaaaaa", "body2ImageUri : " + body2ImageUri.toString())
-                    Log.w("aaaaaaaaa", "body2ImageFilePath : " + body2ImageFilePath.toString())
+
                 } else {
-                    Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@SignUpActivity, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
                 }
             }
             BODY2_CAMERA_REQUEST_CODE -> {
-                body2ImageFilePath = File(curPhotoPath)
-                ivSignUpBody2!!.setImageURI(body2ImageUri)
+                binding.ivSignUpBody2.setImageURI(body2ImageUri)
             }
             else -> {
-                Toast.makeText(this, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@SignUpActivity, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
             }
         }
     }
