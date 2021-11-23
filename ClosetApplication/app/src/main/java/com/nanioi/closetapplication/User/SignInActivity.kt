@@ -35,35 +35,29 @@ import com.nanioi.closetapplication.User.userDBkey.Companion.DB_HEIGHT
 import com.nanioi.closetapplication.User.userDBkey.Companion.DB_NAME
 import com.nanioi.closetapplication.User.userDBkey.Companion.DB_UID
 import com.nanioi.closetapplication.User.userDBkey.Companion.DB_WEIGHT
+import com.nanioi.closetapplication.databinding.ActivitySignInBinding
+import com.nanioi.closetapplication.databinding.ActivitySignUpBinding
 
 class SignInActivity : AppCompatActivity() {
 
-    private var etSignEmail: EditText? = null //이메일 입력 창 변수 선언
-    private var etSignPassword: EditText? = null //비밀번호 입력 창 변수 선언
-    private var btnSignSignIn: Button? = null //로그인 버튼 변수 선언
-    private var firebaseAuth: FirebaseAuth? = null //파이어 베이스 인스턴스 변수 선언
+
+    private val auth: FirebaseAuth by lazy { Firebase.auth }
     private val userDB : FirebaseDatabase by lazy { Firebase.database}
+    private val binding by lazy { ActivitySignInBinding.inflate(layoutInflater) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_sign_in)
-
-        etSignEmail = findViewById(R.id.et_sign_email) //이메일 입력 창 변수에 레이아웃에서 만든 ID 값 할당
-        etSignPassword = findViewById(R.id.et_sign_password) //비밀번호 입력 창 변수에 레이아웃에서 만든 ID 값 할당
-        btnSignSignIn = findViewById(R.id.btn_sign_sign_in) //로그인 버튼 변수에 레이아웃에서 만든 ID 값 할당
-        firebaseAuth = FirebaseAuth.getInstance().also { firebaseAuth = it } //파이어 베이스 인스턴스 생성
-
+        setContentView(binding.root)
 
         // by 나연. 로그인 버튼 클릭 시 firestore 추가
-        btnSignSignIn?.setOnClickListener { //로그인 버튼 클릭 리스너
-            if (etSignEmail?.text!!.isNotEmpty())
-                if (etSignPassword?.text!!.isNotEmpty()) {
+        binding.btnSignSignIn.setOnClickListener { //로그인 버튼 클릭 리스너
+            if (binding.etSignEmail.text.isNotEmpty())
+                if (binding.etSignPassword.text.isNotEmpty()) {
                     Toast.makeText(this@SignInActivity, "로그인 중...", Toast.LENGTH_SHORT).show()
-                    firebaseAuth?.signInWithEmailAndPassword(
-                        etSignEmail?.text.toString(),
-                        etSignPassword?.text.toString()
-                    ) //파이어 베이스 함수 중 로그인 함수 signInWithEmailAndPassword 사용
-                        ?.addOnCompleteListener(this@SignInActivity) { task ->
+                    auth.signInWithEmailAndPassword(
+                        binding.etSignEmail.text.toString(),
+                        binding.etSignPassword.text.toString()
+                    ).addOnCompleteListener(this@SignInActivity) { task ->
                             if (task.isSuccessful) {
                                 Toast.makeText(
                                     this@SignInActivity,
@@ -71,7 +65,7 @@ class SignInActivity : AppCompatActivity() {
                                     Toast.LENGTH_SHORT
                                 ).show()
 
-                                val user = Firebase.auth.currentUser!!.uid
+                                val user = auth.currentUser!!.uid
                                 userDB.reference.child(DB_USERS).child(user).addValueEventListener(object : ValueEventListener {
                                     override fun onDataChange(dataSnapshot: DataSnapshot) {
                                         LoginUserData.uid =
@@ -86,9 +80,9 @@ class SignInActivity : AppCompatActivity() {
                                             dataSnapshot.child(DB_HEIGHT).value.toString()
                                         LoginUserData.kg =
                                             dataSnapshot.child(DB_WEIGHT).value.toString()
-                                        LoginUserData.body_front_ImageUri = Uri.parse(dataSnapshot.child(DB_BODY_FRONT).value.toString())
-                                        LoginUserData.body_back_ImageUri = Uri.parse(dataSnapshot.child(DB_BODY_BACK).value.toString())
-                                        LoginUserData.avatar_back_ImageUri = dataSnapshot.child(DB_AVATAR_FRONT).value.toString()
+                                        LoginUserData.body_front_ImageUrl = dataSnapshot.child(DB_BODY_FRONT).value.toString()
+                                        LoginUserData.body_back_ImageUrl = dataSnapshot.child(DB_BODY_BACK).value.toString()
+                                        LoginUserData.avatar_back_ImageUrl = dataSnapshot.child(DB_AVATAR_FRONT).value.toString()
 
                                         if (LoginUserData.name != null) {
                                             Toast.makeText(
@@ -125,15 +119,14 @@ class SignInActivity : AppCompatActivity() {
                 Toast.makeText(this@SignInActivity, "이메일주소를 입력해 주세요.", Toast.LENGTH_SHORT).show()
         }
         //by 나연. 회원가입 클릭 시 회원가입 Activity로 이동 (2021.09.27)
-        var signUpText = findViewById<TextView>(R.id.signUpTextView)
-        val btnSignSignUp = signUpText.text as Spannable
+        val btnSignSignUp = binding.signUpTextView.text as Spannable
         val clickSpan = object : ClickableSpan() {
             override fun onClick(widget: View) {
                 startActivity(Intent(this@SignInActivity, SignUpActivity::class.java))
             }
         }
         btnSignSignUp.setSpan(clickSpan, 13, 17, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
-        signUpText.movementMethod = LinkMovementMethod.getInstance()
+        binding.signUpTextView.movementMethod = LinkMovementMethod.getInstance()
 
     }
 }

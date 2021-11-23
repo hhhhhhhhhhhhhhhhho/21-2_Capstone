@@ -7,8 +7,8 @@ data class userModel(
     var gender: String?,
     var cm: String?,
     var kg: String?,
-    var body_front_imageUri: String?,
-    var body_back_imageUri: String?
+    var body_front_imageUrl: String?,
+    var body_back_imageUrl: String?
 ) {
     constructor() : this(null,null,null,null,null,null,null,null)
 }
