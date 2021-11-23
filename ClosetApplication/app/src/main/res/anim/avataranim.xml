@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <translate
+        android:duration="1000"
+        android:fromXDelta="0.0"
+        android:fromYDelta="0.0"
+        android:toXDelta="0.0"
+        android:toYDelta="-50.0"
+        android:repeatMode="reverse"
+        android:repeatCount="infinite" />
+
+</set>
+
+<!--
+duration은 애니메이션을 실행할 시간
+fromXDelta, fromYDelta은 애니메이션 시작 시 뷰의 X, Y 위치
+toXDelta, toYDelta은 애니메이션 종료 시 뷰의 X, Y 위치
+repeatMode는 애니메이션을 반복할 방법 (repeat는 단순 반복, reverse는 거꾸로)
+repeatCount는 애니메이션을 반복할 횟수 (숫자면 횟수, infinite는 무한 반복)
+-->
