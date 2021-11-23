@@ -41,7 +41,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="15dp"
+        android:layout_marginTop="12dp"
         android:layout_marginBottom="24dp"
         android:textColor="@color/main_color"
         android:textSize="15sp"
@@ -70,6 +70,7 @@
         android:layout_marginStart="5dp"
         android:textColor="@color/dark_gray"
         android:textSize="12sp"
+        android:layout_marginBottom="1dp"
         app:layout_constraintBottom_toBottomOf="@id/price"
         app:layout_constraintStart_toEndOf="@+id/recommended_productSalePrice"
         tools:text="20000원" />
@@ -82,14 +83,14 @@
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginBottom="25dp"
-        android:textColor="@color/text_blue"
+        android:textColor="@color/main_color_2"
         android:textSize="13sp"
         android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/recommended_item"
         app:layout_constraintTop_toBottomOf="@+id/recommended_productPrice"
-        tools:text="판매자 : 나니쇼핑몰" />
+        tools:text="나니쇼핑몰" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

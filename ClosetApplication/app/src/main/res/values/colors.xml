@@ -10,11 +10,18 @@
     <color name="gray_cc">#cccccc</color>
     <color name="gray_ec">#ececec</color>
     <color name="dark_gray">#5E5B5B</color>
-    <color name="main_color">#ED636D</color>
-    <color name="main_color_2">#E3AFB2</color>
+    <color name="main_color">#BD7E91</color>
+    <color name="main_color_2">#D8BDC7</color>
+    <color name="pink">#DF618C</color>
+    <color name="pinkmilk">#ECBDC0</color>
     <color name="background">#F8F3F4</color>
     <color name="transfer">#00000000</color>
-    <color name="red">#F40707</color>
+    <color name="red">#CC2828</color>
     <color name="black_24">#3D000000</color>
-    <color name="text_blue">#3B4993</color>
+    <color name="text_blue">#635973</color>
+<!--    <color name="violet">#D8BDC7</color>-->
+<!--    <color name="violet_dark">#BD7E91</color>-->
 </resources>
+
+<!--<color name="main_color">#ED636D</color>-->
+<!--<color name="main_color_2">#E3AFB2</color>-->
