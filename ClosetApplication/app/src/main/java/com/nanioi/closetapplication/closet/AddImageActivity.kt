@@ -14,6 +14,8 @@ import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
+import android.view.animation.AlphaAnimation
+import android.view.animation.Animation
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -75,6 +77,15 @@ class AddImageActivity : AppCompatActivity() {
         addImageButton.setOnClickListener {
             showPictureUploadDialog()
         }
+
+        var anim : Animation = AlphaAnimation(0.0f,1.0f)
+        anim.apply {
+            duration = 800
+            startOffset = 20
+            repeatMode = Animation.REVERSE
+            repeatCount = Animation.INFINITE
+        }
+        binding.messageTextView.startAnimation(anim)
 
         //by 나연. 이미지 부분 버튼 클릭 시 이미지 업로드 함수 (21.10.16)
         itemUploadButton.setOnClickListener {

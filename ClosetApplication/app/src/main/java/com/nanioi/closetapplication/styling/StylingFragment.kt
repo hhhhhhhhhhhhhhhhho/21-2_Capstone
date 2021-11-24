@@ -102,6 +102,10 @@ class StylingFragment : Fragment(layout.fragment_styling) {
             .load(LoginUserData.avatar_front_ImageUrl)
             .into(binding.personImage)
 
+//        Glide.with(this)
+//            .load(R.drawable.avatar)
+//            .into(binding.personImage)
+
         binding.selectItemTap.visibility = View.INVISIBLE
 
         //by 나연. 각 카테고리 버튼 클릭 시 item들 보여주는 RecyclerView 창 보여주기 (21.10.12)

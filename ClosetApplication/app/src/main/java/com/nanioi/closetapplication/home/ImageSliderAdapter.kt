@@ -15,9 +15,10 @@ class ImageSliderAdapter(private val context: Context
 ) : RecyclerView.Adapter<ImageSliderAdapter.ViewHolder>() {
 
     var sliderImage = arrayOf(
-        R.drawable.image1,
-        R.drawable.image2,
-        R.drawable.image3
+        R.drawable.home_image1,
+        R.drawable.home_image2,
+        R.drawable.home_image3,
+        R.drawable.home_image4
     )
 
     inner class ViewHolder(
