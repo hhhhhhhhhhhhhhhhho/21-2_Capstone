@@ -13,7 +13,7 @@ import com.nanioi.closetapplication.closet.ClosetFragment
 import com.nanioi.closetapplication.databinding.FragmentHomeBinding
 import com.nanioi.closetapplication.styling.StylingFragment
 
-class HomeFragment: Fragment(R.layout.fragment_home) {
+class HomeFragment : Fragment(R.layout.fragment_home) {
     // 이미지 받는대로 구현
 
     override fun onCreateView(
@@ -21,14 +21,14 @@ class HomeFragment: Fragment(R.layout.fragment_home) {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding = FragmentHomeBinding.inflate(inflater,container,false)
+        val binding = FragmentHomeBinding.inflate(inflater, container, false)
 
         binding.mainViewPager.apply {
             adapter = ImageSliderAdapter(requireContext())
         }
         binding.indicator.apply {
             setViewPager(binding.mainViewPager)
-            createIndicators(3,0)
+            createIndicators(4, 0)
         }
 
         //by 나연. 버튼 클릭 시 해당 Fragment이동 (21.10.15)

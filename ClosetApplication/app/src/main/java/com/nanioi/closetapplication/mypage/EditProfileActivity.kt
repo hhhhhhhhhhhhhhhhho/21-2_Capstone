@@ -70,36 +70,7 @@ class EditProfileActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
 
-        userID = auth.currentUser!!.uid
-        body1ImageFileName =
-            userID + "_img_body1.jpg"
-        body2ImageFileName =
-            userID + "_img_body2.jpg"
-
-        binding.cbEditUserDataPassword.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked)
-                binding.llEditUserDataPassword.visibility = View.VISIBLE //체크할 경우 비밀번호 수정 레이아웃을 보여줌
-            else
-                binding.llEditUserDataPassword.visibility = View.GONE //체크 해제 할 경우 비밀번호 수정 레이아웃을 사라지게 함
-        }
-
-        binding.tvEditUserDataEmail.text = LoginUserData.email
-        binding.etEditUserDataName.setText(LoginUserData.name)
-        binding.etEditUserDataCm.setText(LoginUserData.cm)
-        binding.etEditUserDataKg.setText(LoginUserData.kg)
-        binding.rgEditUserDataGender.check(if (LoginUserData.gender == "남자") R.id.rb_edit_user_data_man else R.id.rb_edit_user_data_woman)
-
-        editBodyFrontImageUrl = LoginUserData.body_front_ImageUrl
-        editBodyBackImageUrl = LoginUserData.body_back_ImageUrl
-
-        Glide.with(this@EditProfileActivity)
-            .load(editBodyFrontImageUrl)
-            .into(binding.ivEditUserDataBody1)
-
-        Glide.with(this@EditProfileActivity)
-            .load(editBodyBackImageUrl)
-            .into(binding.ivEditUserDataBody2)
-
+        initView()
 
         binding.btnEditUserDataPass.setOnClickListener {
             if (binding.etEditUserDataName.text.isNotEmpty())
@@ -149,6 +120,40 @@ class EditProfileActivity : AppCompatActivity() {
         binding.btnEditUserDataBody2.setOnClickListener {
             showPictureUploadDialog(2)
         }
+    }
+    private fun initView() = with(binding){
+        userID = auth.currentUser!!.uid
+        body1ImageFileName =
+            userID + "_img_body1.jpg"
+        body2ImageFileName =
+            userID + "_img_body2.jpg"
+
+        binding.cbEditUserDataPassword.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked)
+                binding.llEditUserDataPassword.visibility = View.VISIBLE //체크할 경우 비밀번호 수정 레이아웃을 보여줌
+            else
+                binding.llEditUserDataPassword.visibility = View.GONE //체크 해제 할 경우 비밀번호 수정 레이아웃을 사라지게 함
+        }
+
+        binding.tvEditUserDataEmail.text = LoginUserData.email
+        binding.etEditUserDataName.setText(LoginUserData.name)
+        binding.etEditUserDataCm.setText(LoginUserData.cm)
+        binding.etEditUserDataKg.setText(LoginUserData.kg)
+        binding.rgEditUserDataGender.check(if (LoginUserData.gender == "남자") R.id.rb_edit_user_data_man else R.id.rb_edit_user_data_woman)
+
+        editBodyFrontImageUrl = LoginUserData.body_front_ImageUrl
+        editBodyBackImageUrl = LoginUserData.body_back_ImageUrl
+
+        Glide.with(binding.root)
+            .load(editBodyFrontImageUrl)
+            .into(binding.ivEditUserDataBody1)
+
+        Glide.with(binding.root)
+            .load(editBodyBackImageUrl)
+            .into(binding.ivEditUserDataBody2)
+    }
+    private fun clickEventListener()= with(binding){
+
     }
     //by 나연. user정보 수정 ( 21.11.05 )
     private fun changeUserData() {

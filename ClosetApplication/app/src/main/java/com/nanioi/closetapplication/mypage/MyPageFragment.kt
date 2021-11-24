@@ -35,7 +35,7 @@ import com.nanioi.closetapplication.databinding.FragmentClosetBinding
 import com.nanioi.closetapplication.databinding.FragmentMypageBinding
 import com.nanioi.closetapplication.databinding.FragmentStylingBinding
 
-class MyPageFragment : Fragment(R.layout.fragment_mypage){
+class MyPageFragment : Fragment(R.layout.fragment_mypage) {
     private lateinit var binding: FragmentMypageBinding
 
     @SuppressLint("SetTextI18n")
@@ -55,16 +55,19 @@ class MyPageFragment : Fragment(R.layout.fragment_mypage){
         Glide.with(view)
             .load(LoginUserData.avatar_front_ImageUrl)
             .into(binding.mypagaAvatarImageView)
+//        Glide.with(view)
+//            .load(R.drawable.avatar)
+//            .into(binding.mypagaAvatarImageView)
 
 //        //아바타에 애니메이션 효과 추가
-//        val avataranim :Animation = AnimationUtils.loadAnimation(requireContext(),R.anim.avataranim)
-//        binding.mypagaAvatarImageView.startAnimation(avataranim)
+        val avataranim :Animation = AnimationUtils.loadAnimation(requireContext(),R.anim.avataranim)
+        binding.mypagaAvatarImageView.startAnimation(avataranim)
 
 
         //by 나연. 프로필 수정 버튼 클릭 시 activity이동 (21.09.27)
         binding.editProfileButton.setOnClickListener {
             activity?.let {
-                startActivity(Intent(requireContext(),EditProfileActivity::class.java))
+                startActivity(Intent(requireContext(), EditProfileActivity::class.java))
             }
         }
     }
@@ -90,9 +93,11 @@ class MyPageFragment : Fragment(R.layout.fragment_mypage){
                     dataSnapshot.child(DB_HEIGHT).value.toString()
                 LoginUserData.kg =
                     dataSnapshot.child(DB_WEIGHT).value.toString()
-                LoginUserData.body_front_ImageUrl = dataSnapshot.child(DB_BODY_FRONT).value.toString()
+                LoginUserData.body_front_ImageUrl =
+                    dataSnapshot.child(DB_BODY_FRONT).value.toString()
                 LoginUserData.body_back_ImageUrl = dataSnapshot.child(DB_BODY_BACK).value.toString()
-                LoginUserData.avatar_front_ImageUrl = dataSnapshot.child(DB_AVATAR_FRONT).value.toString()
+                LoginUserData.avatar_front_ImageUrl =
+                    dataSnapshot.child(DB_AVATAR_FRONT).value.toString()
                 //LoginUserData.avatar_back_ImageUrl = dataSnapshot.child("avatar_back_ImageUrl").value.toString()
             }
 
