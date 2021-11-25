@@ -43,6 +43,8 @@ class SignUpActivity : AppCompatActivity() {
 
     private var body1ImageUri: Uri? = null
     private var body2ImageUri: Uri? = null
+    private var body_front_imageUrl: String? = null
+    private var body_back_imageUrl: String? = null
  //   private lateinit var curPhotoPath: String
 
     private val storage: FirebaseStorage by lazy { Firebase.storage }
@@ -92,6 +94,10 @@ class SignUpActivity : AppCompatActivity() {
                                                                         body1ImageUri,1,
                                                                         successHandler = { uri ->
                                                                             uploadUserDB(userUid, user.email,uri)
+                                                                            Log.w(
+                                                                                "SignUpActivity",
+                                                                                "전신 사진(앞) 업로드 성공 " + it.toString()
+                                                                            )
                                                                         },
                                                                         errorHandler = {
                                                                             Log.w(
@@ -102,21 +108,11 @@ class SignUpActivity : AppCompatActivity() {
                                                                     uploadImage(body2ImageFileName,
                                                                         body2ImageUri,2,
                                                                         successHandler = { uri ->
-                                                                            userDB.reference.child(DBkey.DB_USERS)
-                                                                                .child(userUid)
-                                                                                .child(DB_BODY_BACK)
-                                                                                .setValue(uri)
-                                                                                .addOnCompleteListener {
-                                                                                    Log.w(
-                                                                                        "SignUpActivity",
-                                                                                        "전신 사진(뒤) 업로드 성공! "
-                                                                                    )
-                                                                                }.addOnFailureListener {
-                                                                                    Log.w(
-                                                                                        "SignUpActivity",
-                                                                                        "전신 사진(뒤) 업로드에 실패했습니다. " + it.toString()
-                                                                                    )
-                                                                                }
+                                                                            body_back_imageUrl = uri
+                                                                            Log.w(
+                                                                                "SignUpActivity",
+                                                                                "전신 사진(뒤) 업로드 성공 " + it.toString()
+                                                                            )
                                                                         },
                                                                         errorHandler = {
                                                                             Log.w(
@@ -124,6 +120,7 @@ class SignUpActivity : AppCompatActivity() {
                                                                                 "전신 사진(뒤) 업로드에 실패했습니다. " + it.toString()
                                                                             )
                                                                         })
+
                                                                 }
                                                                 runOnUiThread {
                                                                     Toast.makeText(
@@ -220,6 +217,7 @@ class SignUpActivity : AppCompatActivity() {
         userInfo.cm = binding.etSignUpCm.text.toString()
         userInfo.kg = binding.etSignUpKg.text.toString()
         userInfo.body_front_imageUrl = uri
+        userInfo.body_back_imageUrl = body2ImageUri.toString()
 
         userDB.reference.child(DBkey.DB_USERS)
             .child(userUid)
