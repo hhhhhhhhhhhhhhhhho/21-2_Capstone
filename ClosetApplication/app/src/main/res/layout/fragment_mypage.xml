@@ -6,31 +6,52 @@
     android:layout_height="match_parent"
     android:background="@color/background">
 
-    <ImageView
-        android:id="@+id/img_header_profile"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="25dp"
-        android:background="@drawable/shadow2"
-        android:padding="20dp"
-        android:src="@drawable/ic_baseline_person_24"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <TextView
-        android:id="@+id/titleTextView"
+        android:id="@+id/avatarTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="50dp"
         android:gravity="center"
-        android:maxLines="1"
-        android:text="곽나연"
-        android:textColor="@color/black"
-        android:textSize="17sp"
+        android:shadowColor="@color/gray_cc"
+        android:shadowDx="5.0"
+        android:shadowDy="7.0"
+        android:shadowRadius="5.0"
+        android:text="My Avatar"
+        android:textColor="@color/violet"
+        android:textSize="35sp"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/img_header_profile"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:ignore="HardcodedText" />
+
+    <ImageView
+        android:id="@+id/mypaga_avatar_imageView"
+        android:layout_width="180dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="30dp"
+        android:layout_marginBottom="150dp"
+        android:layout_marginTop="100dp"
+        android:src="@drawable/ic_avatar"
+        android:scaleType="centerCrop"
+        app:layout_constraintBottom_toTopOf="@+id/editProfileButton"
+        app:layout_constraintEnd_toStartOf="@+id/nameTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/avatarTextView" />
+
+    <TextView
+        android:id="@+id/nameTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:text="이름 : 곽나연"
+        android:textColor="@color/dark_gray"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/emailTextView"
+        app:layout_constraintTop_toTopOf="@id/mypaga_avatar_imageView"
+        app:layout_constraintStart_toEndOf="@+id/mypaga_avatar_imageView"
+        app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -38,14 +59,30 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:maxLines="2"
+        android:maxLines="1"
         android:text="nani@gmail.com"
-        android:textColor="@color/black"
-        android:textSize="17sp"
+        android:textColor="@color/dark_gray"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/gender"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/titleTextView"
+        app:layout_constraintStart_toStartOf="@+id/nameTextView"
+        app:layout_constraintTop_toBottomOf="@id/nameTextView"
+        tools:ignore="HardcodedText" />
+
+    <TextView
+        android:id="@+id/gender"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="성별 : 여"
+        android:textColor="@color/dark_gray"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/height"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/nameTextView"
+        app:layout_constraintTop_toBottomOf="@id/emailTextView"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -53,14 +90,14 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:backgroundTint="@color/main_color"
-        android:gravity="center"
-        android:text="키 : 170cm "
-        android:textColor="@color/black"
+        android:text="키 : 170cm"
+        android:textColor="@color/dark_gray"
         android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/weight"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/emailTextView"
+        app:layout_constraintStart_toStartOf="@+id/nameTextView"
+        app:layout_constraintTop_toBottomOf="@id/gender"
         tools:ignore="HardcodedText" />
 
     <TextView
@@ -68,70 +105,31 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:backgroundTint="@color/main_color"
-        android:gravity="center"
+        android:layout_marginBottom="100dp"
         android:text="몸무게 : 40kg"
-        android:textColor="@color/black"
+        android:textColor="@color/dark_gray"
         android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/editProfileButton"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/nameTextView"
         app:layout_constraintTop_toBottomOf="@id/height"
-        tools:ignore="HardcodedText" />
-
-    <ImageView
-        android:id="@+id/iv_sign_up_face"
-        android:layout_width="180dp"
-        android:layout_height="250dp"
-        android:layout_marginTop="23dp"
-        android:background="@drawable/shadow2"
-        app:layout_constraintEnd_toStartOf="@+id/iv_edit_user_data_body"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/weight" />
-
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="얼굴 사진"
-        app:layout_constraintEnd_toEndOf="@id/iv_sign_up_face"
-        app:layout_constraintStart_toStartOf="@id/iv_sign_up_face"
-        app:layout_constraintTop_toBottomOf="@id/iv_sign_up_face"
-        tools:ignore="HardcodedText" />
-
-    <ImageView
-        android:id="@+id/iv_edit_user_data_body"
-        android:layout_width="180dp"
-        android:layout_height="250dp"
-        android:background="@drawable/shadow2"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/iv_sign_up_face"
-        app:layout_constraintTop_toTopOf="@id/iv_sign_up_face" />
-
-    <TextView
-        android:id="@+id/body"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="전신 사진"
-        app:layout_constraintEnd_toEndOf="@id/iv_edit_user_data_body"
-        app:layout_constraintStart_toStartOf="@id/iv_edit_user_data_body"
-        app:layout_constraintTop_toBottomOf="@id/iv_edit_user_data_body"
         tools:ignore="HardcodedText" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/editProfileButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="50dp"
+        android:layout_marginHorizontal="40dp"
+        android:layout_marginBottom="40dp"
         android:background="@drawable/radius_pink2_border"
         android:text="프로필 수정"
+        android:textSize="17sp"
+        android:textColor="@color/violet"
         android:textStyle="bold"
-        android:textColor="@color/main_color_2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/body"
         tools:ignore="HardcodedText" />
 
 

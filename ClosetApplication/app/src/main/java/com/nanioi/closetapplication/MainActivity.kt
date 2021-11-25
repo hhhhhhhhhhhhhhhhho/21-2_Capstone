@@ -1,5 +1,6 @@
 package com.nanioi.closetapplication
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
@@ -7,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -15,28 +17,39 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
+import com.nanioi.closetapplication.User.LoginUserData
 import com.nanioi.closetapplication.User.SignInActivity
-import com.nanioi.closetapplication.User.utils.LoginUserData
 import com.nanioi.closetapplication.closet.ClosetFragment
+import com.nanioi.closetapplication.closet.ItemModel
+import com.nanioi.closetapplication.databinding.ActivityAddImageBinding
+import com.nanioi.closetapplication.databinding.ActivityMainBinding
 import com.nanioi.closetapplication.home.HomeFragment
 import com.nanioi.closetapplication.mypage.MyPageFragment
 import com.nanioi.closetapplication.styling.StylingFragment
+import kotlinx.coroutines.tasks.await
 
 class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelectedListener{
 
     private var auth : FirebaseAuth = FirebaseAuth.getInstance()
 
-    private var toolbar: Toolbar? = null
+    private val binding by lazy { ActivityMainBinding.inflate(layoutInflater) }
+
     private var drawerLayout: DrawerLayout? = null
     private var navView: NavigationView? = null
     private var drawerToggle: ActionBarDrawerToggle? = null
     private var navHeaderView: View? = null
     private var tvHeaderName: TextView? = null
     private var tvHeaderEmail: TextView? = null
+    private var tvHeaderGender: TextView? = null
     private var tvHeaderCm: TextView? = null
     private var tvHeaderKg: TextView? = null
+    private var imgHeaderProfile : ImageView ?=null
 
     val homeFragment = HomeFragment()
     val stylingFragment = StylingFragment()
@@ -45,27 +58,27 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(binding.root)
 
         initViews()
 
     }
 
     //by 나연. Main 페이지 뷰 툴바, drawerLayout, navigationView 초기화 (21.09.24)
-    private fun initViews() {
+    @SuppressLint("SetTextI18n")
+    private fun initViews() = with(binding) {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true) // 드로어를 꺼낼 홈 버튼 활성화
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_menu_24) // 홈버튼 이미지 변경
         supportActionBar?.setDisplayShowTitleEnabled(false) // 툴바에 타이틀 안보이게
 
-
-        drawerLayout = findViewById(R.id.main_drawer_layout)
-        navView = findViewById(R.id.main_navigationView)
-        navView?.setNavigationItemSelectedListener(this) //navigation 리스너
+        drawerLayout = binding.mainDrawerLayout
+        navView = binding.mainNavigationView
+        navView?.setNavigationItemSelectedListener(this@MainActivity) //navigation 리스너
 
         drawerToggle = ActionBarDrawerToggle(
-            this,
+            this@MainActivity,
             drawerLayout,
             toolbar,
             R.string.navigation_drawer_open,
@@ -73,31 +86,28 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
         )
         supportActionBar?.setDisplayShowTitleEnabled(false)
         drawerLayout?.addDrawerListener(drawerToggle!!)
-        navView?.setNavigationItemSelectedListener(this)
+        navView?.setNavigationItemSelectedListener(this@MainActivity)
 
         navHeaderView = navView?.getHeaderView(0)
 
-        tvHeaderName = navHeaderView!!.findViewById(R.id.tv_header_email)
+        tvHeaderName = navHeaderView!!.findViewById(R.id.tv_header_name)
         tvHeaderEmail = navHeaderView!!.findViewById(R.id.tv_header_email)
+        tvHeaderGender = navHeaderView!!.findViewById(R.id.tv_header_gender)
         tvHeaderCm = navHeaderView!!.findViewById(R.id.tv_header_cm)
         tvHeaderKg = navHeaderView!!.findViewById(R.id.tv_header_kg)
+        imgHeaderProfile = navHeaderView!!.findViewById(R.id.img_header_profile)
 
-        tvHeaderName?.text = LoginUserData.name
+
+        tvHeaderName?.text = "이름 : ${LoginUserData.name}"
         tvHeaderEmail?.text = LoginUserData.email
+        tvHeaderGender?.text = "성별 : ${LoginUserData.gender}"
         tvHeaderCm?.text = "키 : ${LoginUserData.cm}cm"
         tvHeaderKg?.text = "몸무게 : ${LoginUserData.kg}kg"
+        Glide.with(navHeaderView!!).load(LoginUserData.avatar_front_ImageUrl).into(imgHeaderProfile!!)
+        //Glide.with(navHeaderView!!).load(R.drawable.avatar).into(imgHeaderProfile!!)
+
         replaceFragment(homeFragment)
     }
-//    // todo by 준승. 뭔함수인지
-//    override fun onPostCreate(savedInstanceState: Bundle?) {
-//        super.onPostCreate(savedInstanceState)
-//        drawerToggle?.syncState()
-//    }
-//    // todo by 준승. 뭔함수인지
-//    override fun onConfigurationChanged(newConfig: Configuration) {
-//        super.onConfigurationChanged(newConfig)
-//        drawerToggle?.onConfigurationChanged(newConfig)
-//    }
 
     //by 나연. 툴바 메뉴 버튼 클릭 시 실행 함수 (21.09.24)
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -155,6 +165,10 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
             LoginUserData.gender = null
             LoginUserData.cm = null
             LoginUserData.kg = null
+            LoginUserData.body_front_ImageUrl = null
+            LoginUserData.body_back_ImageUrl = null
+            LoginUserData.avatar_front_ImageUrl = null
+            LoginUserData.avatar_back_ImageUrl = null
 
             dialog.dismiss()
             startActivity(Intent(context, SignInActivity::class.java))
