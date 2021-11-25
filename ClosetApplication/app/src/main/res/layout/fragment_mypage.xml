@@ -25,17 +25,30 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="HardcodedText" />
 
+<!--    <ImageView-->
+<!--        android:id="@+id/circle"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:layout_marginBottom="150dp"-->
+<!--        android:tint="@color/gray_cc"-->
+<!--        android:src="@drawable/circlee"-->
+<!--        android:scaleType="centerInside"-->
+<!--        android:layout_marginTop="-20dp"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/mypaga_avatar_imageView"-->
+<!--        app:layout_constraintStart_toStartOf="@+id/mypaga_avatar_imageView"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/mypaga_avatar_imageView"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/editProfileButton"-->
+<!--        tools:ignore="UseAppTint" />-->
+
     <ImageView
         android:id="@+id/mypaga_avatar_imageView"
-        android:layout_width="180dp"
+        android:layout_width="250dp"
         android:layout_height="0dp"
-        android:layout_marginHorizontal="30dp"
-        android:layout_marginBottom="150dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginBottom="170dp"
+        android:layout_marginTop="80dp"
         android:src="@drawable/ic_avatar"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toTopOf="@+id/editProfileButton"
-        app:layout_constraintEnd_toStartOf="@+id/nameTextView"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/avatarTextView" />
 
@@ -48,9 +61,10 @@
         android:textColor="@color/dark_gray"
         android:textSize="15sp"
         android:textStyle="bold"
+        android:layout_marginStart="250dp"
         app:layout_constraintBottom_toTopOf="@+id/emailTextView"
         app:layout_constraintTop_toTopOf="@id/mypaga_avatar_imageView"
-        app:layout_constraintStart_toEndOf="@+id/mypaga_avatar_imageView"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         tools:ignore="HardcodedText" />
 

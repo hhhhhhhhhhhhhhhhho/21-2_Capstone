@@ -142,15 +142,13 @@ class EditProfileActivity : AppCompatActivity() {
         binding.rgEditUserDataGender.check(if (LoginUserData.gender == "남자") R.id.rb_edit_user_data_man else R.id.rb_edit_user_data_woman)
 
         editBodyFrontImageUrl = LoginUserData.body_front_ImageUrl
-        editBodyBackImageUrl = LoginUserData.body_back_ImageUrl
+        editBody2ImageUri = LoginUserData.body_back_ImageUrl
 
         Glide.with(binding.root)
             .load(editBodyFrontImageUrl)
             .into(binding.ivEditUserDataBody1)
 
-        Glide.with(binding.root)
-            .load(editBodyBackImageUrl)
-            .into(binding.ivEditUserDataBody2)
+        binding.ivEditUserDataBody2.setImageURI(editBody2ImageUri)
     }
     private fun clickEventListener()= with(binding){
 
@@ -173,12 +171,8 @@ class EditProfileActivity : AppCompatActivity() {
                         .show()
                 })
             deleteImage(body2ImageFileName!!,2)
-            uploadImage(body1ImageFileName!!,editBody1ImageUri,2,successHandler = { uri ->
-                LoginUserData.body_back_ImageUrl = uri
-                userDB.reference.child(DB_USERS).child(userID!!).child(DB_BODY_BACK).setValue(uri).addOnCompleteListener {
-                    Toast.makeText(this@EditProfileActivity, "회원정보 수정 완료", Toast.LENGTH_SHORT).show()
-                    finish()
-                }
+            uploadImage(body1ImageFileName!!,editBody1ImageUri,2,successHandler = { url ->
+                editBodyBackImageUrl = url
             },
                 errorHandler = {
                     Toast.makeText(
@@ -241,7 +235,7 @@ class EditProfileActivity : AppCompatActivity() {
         userModel.cm = binding.etEditUserDataCm.text.toString()
         userModel.kg = binding.etEditUserDataKg.text.toString()
         userModel.body_front_imageUrl = uri
-        userModel.body_back_imageUrl = editBodyBackImageUrl
+        userModel.body_back_imageUrl = editBody2ImageUri.toString()
 
         userDB.reference.child(DB_USERS).child(userID!!).removeValue()
         userDB.reference.child(DB_USERS).child(userID!!).setValue(userModel).addOnCompleteListener {
@@ -304,7 +298,7 @@ class EditProfileActivity : AppCompatActivity() {
         LoginUserData.cm = binding.etEditUserDataCm.text.toString()
         LoginUserData.kg = binding.etEditUserDataKg.text.toString()
         LoginUserData.body_front_ImageUrl = editBodyFrontImageUrl
-        LoginUserData.body_back_ImageUrl = editBodyBackImageUrl
+        LoginUserData.body_back_ImageUrl = editBody2ImageUri
     }
 
 

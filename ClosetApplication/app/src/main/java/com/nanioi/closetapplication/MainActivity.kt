@@ -104,7 +104,6 @@ class MainActivity : AppCompatActivity() , NavigationView.OnNavigationItemSelect
         tvHeaderCm?.text = "키 : ${LoginUserData.cm}cm"
         tvHeaderKg?.text = "몸무게 : ${LoginUserData.kg}kg"
         Glide.with(navHeaderView!!).load(LoginUserData.avatar_front_ImageUrl).into(imgHeaderProfile!!)
-        //Glide.with(navHeaderView!!).load(R.drawable.avatar).into(imgHeaderProfile!!)
 
         replaceFragment(homeFragment)
     }

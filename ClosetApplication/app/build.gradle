@@ -89,4 +89,7 @@ dependencies {
     //retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.3.0' // retrofit 라이브러리 이용
     implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
+
+    //Jsoup
+    implementation 'org.jsoup:jsoup:1.13.1'
 }

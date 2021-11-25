@@ -13,7 +13,7 @@ object LoginUserData {
     var cm: String? = null
     var kg: String? = null
     var body_front_ImageUrl: String? = null
-    var body_back_ImageUrl: String? = null
+    var body_back_ImageUrl: Uri? = null
     var avatar_front_ImageUrl : String? = null // 누끼 딴 이미지 앞면
     var avatar_back_ImageUrl : String? = null// 누끼 뒷면
 }

@@ -7,6 +7,7 @@ import android.os.AsyncTask
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -15,18 +16,29 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.nanioi.closetapplication.DBkey
+import com.nanioi.closetapplication.DBkey.Companion.DB_USERS
+import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.R.layout
 import com.nanioi.closetapplication.User.LoginUserData
+import com.nanioi.closetapplication.User.userDBkey
 import com.nanioi.closetapplication.closet.*
 import com.nanioi.closetapplication.databinding.FragmentStylingBinding
 import com.nanioi.closetapplication.styling.recommend.RecommendItemListAdapter
 import com.nanioi.closetapplication.styling.recommend.RecommendItemModel
 import com.nanioi.closetapplication.styling.recommend.parsingData
 import com.nanioi.closetapplication.styling.recommend.readFeed
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 
 class StylingFragment : Fragment(layout.fragment_styling) {
 
@@ -52,17 +64,16 @@ class StylingFragment : Fragment(layout.fragment_styling) {
 
     private lateinit var binding: FragmentStylingBinding
     var keyword: String = "의류"
-    private val auth: FirebaseAuth by lazy {
-        Firebase.auth
-    }
+    private val auth: FirebaseAuth by lazy { Firebase.auth }
     val db = FirebaseFirestore.getInstance()
+    private val userDB: FirebaseDatabase by lazy { Firebase.database }
     // bottomSheet 추천리스트
     private val recyclerAdapter = RecommendItemListAdapter(itemClicked = { item ->
         var intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.DetailPageUrl))
         startActivity(intent)
     })
+    val weburl = "https://search.musinsa.com/ranking/best?u_cat_cd=001"
 
-    lateinit var selectedItem: ItemModel
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -97,14 +108,17 @@ class StylingFragment : Fragment(layout.fragment_styling) {
         }
     }
 
+//    inner class WebParsingTask() : AsyncTask<Any?, Any?, List<RecommendItemModel>>(){
+//        override fun doInBackground(vararg params: Any?): List<RecommendItemModel> {
+//            val doc: Document = Jsoup.connect("$weburl").get()
+//            val elts : Elements = doc.select("ul.goodsRankList li.li_box" )
+//        }
+//
+//    }
     private fun initViews() {
         Glide.with(this)
             .load(LoginUserData.avatar_front_ImageUrl)
             .into(binding.personImage)
-
-//        Glide.with(this)
-//            .load(R.drawable.avatar)
-//            .into(binding.personImage)
 
         binding.selectItemTap.visibility = View.INVISIBLE
 
@@ -219,29 +233,47 @@ class StylingFragment : Fragment(layout.fragment_styling) {
     private fun handleConfirm(state: stylingState.Confirm) {
         Log.d("aaa", "observe confirm")
 
-        selectedItem = state.photo
-        val userId = auth.currentUser!!.uid
+        showProgress()
 
-        db.collection(DBkey.DB_SELECTED_ITEM).document(selectedItem.itemId.toString()).set(selectedItem)
-            .addOnSuccessListener { Log.d("aaaa", "모델 업로드 성공")
-                showProgress()}
-            .addOnFailureListener { e ->
-                Log.d("aaaa", "Error writing document", e)
+        val selectItem = ItemFromServer()
+        selectItem.userId = auth.currentUser!!.uid
+        selectItem.userBodyImage = LoginUserData.body_front_ImageUrl!!
+
+        when(state.photo.categoryNumber){
+            0-> selectItem.topImageUrl = state.photo.imageUrl
+            1-> selectItem.bottomImageUrl = state.photo.imageUrl
+            2-> selectItem.accessoryImageUrl = state.photo.imageUrl
+            3-> selectItem.shoesImageUrl = state.photo.imageUrl
+        }
+        userDB.reference.child(DBkey.DB_SELECTED_ITEM)
+            .setValue(selectItem)
+            .addOnCompleteListener {
+                Log.w(
+                    "ClosetFragment",
+                    "select item 업로드 "
+                )
+            }.addOnFailureListener {
+                Log.w(
+                    "ClosetFragment",
+                    "select item 업로드 실패 : " + it.toString()
+                )
             }
+        userDB.reference.child(DB_USERS).child(selectItem.userId).addValueEventListener(object :
+            ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                LoginUserData.body_front_ImageUrl = dataSnapshot.child(userDBkey.DB_BODY_FRONT).value.toString()
+                LoginUserData.avatar_front_ImageUrl = dataSnapshot.child(userDBkey.DB_AVATAR_FRONT).value.toString()
 
-        db.collection("Styling").addSnapshotListener { snapshots, e ->
-
-            // 오류 발생 시
-            if (e != null) {
-                Log.w("StylingFragment", "Listen failed: $e")
-                return@addSnapshotListener
-            }
-            snapshots?.documentChanges?.forEach { doc ->
-                //LoginUserData.avatarImageUri = doc.~~~
                 hideProgress()
             }
 
-        }
+            override fun onCancelled(error: DatabaseError) {
+                Log.e(
+                    "StylingFragment",
+                    error.toException().toString()
+                )
+            }
+        })
     }
     private fun showProgress() {
         binding.progressBar.isVisible = true

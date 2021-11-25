@@ -34,9 +34,6 @@ fun parsingData(keyword : String): XmlPullParser {
     urlBuilder.append("&"+ URLEncoder.encode("sortCd", "UTF-8") + "=" + URLEncoder.encode(sortCd, "UTF-8")) // 정렬순서 "CP" -> 인기도
 
     val url = URL(urlBuilder.toString())
-    // url 설정하고
-
-    Log.d("aaaaaa" ,"url : " + url)
 
     // 구글링해서 퍼오넉라 xmlPArser 생성해주는 부분같음
     val parser: XmlPullParser = Xml.newPullParser()

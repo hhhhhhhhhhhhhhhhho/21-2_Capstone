@@ -12,11 +12,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.nanioi.closetapplication.DBkey
 import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
+import com.nanioi.closetapplication.User.LoginUserData
 import com.nanioi.closetapplication.databinding.FragmentClosetBinding
 import com.nanioi.closetapplication.styling.StylingFragment
 import java.io.*
@@ -50,6 +53,7 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
         Firebase.auth
     }
     val db = FirebaseFirestore.getInstance()
+    private val userDB: FirebaseDatabase by lazy { Firebase.database }
     lateinit var itemList : List<ItemModel>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -160,26 +164,32 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
     private fun handleConfirm(state: ItemState.Confirm) {
         Log.d("bb", "observe confirm")
 
-        itemList = state.photoList
-        val userId = auth.currentUser!!.uid
-        for ( item in itemList ) {
-            db.collection(DBkey.DB_SELECTED_ITEM).document(item.itemId.toString()).set(item)
-                .addOnSuccessListener { Log.d("aaaa", "모델 업로드 성공") }
-                .addOnFailureListener { e ->
-                    Log.d("aaaa", "Error writing document", e)
-                }
-        }
-        db.collection("Styling").addSnapshotListener{ snapshots,e->
-            // 오류 발생 시
-            if (e != null) {
-                Log.w("ClosetFragment", "Listen failed: $e")
-                return@addSnapshotListener
+        val selectItem = ItemFromServer()
+        selectItem.userId = auth.currentUser!!.uid
+        selectItem.userBodyImage = LoginUserData.body_front_ImageUrl!!
+
+        for ( item in state.photoList ) {
+            when(item.categoryNumber){
+                0-> selectItem.topImageUrl = item.imageUrl
+                1-> selectItem.bottomImageUrl = item.imageUrl
+                2-> selectItem.accessoryImageUrl = item.imageUrl
+                3-> selectItem.shoesImageUrl = item.imageUrl
             }
-            snapshots?.documentChanges?.forEach { doc ->
-                //LoginUserData.avatarImageUri = doc.~~~
+        }
+        userDB.reference.child(DBkey.DB_SELECTED_ITEM)
+            .setValue(selectItem)
+            .addOnCompleteListener {
+                Log.w(
+                    "ClosetFragment",
+                    "select item 업로드 "
+                )
                 (activity as MainActivity).replaceFragment(StylingFragment())
+            }.addOnFailureListener {
+                Log.w(
+                    "ClosetFragment",
+                    "select item 업로드 실패 : " + it.toString()
+                )
             }
-        }
     }
     override fun onResume() {
         super.onResume()
