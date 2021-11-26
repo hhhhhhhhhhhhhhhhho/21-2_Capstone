@@ -6,11 +6,11 @@ from firebase_admin import db
 
 from uuid import uuid4
 from time import sleep
+import os
 
-
-cred = credentials.Certificate('Server_util/closet-89ea8-firebase-adminsdk-zsasm-96c3e02090.json')
+cred = credentials.Certificate('Server_util/closet-89ea8-firebase-adminsdk-zsasm-2de7a23cef.json')
 default_app=firebase_admin.initialize_app(cred,{ 
-    'databaseURL': 'Server_util/closet-89ea8-firebase-adminsdk-zsasm-96c3e02090.json',
+    'databaseURL': 'https://closet-89ea8-default-rtdb.firebaseio.com',
     'storageBucket':f"closet-89ea8.appspot.com"
     })
     #버킷은 바이너리 객체의 상위 컨테이너이다. 버킷은 Storage에서 데이터를 보관하는 기본 컨테이너이다.
@@ -54,7 +54,8 @@ def fileUpload(upload_path,file):
     metadata = {"firebaseStorageDownloadTokens": new_token} #access token이 필요하다.
     blob.metadata = metadata    
     #upload file
-    blob.upload_from_filename(filename=file)
+    os.system('curl -o Server_util/Download_temp/temp.png '+file)
+    blob.upload_from_filename(filename='Server_util/Download_temp/temp.png', content_type='image/png')
     blob.make_public()
     public_url = blob.public_url
     print("print public url : ",public_url)    
@@ -76,10 +77,11 @@ def listener(event):
 if __name__ == '__main__':
     
     #print("테스트용 파일을 업로드 합니다. ")
-    url = fileUpload('user/avatar/test.png','VTON/Server_util/test_remove_2.png')
+    #https://firebasestorage.googleapis.com/v0/b/closet-89ea8.appspot.com/o/user%2Fbody1%2FfPFIyQhZe6VYheDbDFbjqXMQoxK2_img_body1.jpg?alt=media&token=e7ab0ece-c118-48b8-9ba7-92db20b47bcf
+    user_id="test_user"
+    url = fileUpload('user/avatar/'+user_id+'_test2.png','https://firebasestorage.googleapis.com/v0/b/closet-89ea8.appspot.com/o/user%2Fbody1%2FfPFIyQhZe6VYheDbDFbjqXMQoxK2_img_body1.jpg?alt=media&token=e7ab0ece-c118-48b8-9ba7-92db20b47bcf')
     print(url)
-    
-    realtime_update('kzbuEMGh1yMymoRfcvASXbF7tOB3','avatarImageUri',url)
+    #realtime_update('kzbuEMGh1yMymoRfcvASXbF7tOB3','avatarImageUri',url)
     #fileUpload('item/remove_bg/','VTON/Server_util/test_remove.png')
     
     #new_data=firebase_admin.db.reference('Users').listen(listener)
