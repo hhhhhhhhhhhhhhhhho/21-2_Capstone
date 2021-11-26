@@ -24,7 +24,6 @@ class RecommendItemListAdapter(val itemClicked:(RecommendItemModel)->Unit) : Lis
         @SuppressLint("SetTextI18n")
         fun bind(item: RecommendItemModel) {
             val productName = binding.recommendedProductName
-            val priceTextView = binding.price
             val productPrice = binding.recommendedProductPrice
             val productImage = binding.recommendedItem
             val productSeller = binding.recommendedProductSeller
@@ -32,14 +31,13 @@ class RecommendItemListAdapter(val itemClicked:(RecommendItemModel)->Unit) : Lis
 
 
             productName.text = item.ProductName
-            priceTextView.text = "할인가 : "
-            productPrice.text = "${item.ProductPrice}원 "
+            productPrice.text = "${item.ProductPrice}"
             productPrice.apply {
                 paintFlags = paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                 //setTypeface(null, Typeface.ITALIC)
             }
-            productSalePrice.text = "${item.SalePrice}원"
-            productSeller.text = "판매자 : ${item.Seller}"
+            productSalePrice.text = "${item.SalePrice}"
+            productSeller.text = "${item.Seller}"
             Glide
                 .with(productImage.context)
                 .load(item.ProductImage)
@@ -66,7 +64,7 @@ class RecommendItemListAdapter(val itemClicked:(RecommendItemModel)->Unit) : Lis
     companion object {
         val differ = object : DiffUtil.ItemCallback<RecommendItemModel>() {
             override fun areItemsTheSame(oldItem: RecommendItemModel, newItem: RecommendItemModel): Boolean {
-                return oldItem.ProductCode == newItem.ProductCode
+                return oldItem == newItem
             }
 
             override fun areContentsTheSame(oldItem: RecommendItemModel, newItem: RecommendItemModel): Boolean {

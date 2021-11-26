@@ -18,12 +18,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ClosetApplication"
         android:usesCleartextTraffic="true">
-        <activity
-            android:name=".retrofit.RetrofitActivity"
-            android:exported="false" />
-        <activity
-            android:name=".User.CautionActivity"
-            android:exported="false" />
         <activity android:name=".User.SignInActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,9 +30,12 @@
         <activity android:name=".mypage.EditProfileActivity" />
         <activity android:name=".MainActivity" />
         <activity
-            android:name="com.soundcloud.android.crop.CropImageActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.NoActionBar" />
+            android:name=".User.CautionActivity"
+            android:exported="false" />
+<!--        <activity-->
+<!--            android:name="com.soundcloud.android.crop.CropImageActivity"-->
+<!--            android:screenOrientation="portrait"-->
+<!--            android:theme="@style/Theme.AppCompat.NoActionBar" />-->
 
         <provider
             android:name="androidx.core.content.FileProvider"
