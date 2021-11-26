@@ -67,13 +67,13 @@ class StylingFragment : Fragment(layout.fragment_styling) {
     private val auth: FirebaseAuth by lazy { Firebase.auth }
     val db = FirebaseFirestore.getInstance()
     private val userDB: FirebaseDatabase by lazy { Firebase.database }
+
     // bottomSheet 추천리스트
     private val recyclerAdapter = RecommendItemListAdapter(itemClicked = { item ->
         var intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.DetailPageUrl))
         startActivity(intent)
     })
-    val weburl = "https://search.musinsa.com/ranking/best?u_cat_cd=001"
-
+    val TAG = "StylingFragment"
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -94,27 +94,44 @@ class StylingFragment : Fragment(layout.fragment_styling) {
             "남자" -> keyword = "20대 남성의류"
             "여자" -> keyword = "20대 여성의류"
         }
-        XmlParsingTask().execute()
+        //XmlParsingTask().execute()
+        WebParsingTask().execute()
     }
 
-    inner class XmlParsingTask() : AsyncTask<Any?, Any?, List<RecommendItemModel>>() {
+    inner class WebParsingTask() :
+        AsyncTask<Any?, Any?, List<RecommendItemModel>>() { //input, progress update type, result type
+        var itemList = mutableListOf<RecommendItemModel>()
+        val weburl = "https://search.musinsa.com/ranking/best"
+        override fun doInBackground(vararg params: Any?): List<RecommendItemModel> {
+            val doc: Document = Jsoup.connect("$weburl").get()
+            val elts: Elements = doc.select("ul li div.li_inner")
+
+
+            elts.forEachIndexed { index, elem ->
+                val pageUrl = elem.select("div.list_img a").attr("href")
+                val itemImage = elem.select("div.list_img img").attr("data-original")
+                val seller = elem.select("div.article_info p.item_title a").text()
+                val itemTitle = elem.select("div.article_info p.list_info a").attr("title")
+                var salePrice = elem.select("div.article_info p.price").text().replace(" ","*")
+                var price = ""
+                if("*" in salePrice) {
+                    val arr = salePrice.split("*")
+                    price = arr.get(0)
+                    salePrice = arr.get(1)
+                }
+
+                var item = RecommendItemModel(itemTitle,price,itemImage,seller,pageUrl,salePrice)
+                itemList.add(item)
+            }
+            return itemList
+        }
+
         override fun onPostExecute(result: List<RecommendItemModel>) {
             super.onPostExecute(result)
             recyclerAdapter.submitList(result)
         }
-
-        override fun doInBackground(vararg params: Any?): List<RecommendItemModel> { // xml 파싱할때 여기서 데이터 받아와 reedFeed 부분은 저 XmlParsingTask 파일보면 있으
-            return readFeed(parsingData(keyword))
-        }
     }
 
-//    inner class WebParsingTask() : AsyncTask<Any?, Any?, List<RecommendItemModel>>(){
-//        override fun doInBackground(vararg params: Any?): List<RecommendItemModel> {
-//            val doc: Document = Jsoup.connect("$weburl").get()
-//            val elts : Elements = doc.select("ul.goodsRankList li.li_box" )
-//        }
-//
-//    }
     private fun initViews() {
         Glide.with(this)
             .load(LoginUserData.avatar_front_ImageUrl)
@@ -132,7 +149,7 @@ class StylingFragment : Fragment(layout.fragment_styling) {
                 "남자" -> keyword = "20대 남성 상의"
                 "여자" -> keyword = "20대 여성 상의"
             }
-            XmlParsingTask().execute()
+            //  XmlParsingTask().execute()
         }
         binding.pantsButton.setOnClickListener {
             Log.d("aaa", "pantButton")
@@ -144,7 +161,7 @@ class StylingFragment : Fragment(layout.fragment_styling) {
                 "남자" -> keyword = "20대 남성 하의"
                 "여자" -> keyword = "20대 여성 하의"
             }
-            XmlParsingTask().execute()
+            //  XmlParsingTask().execute()
         }
         binding.accessoryButton.setOnClickListener {
             activity?.let {
@@ -155,7 +172,7 @@ class StylingFragment : Fragment(layout.fragment_styling) {
                 "남자" -> keyword = "20대 남성 액세서리"
                 "여자" -> keyword = "20대 여성 액세서리"
             }
-            XmlParsingTask().execute()
+            //  XmlParsingTask().execute()
         }
         binding.shoesButton.setOnClickListener {
             activity?.let {
@@ -166,7 +183,7 @@ class StylingFragment : Fragment(layout.fragment_styling) {
                 "남자" -> keyword = "20대 남성 신발"
                 "여자" -> keyword = "20대 여성 신발"
             }
-            XmlParsingTask().execute()
+            //   XmlParsingTask().execute()
         }
         binding.backButton.setOnClickListener {
             activity?.let {
@@ -239,11 +256,11 @@ class StylingFragment : Fragment(layout.fragment_styling) {
         selectItem.userId = auth.currentUser!!.uid
         selectItem.userBodyImage = LoginUserData.body_front_ImageUrl!!
 
-        when(state.photo.categoryNumber){
-            0-> selectItem.topImageUrl = state.photo.imageUrl
-            1-> selectItem.bottomImageUrl = state.photo.imageUrl
-            2-> selectItem.accessoryImageUrl = state.photo.imageUrl
-            3-> selectItem.shoesImageUrl = state.photo.imageUrl
+        when (state.photo.categoryNumber) {
+            0 -> selectItem.topImageUrl = state.photo.imageUrl
+            1 -> selectItem.bottomImageUrl = state.photo.imageUrl
+            2 -> selectItem.accessoryImageUrl = state.photo.imageUrl
+            3 -> selectItem.shoesImageUrl = state.photo.imageUrl
         }
         userDB.reference.child(DBkey.DB_SELECTED_ITEM)
             .setValue(selectItem)
@@ -261,8 +278,10 @@ class StylingFragment : Fragment(layout.fragment_styling) {
         userDB.reference.child(DB_USERS).child(selectItem.userId).addValueEventListener(object :
             ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
-                LoginUserData.body_front_ImageUrl = dataSnapshot.child(userDBkey.DB_BODY_FRONT).value.toString()
-                LoginUserData.avatar_front_ImageUrl = dataSnapshot.child(userDBkey.DB_AVATAR_FRONT).value.toString()
+                LoginUserData.body_front_ImageUrl =
+                    dataSnapshot.child(userDBkey.DB_BODY_FRONT).value.toString()
+                LoginUserData.avatar_front_ImageUrl =
+                    dataSnapshot.child(userDBkey.DB_AVATAR_FRONT).value.toString()
 
                 hideProgress()
             }
@@ -275,12 +294,15 @@ class StylingFragment : Fragment(layout.fragment_styling) {
             }
         })
     }
+
     private fun showProgress() {
         binding.progressBar.isVisible = true
     }
+
     private fun hideProgress() {
         binding.progressBar.isVisible = false
     }
+
     override fun onResume() {
         super.onResume()
         viewModel.fetchData()
@@ -292,4 +314,16 @@ class StylingFragment : Fragment(layout.fragment_styling) {
         Log.d("aaa", "destroy")
         //  viewModel.
     }
+
+    //11번가 openApi xml Parsing
+    //    inner class XmlParsingTask() : AsyncTask<Any?, Any?, List<RecommendItemModel>>() {
+//        override fun onPostExecute(result: List<RecommendItemModel>) {
+//            super.onPostExecute(result)
+//            recyclerAdapter.submitList(result)
+//        }
+//
+//        override fun doInBackground(vararg params: Any?): List<RecommendItemModel> { // xml 파싱할때 여기서 데이터 받아와 reedFeed 부분은 저 XmlParsingTask 파일보면 있으
+//            return readFeed(parsingData(keyword))
+//        }
+//    }
 }

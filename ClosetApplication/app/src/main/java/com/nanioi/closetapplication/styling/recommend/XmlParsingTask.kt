@@ -89,7 +89,7 @@ fun readEntry(parser: XmlPullParser): RecommendItemModel {
             else -> skip(parser)
         }
     }
-    return RecommendItemModel(ProductCode,ProductName, ProductPrice, ProductImage, Seller,DetailPageUrl,SalePrice) // 클래스에 데이터 넣어서 반환
+    return RecommendItemModel(ProductName, ProductPrice, ProductImage, Seller,DetailPageUrl,SalePrice) // 클래스에 데이터 넣어서 반환
 }
 
 // Processes title tags in the feed.
