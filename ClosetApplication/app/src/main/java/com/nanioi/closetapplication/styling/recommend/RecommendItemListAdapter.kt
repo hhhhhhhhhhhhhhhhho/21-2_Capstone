@@ -13,23 +13,25 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.nanioi.closetapplication.databinding.RecommendBinding
 import com.nanioi.closetapplication.databinding.RecommendedItemListBinding
 
 class RecommendItemListAdapter(val itemClicked:(RecommendItemModel)->Unit) : ListAdapter<RecommendItemModel, RecommendItemListAdapter.ViewHolder>(differ) {
 
     inner class ViewHolder(
-        private val binding: RecommendedItemListBinding
+        private val binding: RecommendBinding
         ) : RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n")
         fun bind(item: RecommendItemModel) {
+            val productRank = binding.rank
             val productName = binding.recommendedProductName
             val productPrice = binding.recommendedProductPrice
             val productImage = binding.recommendedItem
             val productSeller = binding.recommendedProductSeller
             val productSalePrice = binding.recommendedProductSalePrice
 
-
+            productRank.text = item.itemRank
             productName.text = item.ProductName
             productPrice.text = "${item.ProductPrice}"
             productPrice.apply {
@@ -51,7 +53,7 @@ class RecommendItemListAdapter(val itemClicked:(RecommendItemModel)->Unit) : Lis
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(RecommendedItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ViewHolder(RecommendBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
