@@ -24,6 +24,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.nanioi.closetapplication.DBkey
+import com.nanioi.closetapplication.DBkey.Companion.DB_SELECTED_ITEM
 import com.nanioi.closetapplication.DBkey.Companion.DB_USERS
 import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
@@ -235,28 +236,34 @@ class StylingFragment : Fragment(layout.fragment_styling) {
             2 -> selectItem.accessoryImageUrl = state.photo.imageUrl
             3 -> selectItem.shoesImageUrl = state.photo.imageUrl
         }
-        userDB.reference.child(DBkey.DB_SELECTED_ITEM)
+        userDB.reference.child(DB_SELECTED_ITEM).child(DB_USERS)
             .setValue(selectItem)
             .addOnCompleteListener {
                 Log.w(TAG, "select item 업로드 ")
             }.addOnFailureListener {
                 Log.w(TAG, "select item 업로드 실패 : " + it.toString())
             }
-        userDB.reference.child(DB_USERS).child(selectItem.userId).addValueEventListener(object :
-            ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                LoginUserData.body_front_ImageUrl =
-                    dataSnapshot.child(userDBkey.DB_BODY_FRONT).value.toString()
-                LoginUserData.avatar_front_ImageUrl =
-                    dataSnapshot.child(userDBkey.DB_AVATAR_FRONT).value.toString()
+//        userDB.reference.child(DB_USERS).child(selectItem.userId).addValueEventListener(object :
+//            ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                LoginUserData.body_front_ImageUrl =
+//                    dataSnapshot.child(userDBkey.DB_BODY_FRONT).value.toString()
+//                LoginUserData.avatar_front_ImageUrl =
+//                    dataSnapshot.child(userDBkey.DB_AVATAR_FRONT).value.toString()
+//
+//                hideProgress()
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                Log.e(TAG, error.toException().toString())
+//            }
+//        })
 
-                hideProgress()
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e(TAG, error.toException().toString())
-            }
-        })
+        Glide.with(this)
+            .load(R.drawable.top_styling_image)
+            .into(binding.personImage)
+        hideProgress()
     }
 
     private fun showProgress() {

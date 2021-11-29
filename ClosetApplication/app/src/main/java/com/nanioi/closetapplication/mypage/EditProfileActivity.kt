@@ -18,11 +18,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.fragment.app.Fragment
+import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.CollectionReference
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
@@ -30,17 +34,23 @@ import com.google.firebase.storage.ktx.storage
 import com.gun0912.tedpermission.PermissionListener
 import com.gun0912.tedpermission.TedPermission
 import com.nanioi.closetapplication.DBkey
+import com.nanioi.closetapplication.DBkey.Companion.DB_ITEM
 import com.nanioi.closetapplication.DBkey.Companion.DB_USERS
+import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.User.SignInActivity
 import com.nanioi.closetapplication.User.userModel
 import com.nanioi.closetapplication.User.LoginUserData
 import com.nanioi.closetapplication.User.userDBkey.Companion.DB_BODY_BACK
+import com.nanioi.closetapplication.closet.ClosetFragment
+import com.nanioi.closetapplication.closet.ItemModel
+import com.nanioi.closetapplication.closet.ItemState
 import com.nanioi.closetapplication.databinding.ActivityEditProfileBinding
 import com.nanioi.closetapplication.databinding.ActivitySignUpBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
 import java.io.DataOutputStream
 import java.io.File
 import java.io.IOException
@@ -48,6 +58,7 @@ import java.lang.Exception
 import java.net.Socket
 import java.text.SimpleDateFormat
 import java.util.*
+import androidx.lifecycle.viewModelScope
 
 class EditProfileActivity : AppCompatActivity() {
 
@@ -59,12 +70,13 @@ class EditProfileActivity : AppCompatActivity() {
 
     private val storage: FirebaseStorage by lazy { Firebase.storage }
     private val auth: FirebaseAuth by lazy { Firebase.auth }
-    private val userDB : FirebaseDatabase by lazy { Firebase.database}
+    private val userDB: FirebaseDatabase by lazy { Firebase.database }
+    val db = FirebaseFirestore.getInstance()
     private val binding by lazy { ActivityEditProfileBinding.inflate(layoutInflater) }
 
-    var body1ImageFileName : String ? =null
-    var body2ImageFileName  : String ? =null
-    var userID : String ?=null
+    var body1ImageFileName: String? = null
+    var body2ImageFileName: String? = null
+    var userID: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,26 +97,55 @@ class EditProfileActivity : AppCompatActivity() {
                                                 auth?.currentUser?.updatePassword(binding.etEditUserDataChangePassword.text.toString())
                                                     ?.addOnCompleteListener(this) {
                                                         if (it.isSuccessful) {
-                                                            Toast.makeText(this@EditProfileActivity, "비밀번호 변경 완료", Toast.LENGTH_SHORT).show()
+                                                            Toast.makeText(
+                                                                this@EditProfileActivity,
+                                                                "비밀번호 변경 완료",
+                                                                Toast.LENGTH_SHORT
+                                                            ).show()
                                                             changeUserData()
                                                         }
                                                     }
                                             } else
-                                                Toast.makeText(this@EditProfileActivity, "변경할 비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show()
+                                                Toast.makeText(
+                                                    this@EditProfileActivity,
+                                                    "변경할 비밀번호가 일치하지 않습니다.",
+                                                    Toast.LENGTH_SHORT
+                                                ).show()
                                         else
-                                            Toast.makeText(this@EditProfileActivity, "변경할 비밀번호 확인을 입력해 주세요.", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(
+                                                this@EditProfileActivity,
+                                                "변경할 비밀번호 확인을 입력해 주세요.",
+                                                Toast.LENGTH_SHORT
+                                            ).show()
                                     else
-                                        Toast.makeText(this@EditProfileActivity, "변경할 비밀번호를 입력해 주세요.", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(
+                                            this@EditProfileActivity,
+                                            "변경할 비밀번호를 입력해 주세요.",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
                                 else
                                     changeUserData()
                             else
-                                Toast.makeText(this@EditProfileActivity, "전신 사진을 업로드 해 주세요.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(
+                                    this@EditProfileActivity,
+                                    "전신 사진을 업로드 해 주세요.",
+                                    Toast.LENGTH_SHORT
+                                ).show()
                         else
-                            Toast.makeText(this@EditProfileActivity, "얼굴 사진을 업로드 해 주세요.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(
+                                this@EditProfileActivity,
+                                "얼굴 사진을 업로드 해 주세요.",
+                                Toast.LENGTH_SHORT
+                            ).show()
                     else
-                        Toast.makeText(this@EditProfileActivity, "몸무게를 입력해 주세요.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@EditProfileActivity,
+                            "몸무게를 입력해 주세요.",
+                            Toast.LENGTH_SHORT
+                        ).show()
                 else
-                    Toast.makeText(this@EditProfileActivity, "키를 입력해 주세요.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@EditProfileActivity, "키를 입력해 주세요.", Toast.LENGTH_SHORT)
+                        .show()
             else
                 Toast.makeText(this@EditProfileActivity, "이름을 입력해 주세요.", Toast.LENGTH_SHORT).show()
         }
@@ -121,7 +162,8 @@ class EditProfileActivity : AppCompatActivity() {
             showPictureUploadDialog(2)
         }
     }
-    private fun initView() = with(binding){
+
+    private fun initView() = with(binding) {
         userID = auth.currentUser!!.uid
         body1ImageFileName =
             userID + "_img_body1.jpg"
@@ -132,7 +174,8 @@ class EditProfileActivity : AppCompatActivity() {
             if (isChecked)
                 binding.llEditUserDataPassword.visibility = View.VISIBLE //체크할 경우 비밀번호 수정 레이아웃을 보여줌
             else
-                binding.llEditUserDataPassword.visibility = View.GONE //체크 해제 할 경우 비밀번호 수정 레이아웃을 사라지게 함
+                binding.llEditUserDataPassword.visibility =
+                    View.GONE //체크 해제 할 경우 비밀번호 수정 레이아웃을 사라지게 함
         }
 
         binding.tvEditUserDataEmail.text = LoginUserData.email
@@ -150,16 +193,18 @@ class EditProfileActivity : AppCompatActivity() {
 
         binding.ivEditUserDataBody2.setImageURI(editBody2ImageUri)
     }
-    private fun clickEventListener()= with(binding){
+
+    private fun clickEventListener() = with(binding) {
 
     }
+
     //by 나연. user정보 수정 ( 21.11.05 )
     private fun changeUserData() {
         Toast.makeText(this@EditProfileActivity, "회원정보 수정 중...", Toast.LENGTH_SHORT).show()
         CoroutineScope(Dispatchers.Default).launch {
 
-            deleteImage(body1ImageFileName!!,1)
-            uploadImage(body1ImageFileName!!,editBody1ImageUri,1,successHandler = { uri ->
+            deleteImage(body1ImageFileName!!, 1)
+            uploadImage(body1ImageFileName!!, editBody1ImageUri, 1, successHandler = { uri ->
                 uploadUserDB(uri)
             },
                 errorHandler = {
@@ -170,8 +215,8 @@ class EditProfileActivity : AppCompatActivity() {
                     )
                         .show()
                 })
-            deleteImage(body2ImageFileName!!,2)
-            uploadImage(body1ImageFileName!!,editBody1ImageUri,2,successHandler = { url ->
+            deleteImage(body2ImageFileName!!, 2)
+            uploadImage(body1ImageFileName!!, editBody1ImageUri, 2, successHandler = { url ->
                 editBodyBackImageUrl = url
             },
                 errorHandler = {
@@ -184,34 +229,36 @@ class EditProfileActivity : AppCompatActivity() {
                 })
         }
     }
-    private fun deleteImage(fileName: String,type : Int){
-        var path : String
-        if(type == 1){
+
+    private fun deleteImage(fileName: String, type: Int) {
+        var path: String
+        if (type == 1) {
             path = "user/body1"
-        }else{
+        } else {
             path = "user/body2"
         }
         storage.reference.child(path).child(fileName).delete()
     }
+
     private fun uploadImage(
         fileName: String,
         ImageUri: Uri?,
-        type : Int,
+        type: Int,
         successHandler: (String) -> Unit,
         errorHandler: () -> Unit
     ) {
-        var path : String ? =null
-        if(type==1)
+        var path: String? = null
+        if (type == 1)
             path = "user/body1"
         else
             path = "user/body2"
 
-        storage.reference.child( path)
+        storage.reference.child(path)
             .child(fileName)
             .putFile(ImageUri!!)
             .addOnCompleteListener { // 성공했는지 확인 리스너
                 if (it.isSuccessful) { // 성공시 -> 업로드 완료
-                    storage.reference.child( path).child(
+                    storage.reference.child(path).child(
                         fileName
                     )
                         .downloadUrl
@@ -226,12 +273,13 @@ class EditProfileActivity : AppCompatActivity() {
                 }
             }
     }
-    private fun uploadUserDB( uri: String) = with(binding) {
+
+    private fun uploadUserDB(uri: String) = with(binding) {
         val userModel = userModel()
         userModel.uid = userID
-        userModel.email =binding.tvEditUserDataEmail.text.toString()
+        userModel.email = binding.tvEditUserDataEmail.text.toString()
         userModel.name = binding.etEditUserDataName.text.toString()
-        userModel.gender= if (binding.rbEditUserDataMan.isChecked == true) "남자" else "여자"
+        userModel.gender = if (binding.rbEditUserDataMan.isChecked == true) "남자" else "여자"
         userModel.cm = binding.etEditUserDataCm.text.toString()
         userModel.kg = binding.etEditUserDataKg.text.toString()
         userModel.body_front_imageUrl = uri
@@ -244,6 +292,7 @@ class EditProfileActivity : AppCompatActivity() {
         }
         updateLoginUserDB()
     }
+
     //by 나연. user정보 삭제 ( 21.11.05 )
     private fun deleteUserData() {
         var signOutDialog: AlertDialog.Builder = AlertDialog.Builder(this@EditProfileActivity)
@@ -252,34 +301,25 @@ class EditProfileActivity : AppCompatActivity() {
 
         signOutDialog.setPositiveButton("확인") { dialog, _ ->
             val user = auth.currentUser
-            user?.let {
-                user.delete().addOnCompleteListener(this) {
-                    if (it.isSuccessful) {
-                        userDB.reference.child(DB_USERS).child(user.uid).removeValue()
-                            .addOnCompleteListener(this@EditProfileActivity) { task ->
-                                if (task.isSuccessful) {
-                                    CoroutineScope(Dispatchers.IO).launch {
-                                        storage.reference.child("user/body1").child(body1ImageFileName!!).delete()
-                                        storage.reference.child("user/body2").child(body2ImageFileName!!).delete()
+            val userId: String = user!!.uid
 
-                                        Toast.makeText(
-                                            this@EditProfileActivity,
-                                            "회원 탈퇴 완료",
-                                            Toast.LENGTH_SHORT
-                                        ).show()
+            user.delete().addOnCompleteListener(this) {
+                if (it.isSuccessful) {
+                    userDB.reference.child(DB_USERS).child(userId).removeValue()
+                        .addOnCompleteListener(this@EditProfileActivity) { task ->
+                            if (task.isSuccessful) {
+                                Log.d("bbbbb", "userDelete")
+                                deleteImage(body1ImageFileName!!, 1)
+                                deleteImage(body2ImageFileName!!, 2)
 
-                                        dialog.dismiss()
-                                        startActivity(
-                                            Intent(
-                                                this@EditProfileActivity,
-                                                SignInActivity::class.java
-                                            )
-                                        )
-                                        finish()
-                                    }
-                                }
+                                Toast.makeText(this@EditProfileActivity, "회원 탈퇴 완료", Toast.LENGTH_SHORT).show()
+                                dialog.dismiss()
+                                startActivity(Intent(this@EditProfileActivity, SignInActivity::class.java))
+                                finish()
                             }
-                    }
+                        }.addOnFailureListener {
+                            Log.d("EditProfileActivity", "userDelete error" + it.toString())
+                        }
                 }
             }
         }
@@ -291,7 +331,7 @@ class EditProfileActivity : AppCompatActivity() {
         signOutDialog.show()
     }
 
-    private fun updateLoginUserDB() = with(binding){
+    private fun updateLoginUserDB() = with(binding) {
         LoginUserData.email = binding.tvEditUserDataEmail.text.toString()
         LoginUserData.name = binding.etEditUserDataName.text.toString()
         LoginUserData.gender = if (binding.rbEditUserDataMan.isChecked == true) "남자" else "여자"
@@ -486,43 +526,53 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) = with(binding) {
-        super.onActivityResult(requestCode, resultCode, data)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) =
+        with(binding) {
+            super.onActivityResult(requestCode, resultCode, data)
 
-        if (resultCode != Activity.RESULT_OK) {
-            return
-        }
+            if (resultCode != Activity.RESULT_OK) {
+                return
+            }
 
-        when (requestCode) {
-            BODY1_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
-                val uri = data?.data
-                if (uri != null) {
-                    binding.ivEditUserDataBody1.setImageURI(uri)
-                    editBody1ImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
-                } else {
-                    Toast.makeText(this@EditProfileActivity, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
+            when (requestCode) {
+                BODY1_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
+                    val uri = data?.data
+                    if (uri != null) {
+                        binding.ivEditUserDataBody1.setImageURI(uri)
+                        editBody1ImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
+                    } else {
+                        Toast.makeText(
+                            this@EditProfileActivity,
+                            "사진을 가져오지 못했습니다.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                BODY1_CAMERA_REQUEST_CODE -> {
+                    binding.ivEditUserDataBody1.setImageURI(editBody1ImageUri)
+                }
+                BODY2_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
+                    val uri = data?.data
+                    if (uri != null) {
+                        binding.ivEditUserDataBody2.setImageURI(uri)
+                        editBody2ImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
+                    } else {
+                        Toast.makeText(
+                            this@EditProfileActivity,
+                            "사진을 가져오지 못했습니다.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+                BODY2_CAMERA_REQUEST_CODE -> {
+                    binding.ivEditUserDataBody2.setImageURI(editBody2ImageUri)
+                }
+                else -> {
+                    Toast.makeText(this@EditProfileActivity, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT)
+                        .show()
                 }
             }
-            BODY1_CAMERA_REQUEST_CODE -> {
-                binding.ivEditUserDataBody1.setImageURI(editBody1ImageUri)
-            }
-            BODY2_GALLERY_REQUEST_CODE -> { //갤러리 요청일 경우 받아온 data에서 사진에 대한 uri 저장
-                val uri = data?.data
-                if (uri != null) {
-                    binding.ivEditUserDataBody2.setImageURI(uri)
-                    editBody2ImageUri = uri // 이미지 업로드 버튼을 눌러야 저장되므로 그전까지 이 변수에 저장
-                } else {
-                    Toast.makeText(this@EditProfileActivity, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
-                }
-            }
-            BODY2_CAMERA_REQUEST_CODE -> {
-                binding.ivEditUserDataBody2.setImageURI(editBody2ImageUri)
-            }
-            else -> {
-                Toast.makeText(this@EditProfileActivity, "사진을 가져오지 못했습니다.", Toast.LENGTH_SHORT).show()
-            }
         }
-    }
 
     override fun onBackPressed() {
         super.onBackPressed()

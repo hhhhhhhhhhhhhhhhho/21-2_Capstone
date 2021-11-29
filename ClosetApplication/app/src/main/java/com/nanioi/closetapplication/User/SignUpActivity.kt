@@ -2,6 +2,7 @@ package com.nanioi.closetapplication.User
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -9,6 +10,7 @@ import android.os.*
 import androidx.appcompat.app.AppCompatActivity
 import android.provider.MediaStore
 import android.util.Log
+import android.view.LayoutInflater
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -58,6 +60,33 @@ class SignUpActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.rgSignUpGender.check(R.id.rb_sign_up_man) //아무것도 체크가 되어있지 않으면 안되니 기본적으로 남자로 체크되어 있음
+
+        //numberPicker
+        val dialog = AlertDialog.Builder(this).create()
+        val edialog : LayoutInflater = LayoutInflater.from(this)
+
+        val year : NumberPicker = binding.yearPicker
+        val month : NumberPicker = binding.monthPicker
+        val day : NumberPicker = binding.dayPicker
+
+        year.apply {
+            descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
+            minValue = 1980
+            maxValue = 2021
+        }
+        month.apply {
+            descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
+            minValue = 1
+            maxValue = 12
+        }
+        day.apply {
+            //wrapSelectorWheel = false
+            descendantFocusability = NumberPicker.FOCUS_BLOCK_DESCENDANTS
+            minValue = 1
+            maxValue = 31
+        }
+
+
 
         binding.btnSignUpPass.setOnClickListener {
             if (binding.etSignUpName.text.isNotEmpty())
