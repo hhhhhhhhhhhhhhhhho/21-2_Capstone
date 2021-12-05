@@ -12,9 +12,20 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
+import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
+import com.nanioi.closetapplication.DBkey
+import com.nanioi.closetapplication.DBkey.Companion.DB_ITEM
+import com.nanioi.closetapplication.DBkey.Companion.DB_USERS
+import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
+import com.nanioi.closetapplication.User.LoginUserData
 import com.nanioi.closetapplication.databinding.FragmentClosetBinding
+import com.nanioi.closetapplication.styling.StylingFragment
+import java.io.*
+
 
 class ClosetFragment : Fragment(R.layout.fragment_closet) {
 
@@ -34,7 +45,6 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
     }
 
     private val viewModel by viewModels<itemViewModel>()
-    //private val viewModel by lazy { ViewModelProvider(this).get(itemViewModel::class.java) }
 
     private val topItemList = mutableListOf<ItemModel>()
     private val pantsItemList = mutableListOf<ItemModel>()
@@ -44,6 +54,9 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
     private val auth: FirebaseAuth by lazy {
         Firebase.auth
     }
+    val db = FirebaseFirestore.getInstance()
+    private val userDB: FirebaseDatabase by lazy { Firebase.database }
+    lateinit var itemList : List<ItemModel>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -53,9 +66,9 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
         val fragmentClosetBinding = FragmentClosetBinding.bind(view)
         binding = fragmentClosetBinding
 
-        Log.d("bb","onViewCreated")
+        Log.d("bb", "onViewCreated")
         initViews(view, fragmentClosetBinding)
-//        viewModel.fetchData()
+        viewModel.fetchData()
         observeState()
     }
 
@@ -90,13 +103,11 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
             context?.let {
                 if (auth.currentUser != null) {
                     val intent = Intent(it, AddImageActivity::class.java)
-                    Log.d("bb","add ")
                     startActivity(intent)
                 } else {
                     Snackbar.make(view, "로그인 후 사용해주세요", Snackbar.LENGTH_LONG).show()
                 }
             }
-            Log.d("bb","add 후")
         }
         //todo 선택이미지 삭제기능
         fragmentClosetBinding.deleteItemButton.setOnClickListener {
@@ -111,7 +122,7 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
 
     //by나연. 아이템 중복 쌓임 방지 아이템 리스트 초기화
     private fun initList() {
-        Log.d("bb","init :"+topItemList.toString())
+        Log.d("bb", "init :" + topItemList.toString())
         topItemList.clear()
         pantsItemList.clear()
         accessoryItemList.clear()
@@ -129,15 +140,16 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
 
     //by 나연. 데이터 변경 관찰, UI 업데이트 함수 (21.10.25)
     private fun handleLoading() = with(binding) {
-        Log.d("bb","observe loading")
+        Log.d("bb", "observe loading")
         this!!.progressBar.isVisible = true
     }
 
     private fun handleSuccess(state: ItemState.Success) = with(binding) {
         this!!.progressBar.isGone = true
         initList()
-        Log.d("bb","observe success")
-        for (item in state.photoList) {
+        itemList = state.photoList
+        Log.d("bb", "observe success")
+        for (item in itemList) {
             when (item.categoryNumber) {
                 0 -> topItemList.add(item)
                 1 -> pantsItemList.add(item)
@@ -153,23 +165,55 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
     }
 
     private fun handleConfirm(state: ItemState.Confirm) {
-        Log.d("bb","observe confirm")
-//        setResult(Activity.RESULT_OK, Intent().apply {
-//            putExtra(URI_LIST_KEY, ArrayList(state.photoList.map { it.uri }))
-//        })
-//        finish()
+        Log.d("bb", "observe confirm")
+
+        val selectItem = ItemFromServer()
+        selectItem.userId = auth.currentUser!!.uid
+        selectItem.userBodyImage = LoginUserData.body_front_ImageUrl!!
+
+        for ( item in state.photoList ) {
+            when(item.categoryNumber){
+                0-> selectItem.topImageUrl = item.imageUrl
+                1-> selectItem.bottomImageUrl = item.imageUrl
+                2-> selectItem.accessoryImageUrl = item.imageUrl
+                3-> selectItem.shoesImageUrl = item.imageUrl
+            }
+        }
+        userDB.reference.child(DBkey.DB_SELECTED_ITEM).child(DB_USERS)
+            .setValue(selectItem)
+            .addOnCompleteListener {
+                Log.w(
+                    "ClosetFragment",
+                    "select item 업로드 "
+                )
+                (activity as MainActivity).replaceFragment(StylingFragment())
+            }.addOnFailureListener {
+                Log.w(
+                    "ClosetFragment",
+                    "select item 업로드 실패 : " + it.toString()
+                )
+            }
+
+        //todo 가상착용 이미지 추가
+        (activity as MainActivity).replaceFragment(StylingFragment())
     }
 
+    fun deleteAllItems(userId : String){
+        for( item in itemList ){
+            Log.d("bbbbb","item : "+ item.itemId)
+            db.collection(DB_USERS).document(userId).collection(DB_ITEM).document(item.itemId.toString()).delete()
+        }
+    }
     override fun onResume() {
         super.onResume()
 
-        Log.d("bb","resume")
+        Log.d("bb", "resume")
         viewModel.fetchData()
         observeState()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        Log.d("bb","destroy")
+        Log.d("bb", "destroy")
     }
 }

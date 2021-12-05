@@ -13,6 +13,7 @@ class closetApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         appContext = applicationContext
+
     }
 
     override fun onTerminate() {

@@ -9,78 +9,95 @@
     android:padding="30dp">
 
     <ImageView
-        android:id="@+id/profileImage"
-        android:layout_width="200dp"
-        android:layout_height="300dp"
-        android:layout_marginTop="50dp"
-        android:background="@drawable/radius_white"
+        android:id="@+id/img_header_profile"
+        android:layout_width="100dp"
+        android:layout_height="220dp"
+        android:layout_marginTop="60dp"
         android:elevation="10dp"
-        android:src="@drawable/ic_avatar"
+        android:src="@drawable/top_styling_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/et_sign_up_name"
+        android:id="@+id/tv_header_name"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="20dp"
         android:gravity="center"
-        android:text="곽나연"
+        android:layout_marginTop="30dp"
         android:textColor="@color/white"
         android:textSize="15sp"
-        app:layout_constraintEnd_toEndOf="@id/profileImage"
-        app:layout_constraintStart_toStartOf="@id/profileImage"
-        app:layout_constraintTop_toBottomOf="@id/profileImage"
-        app:layout_constraintBottom_toTopOf="@id/et_sign_up_email"
-        tools:ignore="HardcodedText" />
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/tv_header_email"
+        app:layout_constraintEnd_toEndOf="@id/img_header_profile"
+        app:layout_constraintStart_toStartOf="@id/img_header_profile"
+        app:layout_constraintTop_toBottomOf="@id/img_header_profile"
+        tools:ignore="HardcodedText"
+        tools:text="곽나연" />
 
     <TextView
-        android:id="@+id/et_sign_up_email"
+        android:id="@+id/tv_header_email"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        android:text="nani@gmail.com"
         android:textColor="@color/white"
         android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/tv_header_gender"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_sign_up_name"
-        app:layout_constraintBottom_toTopOf="@+id/et_sign_up_cm"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintTop_toBottomOf="@id/tv_header_name"
+        tools:ignore="HardcodedText"
+        tools:text="nani@gmail.com" />
 
     <TextView
-        android:id="@+id/et_sign_up_cm"
+        android:id="@+id/tv_header_gender"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        android:text="키 : 170cm"
         android:textColor="@color/white"
-        android:textSize="15sp"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/tv_header_cm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_sign_up_email"
-        app:layout_constraintBottom_toTopOf="@+id/et_sign_up_kg"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintTop_toBottomOf="@id/tv_header_email"
+        tools:ignore="HardcodedText"
+        tools:text="성별 : 여" />
 
     <TextView
-        android:id="@+id/et_sign_up_kg"
+        android:id="@+id/tv_header_cm"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        android:text="몸무게 : 40kg"
         android:textColor="@color/white"
-        android:textSize="15sp"
+        android:textSize="13sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/tv_header_kg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/et_sign_up_cm"
+        app:layout_constraintTop_toBottomOf="@id/tv_header_gender"
+        tools:ignore="HardcodedText"
+        tools:text="키 : 170cm" />
+
+    <TextView
+        android:id="@+id/tv_header_kg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:ignore="HardcodedText" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_header_cm"
+        tools:ignore="HardcodedText"
+        tools:text="몸무게 : 40kg" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

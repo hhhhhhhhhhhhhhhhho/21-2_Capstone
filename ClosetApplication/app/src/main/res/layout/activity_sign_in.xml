@@ -9,12 +9,13 @@
 
     <ImageView
         android:id="@+id/iv_sign_logo"
-        android:layout_width="200dp"
-        android:layout_height="200dp"
-        android:layout_marginTop="100dp"
-        android:background="@drawable/ic_closet"
-        android:backgroundTint="@color/main_color"
+        android:layout_width="250dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="80dp"
+        android:background="@drawable/hanger"
+        android:backgroundTint="@color/main_color_2"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,12 +23,16 @@
         android:id="@+id/closetTextView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:fontFamily="@font/dongdong"
         android:gravity="center"
         android:text="클로젯."
+        android:shadowColor="@color/gray_cc"
+        android:shadowDx="5.0"
+        android:shadowDy="7.0"
+        android:shadowRadius="5.0"
         android:textColor="@color/main_color_2"
-        android:textSize="40sp"
+        android:textSize="35dp"
+        android:textStyle="bold"
+        android:fontFamily="@font/gowunbatangbold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/iv_sign_logo"
@@ -63,28 +68,14 @@
         app:layout_constraintTop_toBottomOf="@id/et_sign_email"
         tools:ignore="HardcodedText" />
 
-    <!--    <Button-->
-    <!--        android:id="@+id/signUpButton"-->
-    <!--        android:layout_width="wrap_content"-->
-    <!--        android:layout_height="wrap_content"-->
-    <!--        android:layout_marginTop="20dp"-->
-    <!--        android:layout_marginEnd="15dp"-->
-    <!--        android:backgroundTint="@color/main_color_2"-->
-    <!--        android:enabled="false"-->
-    <!--        android:text="회원가입"-->
-    <!--        android:textColor="@color/white"-->
-    <!--        app:layout_constraintEnd_toStartOf="@id/signInOutButton"-->
-    <!--        app:layout_constraintTop_toBottomOf="@id/passwordEditText"-->
-    <!--        tools:ignore="HardcodedText" />-->
-
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_sign_sign_in"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:background="@drawable/radius_pink"
-        android:enabled="false"
         android:text="로그인"
+        android:fontFamily="@font/gowunbatangbold"
         android:textColor="@color/white"
         android:textSize="20sp"
         app:layout_constraintEnd_toEndOf="@id/et_sign_email"

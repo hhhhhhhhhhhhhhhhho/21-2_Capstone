@@ -5,7 +5,7 @@ data class ItemModel(
     val itemId: Long,
     val categoryNumber: Int,
     val imageUrl: String,
-    var isSelected: Boolean = false
+    var isSelected: Boolean
 ) {
     constructor() : this("", 0, 0, "", false)
 }

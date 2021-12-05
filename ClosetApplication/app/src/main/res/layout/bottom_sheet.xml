@@ -11,7 +11,7 @@
         android:layout_width="30dp"
         android:layout_height="3dp"
         android:layout_marginTop="12dp"
-        android:background="@color/main_color_2"
+        android:background="@color/violet"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -22,7 +22,7 @@
         android:layout_height="100dp"
         android:background="@drawable/top_radius_white_background"
         android:gravity="center"
-        android:text="추천템 보러가기!"
+        android:text="▾ 무신사 추천템 보러가기 ▾"
         android:textColor="@color/black"
         android:textSize="15sp"
         android:textStyle="bold"
@@ -35,7 +35,7 @@
         android:id="@+id/lineView"
         android:layout_width="0dp"
         android:layout_height="1dp"
-        android:background="@color/main_color_2"
+        android:background="@color/pinkmilk"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/bottomSheetTitleTextView" />
