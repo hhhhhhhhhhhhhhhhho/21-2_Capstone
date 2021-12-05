@@ -6,12 +6,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ktx.database
 
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.ktx.storage
 import com.nanioi.closetapplication.DBkey
+import com.nanioi.closetapplication.DBkey.Companion.DB_ITEM
+import com.nanioi.closetapplication.DBkey.Companion.DB_USERS
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -22,6 +26,7 @@ class itemViewModel : ViewModel() {
     val db = FirebaseFirestore.getInstance()
     val user = Firebase.auth.currentUser!!.uid
     private val storage: FirebaseStorage by lazy { Firebase.storage }
+    private val userDB: FirebaseDatabase by lazy { Firebase.database }
 
     var itemList = mutableListOf<ItemModel>()
     private var _itemStateLiveData = MutableLiveData<ItemState>(ItemState.Uninitialized)
@@ -33,8 +38,8 @@ class itemViewModel : ViewModel() {
             ItemState.Loading
         )
 
-        itemList = db.collection(DBkey.DB_USERS).document(user)
-            .collection(DBkey.DB_ITEM).get().await()
+        itemList = db.collection(DB_USERS).document(user)
+            .collection(DB_ITEM).get().await()
             .toObjects(ItemModel::class.java)
 
         setState(

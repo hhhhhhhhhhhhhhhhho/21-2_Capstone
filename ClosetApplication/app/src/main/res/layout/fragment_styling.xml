@@ -15,6 +15,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="35dp"
+            android:fontFamily="@font/gowunbatangbold"
             android:gravity="center"
             android:padding="5dp"
             android:shadowColor="@color/gray_cc"
@@ -22,10 +23,9 @@
             android:shadowDy="7.0"
             android:shadowRadius="5.0"
             android:text="My own styling"
-            android:fontFamily="@font/gowunbatangbold"
-            android:textStyle="bold"
             android:textColor="@color/violet"
             android:textSize="30sp"
+            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -33,15 +33,14 @@
 
         <ImageView
             android:id="@+id/person_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_avatar"
+            android:layout_width="140dp"
+            android:layout_height="360dp"
+            android:layout_marginBottom="30dp"
+            android:src="@drawable/top_styling_image"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            android:layout_marginBottom="150dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageButton
             android:id="@+id/accessoryButton"
@@ -86,28 +85,29 @@
             android:backgroundTint="@color/dark_gray"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
+
         <ProgressBar
             android:id="@+id/progressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:visibility="invisible"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/selectItemTap"
             android:layout_width="match_parent"
             android:layout_height="400dp"
             android:layout_gravity="center"
-            tools:visibility="gone"
-            android:background="@drawable/shadow"
             android:layout_marginBottom="70dp"
+            android:background="@drawable/shadow"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toTopOf="parent"
+            tools:visibility="gone">
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/itemRecycleView"

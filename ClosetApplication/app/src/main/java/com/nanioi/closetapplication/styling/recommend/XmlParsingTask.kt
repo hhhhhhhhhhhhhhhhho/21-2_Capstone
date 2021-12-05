@@ -13,6 +13,20 @@ import java.net.URLEncoder
 
 private val ns: String? = null
 
+//11번가 openApi xml Parsing
+
+// 원하는 액티비티 코드 추가
+//    inner class XmlParsingTask() : AsyncTask<Any?, Any?, List<RecommendItemModel>>() {
+//        override fun onPostExecute(result: List<RecommendItemModel>) {
+//            super.onPostExecute(result)
+//            recyclerAdapter.submitList(result)
+//        }
+//
+//        override fun doInBackground(vararg params: Any?): List<RecommendItemModel> { // xml 파싱할때 여기서 데이터 받아와 reedFeed 부분은 저 XmlParsingTask 파일보면 있으
+//            return readFeed(parsingData(keyword))
+//        }
+//    }
+
 fun parsingData(keyword : String): XmlPullParser {
 
     val apiKey = "392d1a9ebfe2deb7694d652fd495b316"
@@ -89,7 +103,7 @@ fun readEntry(parser: XmlPullParser): RecommendItemModel {
             else -> skip(parser)
         }
     }
-    return RecommendItemModel(ProductCode,ProductName, ProductPrice, ProductImage, Seller,DetailPageUrl,SalePrice) // 클래스에 데이터 넣어서 반환
+    return RecommendItemModel(ProductCode, ProductName, ProductPrice, ProductImage, Seller,DetailPageUrl,SalePrice) // 클래스에 데이터 넣어서 반환
 }
 
 // Processes title tags in the feed.

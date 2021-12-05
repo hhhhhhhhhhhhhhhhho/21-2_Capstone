@@ -24,6 +24,7 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.nanioi.closetapplication.DBkey
+import com.nanioi.closetapplication.DBkey.Companion.DB_SELECTED_ITEM
 import com.nanioi.closetapplication.DBkey.Companion.DB_USERS
 import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
@@ -63,24 +64,22 @@ class StylingFragment : Fragment(layout.fragment_styling) {
     private lateinit var shoesItemList: List<ItemModel>
 
     private lateinit var binding: FragmentStylingBinding
-    var keyword: String = "의류"
     private val auth: FirebaseAuth by lazy { Firebase.auth }
-    val db = FirebaseFirestore.getInstance()
     private val userDB: FirebaseDatabase by lazy { Firebase.database }
+
+    val TAG = "StylingFragment"
     // bottomSheet 추천리스트
     private val recyclerAdapter = RecommendItemListAdapter(itemClicked = { item ->
         var intent = Intent(Intent.ACTION_VIEW, Uri.parse(item.DetailPageUrl))
         startActivity(intent)
     })
-    val weburl = "https://search.musinsa.com/ranking/best?u_cat_cd=001"
-
+    var weburl = "https://search.musinsa.com/ranking/best"
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val fragmentStylingBinding = FragmentStylingBinding.bind(view)
         binding = fragmentStylingBinding
 
-        Log.d("aaa", "onViewCreated")
         initViews()
         viewModel.fetchData()
         observeState()
@@ -90,31 +89,43 @@ class StylingFragment : Fragment(layout.fragment_styling) {
             adapter = recyclerAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
-        when (LoginUserData.gender) {
-            "남자" -> keyword = "20대 남성의류"
-            "여자" -> keyword = "20대 여성의류"
-        }
-        XmlParsingTask().execute()
+        WebParsingTask().execute()
     }
 
-    inner class XmlParsingTask() : AsyncTask<Any?, Any?, List<RecommendItemModel>>() {
+    inner class WebParsingTask() :
+        AsyncTask<Any?, Any?, List<RecommendItemModel>>() { //input, progress update type, result type
+        var itemList = mutableListOf<RecommendItemModel>()
+        override fun doInBackground(vararg params: Any?): List<RecommendItemModel> {
+            val doc: Document = Jsoup.connect("$weburl").get()
+            val elts: Elements = doc.select("ul li.li_box")
+
+
+            elts.forEachIndexed { index, elem ->
+                val itemRank = elem.select("p.txt_num_rank").text()
+                val pageUrl = elem.select("div.li_inner div.list_img a").attr("href")
+                val itemImage = elem.select("div.li_inner div.list_img img").attr("data-original")
+                val seller = elem.select("div.li_inner div.article_info p.item_title a").text()
+                val itemTitle = elem.select("div.li_inner div.article_info p.list_info a").attr("title")
+                var salePrice = elem.select("div.li_inner div.article_info p.price").text().replace(" ","*")
+                var price = ""
+                if("*" in salePrice) {
+                    val arr = salePrice.split("*")
+                    price = arr.get(0)
+                    salePrice = arr.get(1)
+                }
+
+                var item = RecommendItemModel(itemRank,itemTitle,price,itemImage,seller,pageUrl,salePrice)
+                itemList.add(item)
+            }
+            return itemList
+        }
+
         override fun onPostExecute(result: List<RecommendItemModel>) {
             super.onPostExecute(result)
             recyclerAdapter.submitList(result)
         }
-
-        override fun doInBackground(vararg params: Any?): List<RecommendItemModel> { // xml 파싱할때 여기서 데이터 받아와 reedFeed 부분은 저 XmlParsingTask 파일보면 있으
-            return readFeed(parsingData(keyword))
-        }
     }
 
-//    inner class WebParsingTask() : AsyncTask<Any?, Any?, List<RecommendItemModel>>(){
-//        override fun doInBackground(vararg params: Any?): List<RecommendItemModel> {
-//            val doc: Document = Jsoup.connect("$weburl").get()
-//            val elts : Elements = doc.select("ul.goodsRankList li.li_box" )
-//        }
-//
-//    }
     private fun initViews() {
         Glide.with(this)
             .load(LoginUserData.avatar_front_ImageUrl)
@@ -128,45 +139,32 @@ class StylingFragment : Fragment(layout.fragment_styling) {
                 binding.selectItemTap.visibility = View.VISIBLE
                 initRecyclerView(0)
             }
-            when (LoginUserData.gender) {
-                "남자" -> keyword = "20대 남성 상의"
-                "여자" -> keyword = "20대 여성 상의"
-            }
-            XmlParsingTask().execute()
+            weburl = "https://search.musinsa.com/ranking/best?period=now&age=ALL&mainCategory=001"
+            WebParsingTask().execute()
         }
         binding.pantsButton.setOnClickListener {
-            Log.d("aaa", "pantButton")
             activity?.let {
                 initRecyclerView(1)
                 binding.selectItemTap.visibility = View.VISIBLE
             }
-            when (LoginUserData.gender) {
-                "남자" -> keyword = "20대 남성 하의"
-                "여자" -> keyword = "20대 여성 하의"
-            }
-            XmlParsingTask().execute()
+            weburl = "https://search.musinsa.com/ranking/best?period=now&age=ALL&mainCategory=003"
+            WebParsingTask().execute()
         }
         binding.accessoryButton.setOnClickListener {
             activity?.let {
                 initRecyclerView(2)
                 binding.selectItemTap.visibility = View.VISIBLE
             }
-            when (LoginUserData.gender) {
-                "남자" -> keyword = "20대 남성 액세서리"
-                "여자" -> keyword = "20대 여성 액세서리"
-            }
-            XmlParsingTask().execute()
+            weburl = "https://search.musinsa.com/ranking/best?period=now&age=ALL&mainCategory=011"
+            WebParsingTask().execute()
         }
         binding.shoesButton.setOnClickListener {
             activity?.let {
                 binding.selectItemTap.visibility = View.VISIBLE
                 initRecyclerView(3)
             }
-            when (LoginUserData.gender) {
-                "남자" -> keyword = "20대 남성 신발"
-                "여자" -> keyword = "20대 여성 신발"
-            }
-            XmlParsingTask().execute()
+            weburl = "https://search.musinsa.com/ranking/best?period=now&age=ALL&mainCategory=005"
+            WebParsingTask().execute()
         }
         binding.backButton.setOnClickListener {
             activity?.let {
@@ -177,7 +175,7 @@ class StylingFragment : Fragment(layout.fragment_styling) {
             activity?.let {
                 viewModel.confirmCheckedPhotos()
                 binding.selectItemTap.visibility = View.INVISIBLE
-                // 아바타에 옷입히기 코드 구현
+                // todo 아바타에 옷입히기 코드 구현
             }
         }
     }
@@ -187,7 +185,6 @@ class StylingFragment : Fragment(layout.fragment_styling) {
         binding.itemRecycleView.layoutManager = LinearLayoutManager(context).also {
             it.orientation = LinearLayoutManager.HORIZONTAL
         }
-        Log.d("aaa", "initRecyclerView")
         when (categoryNum) {
             0 -> {
                 binding.itemRecycleView.adapter = topItemAdapter
@@ -205,7 +202,6 @@ class StylingFragment : Fragment(layout.fragment_styling) {
     }
 
     private fun observeState() = viewModel.itemStateLiveData.observe(viewLifecycleOwner) {
-        Log.d("aaa", "observestate")
         when (it) {
             is stylingState.Success -> handleSuccess(it)
             is stylingState.Confirm -> handleConfirm(it)
@@ -215,9 +211,6 @@ class StylingFragment : Fragment(layout.fragment_styling) {
 
     @SuppressLint("NotifyDataSetChanged")
     private fun handleSuccess(state: stylingState.Success) = with(binding) {
-        //initList()
-        Log.d("aaa", "observe success")
-
         itemList = state.photoList
         topItemList = itemList.filter { it.categoryNumber == 0 }
         pantsItemList = itemList.filter { it.categoryNumber == 1 }
@@ -231,65 +224,59 @@ class StylingFragment : Fragment(layout.fragment_styling) {
     }
 
     private fun handleConfirm(state: stylingState.Confirm) {
-        Log.d("aaa", "observe confirm")
-
         showProgress()
 
         val selectItem = ItemFromServer()
         selectItem.userId = auth.currentUser!!.uid
         selectItem.userBodyImage = LoginUserData.body_front_ImageUrl!!
 
-        when(state.photo.categoryNumber){
-            0-> selectItem.topImageUrl = state.photo.imageUrl
-            1-> selectItem.bottomImageUrl = state.photo.imageUrl
-            2-> selectItem.accessoryImageUrl = state.photo.imageUrl
-            3-> selectItem.shoesImageUrl = state.photo.imageUrl
+        when (state.photo.categoryNumber) {
+            0 -> selectItem.topImageUrl = state.photo.imageUrl
+            1 -> selectItem.bottomImageUrl = state.photo.imageUrl
+            2 -> selectItem.accessoryImageUrl = state.photo.imageUrl
+            3 -> selectItem.shoesImageUrl = state.photo.imageUrl
         }
-        userDB.reference.child(DBkey.DB_SELECTED_ITEM)
+        userDB.reference.child(DB_SELECTED_ITEM).child(DB_USERS)
             .setValue(selectItem)
             .addOnCompleteListener {
-                Log.w(
-                    "ClosetFragment",
-                    "select item 업로드 "
-                )
+                Log.w(TAG, "select item 업로드 ")
             }.addOnFailureListener {
-                Log.w(
-                    "ClosetFragment",
-                    "select item 업로드 실패 : " + it.toString()
-                )
+                Log.w(TAG, "select item 업로드 실패 : " + it.toString())
             }
-        userDB.reference.child(DB_USERS).child(selectItem.userId).addValueEventListener(object :
-            ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                LoginUserData.body_front_ImageUrl = dataSnapshot.child(userDBkey.DB_BODY_FRONT).value.toString()
-                LoginUserData.avatar_front_ImageUrl = dataSnapshot.child(userDBkey.DB_AVATAR_FRONT).value.toString()
+//        userDB.reference.child(DB_USERS).child(selectItem.userId).addValueEventListener(object :
+//            ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                LoginUserData.body_front_ImageUrl =
+//                    dataSnapshot.child(userDBkey.DB_BODY_FRONT).value.toString()
+//                LoginUserData.avatar_front_ImageUrl =
+//                    dataSnapshot.child(userDBkey.DB_AVATAR_FRONT).value.toString()
+//
+//                hideProgress()
+//            }
+//
+//            override fun onCancelled(error: DatabaseError) {
+//                Log.e(TAG, error.toException().toString())
+//            }
+//        })
 
-                hideProgress()
-            }
 
-            override fun onCancelled(error: DatabaseError) {
-                Log.e(
-                    "StylingFragment",
-                    error.toException().toString()
-                )
-            }
-        })
+        Glide.with(this)
+            .load(R.drawable.top_styling_image)
+            .into(binding.personImage)
+        hideProgress()
     }
+
     private fun showProgress() {
         binding.progressBar.isVisible = true
     }
+
     private fun hideProgress() {
         binding.progressBar.isVisible = false
     }
+
     override fun onResume() {
         super.onResume()
         viewModel.fetchData()
-        Log.d("aaa", "resume")
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        Log.d("aaa", "destroy")
-        //  viewModel.
-    }
 }

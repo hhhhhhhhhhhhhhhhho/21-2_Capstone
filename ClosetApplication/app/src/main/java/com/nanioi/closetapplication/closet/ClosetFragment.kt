@@ -17,6 +17,8 @@ import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
 import com.nanioi.closetapplication.DBkey
+import com.nanioi.closetapplication.DBkey.Companion.DB_ITEM
+import com.nanioi.closetapplication.DBkey.Companion.DB_USERS
 import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.User.LoginUserData
@@ -145,8 +147,9 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
     private fun handleSuccess(state: ItemState.Success) = with(binding) {
         this!!.progressBar.isGone = true
         initList()
+        itemList = state.photoList
         Log.d("bb", "observe success")
-        for (item in state.photoList) {
+        for (item in itemList) {
             when (item.categoryNumber) {
                 0 -> topItemList.add(item)
                 1 -> pantsItemList.add(item)
@@ -176,7 +179,7 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
                 3-> selectItem.shoesImageUrl = item.imageUrl
             }
         }
-        userDB.reference.child(DBkey.DB_SELECTED_ITEM)
+        userDB.reference.child(DBkey.DB_SELECTED_ITEM).child(DB_USERS)
             .setValue(selectItem)
             .addOnCompleteListener {
                 Log.w(
@@ -190,6 +193,16 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
                     "select item 업로드 실패 : " + it.toString()
                 )
             }
+
+        //todo 가상착용 이미지 추가
+        (activity as MainActivity).replaceFragment(StylingFragment())
+    }
+
+    fun deleteAllItems(userId : String){
+        for( item in itemList ){
+            Log.d("bbbbb","item : "+ item.itemId)
+            db.collection(DB_USERS).document(userId).collection(DB_ITEM).document(item.itemId.toString()).delete()
+        }
     }
     override fun onResume() {
         super.onResume()

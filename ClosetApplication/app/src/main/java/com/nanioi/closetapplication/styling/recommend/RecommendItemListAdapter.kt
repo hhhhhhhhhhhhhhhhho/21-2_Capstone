@@ -13,33 +13,33 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.nanioi.closetapplication.databinding.RecommendBinding
 import com.nanioi.closetapplication.databinding.RecommendedItemListBinding
 
 class RecommendItemListAdapter(val itemClicked:(RecommendItemModel)->Unit) : ListAdapter<RecommendItemModel, RecommendItemListAdapter.ViewHolder>(differ) {
 
     inner class ViewHolder(
-        private val binding: RecommendedItemListBinding
+        private val binding: RecommendBinding
         ) : RecyclerView.ViewHolder(binding.root) {
 
         @SuppressLint("SetTextI18n")
         fun bind(item: RecommendItemModel) {
+            val productRank = binding.rank
             val productName = binding.recommendedProductName
-            val priceTextView = binding.price
             val productPrice = binding.recommendedProductPrice
             val productImage = binding.recommendedItem
             val productSeller = binding.recommendedProductSeller
             val productSalePrice = binding.recommendedProductSalePrice
 
-
+            productRank.text = item.itemRank
             productName.text = item.ProductName
-            priceTextView.text = "할인가 : "
-            productPrice.text = "${item.ProductPrice}원 "
+            productPrice.text = "${item.ProductPrice}"
             productPrice.apply {
                 paintFlags = paintFlags or Paint.STRIKE_THRU_TEXT_FLAG
                 //setTypeface(null, Typeface.ITALIC)
             }
-            productSalePrice.text = "${item.SalePrice}원"
-            productSeller.text = "판매자 : ${item.Seller}"
+            productSalePrice.text = "${item.SalePrice}"
+            productSeller.text = "${item.Seller}"
             Glide
                 .with(productImage.context)
                 .load(item.ProductImage)
@@ -53,7 +53,7 @@ class RecommendItemListAdapter(val itemClicked:(RecommendItemModel)->Unit) : Lis
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        return ViewHolder(RecommendedItemListBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        return ViewHolder(RecommendBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
@@ -66,7 +66,7 @@ class RecommendItemListAdapter(val itemClicked:(RecommendItemModel)->Unit) : Lis
     companion object {
         val differ = object : DiffUtil.ItemCallback<RecommendItemModel>() {
             override fun areItemsTheSame(oldItem: RecommendItemModel, newItem: RecommendItemModel): Boolean {
-                return oldItem.ProductCode == newItem.ProductCode
+                return oldItem == newItem
             }
 
             override fun areContentsTheSame(oldItem: RecommendItemModel, newItem: RecommendItemModel): Boolean {

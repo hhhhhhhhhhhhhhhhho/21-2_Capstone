@@ -13,10 +13,10 @@
         android:layout_margin="24dp"
         android:background="@drawable/shadow2"
         android:scaleType="centerCrop"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="3:2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/recommended_productName"
@@ -30,37 +30,23 @@
         android:textColor="@color/black"
         android:textSize="16sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/price"
+        app:layout_constraintBottom_toTopOf="@id/recommended_productSalePrice"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/recommended_item"
         app:layout_constraintTop_toTopOf="@+id/recommended_item"
         tools:text="의상asdfasdfasdklbfasdbfasldbfklsdbflaksdfladjfaklbsdfjabsldkjbfaklsdjfbalsdsfd" />
 
     <TextView
-        android:id="@+id/price"
+        android:id="@+id/recommended_productSalePrice"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
         android:layout_marginTop="12dp"
         android:layout_marginBottom="24dp"
         android:textColor="@color/main_color"
         android:textSize="15sp"
         android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/recommended_item"
+        app:layout_constraintStart_toStartOf="@+id/recommended_productName"
         app:layout_constraintTop_toBottomOf="@+id/recommended_productName"
-        tools:text="할인가 :  " />
-
-    <TextView
-        android:id="@+id/recommended_productSalePrice"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:textColor="@color/main_color"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/price"
-        app:layout_constraintStart_toEndOf="@+id/price"
-        app:layout_constraintTop_toTopOf="@+id/price"
         tools:text="15000원" />
 
     <TextView
@@ -68,10 +54,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="5dp"
+        android:layout_marginBottom="1dp"
         android:textColor="@color/dark_gray"
         android:textSize="12sp"
-        android:layout_marginBottom="1dp"
-        app:layout_constraintBottom_toBottomOf="@id/price"
+        app:layout_constraintBottom_toBottomOf="@id/recommended_productSalePrice"
         app:layout_constraintStart_toEndOf="@+id/recommended_productSalePrice"
         tools:text="20000원" />
 
