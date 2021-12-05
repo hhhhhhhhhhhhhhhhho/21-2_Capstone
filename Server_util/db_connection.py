@@ -54,7 +54,7 @@ def fileUpload(upload_path,file):
     metadata = {"firebaseStorageDownloadTokens": new_token} #access token이 필요하다.
     blob.metadata = metadata    
     #upload file
-    os.system('curl -o Server_util/Download_temp/temp.png '+file)
+    #os.system('curl -o Server_util/Download_temp/temp.png '+file)
     blob.upload_from_filename(filename='Server_util/Download_temp/temp.png', content_type='image/png')
     blob.make_public()
     public_url = blob.public_url
@@ -78,8 +78,8 @@ if __name__ == '__main__':
     
     #print("테스트용 파일을 업로드 합니다. ")
     #https://firebasestorage.googleapis.com/v0/b/closet-89ea8.appspot.com/o/user%2Fbody1%2FfPFIyQhZe6VYheDbDFbjqXMQoxK2_img_body1.jpg?alt=media&token=e7ab0ece-c118-48b8-9ba7-92db20b47bcf
-    user_id="test_user"
-    url = fileUpload('user/avatar/'+user_id+'_test2.png','https://firebasestorage.googleapis.com/v0/b/closet-89ea8.appspot.com/o/user%2Fbody1%2FfPFIyQhZe6VYheDbDFbjqXMQoxK2_img_body1.jpg?alt=media&token=e7ab0ece-c118-48b8-9ba7-92db20b47bcf')
+    user_id="F41EkwbjsQUHWiuAqi4wEmAkKHE2"
+    url = fileUpload('user/avatar/'+user_id+'_avatar_front.png','Server_util/박태정_누끼제거.png')
     print(url)
     #realtime_update('kzbuEMGh1yMymoRfcvASXbF7tOB3','avatarImageUri',url)
     #fileUpload('item/remove_bg/','VTON/Server_util/test_remove.png')
