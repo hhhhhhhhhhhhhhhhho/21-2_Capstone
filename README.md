@@ -20,7 +20,12 @@
 ![FlowChart](/image/service.png)
 ![FlowChart](/image/vton.png)
 
-
+## 기능소개영상
+#### 1. 회원가입/ 로그인
+#### 2. 
+#### 3. 프로필 수정
+#### 4. 다중선택 삭제 / 스타일링
+<img width="250" src="https://user-images.githubusercontent.com/52556870/145669508-a3b99f80-f421-4172-96f4-559600e0cf2a.gif">
 ## Fine  
 
 마무리 사진 한 방 찍읍시다 - !
