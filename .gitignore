@@ -14,13 +14,7 @@
 .cxx
 local.properties
 
-
-/.DS_Store
 .DS_Store
-./.DS_Store
-*.DS_Store
-*/.DS_Store
-
 *.pyc
 
 /Server_util/__pycache__
