@@ -14,7 +14,7 @@
 
 # Subject
 ## 캡쳐한번에 가능 한 가상의류착용서비스 (서비스명 : 클로젯)  
-<img src="https://user-images.githubusercontent.com/52556870/145669737-4c48b5a6-efb5-4e0c-b81a-787bf5db6895.gif">
+<img src="https://user-images.githubusercontent.com/52556870/145670155-86ae5faa-6495-4651-8036-2b00105353f3.gif">
 
 ## 서비스개요
 ![FlowChart](/image/service.png)
@@ -22,14 +22,14 @@
 
 ## 기능소개영상
 #### [ 회원가입 / 로그인 ]
-<img width="250" src="https://user-images.githubusercontent.com/52556870/145669884-1e7f0f7a-359e-4284-9ae7-54ee57136bbc.gif">
+<img width="250" src="https://user-images.githubusercontent.com/52556870/145670168-5e514d8a-5efb-420b-920a-4b318e79f94b.gif">
 
 ###### 1. 이름과 이메일을 입력하고 옷 추천을 위한 성별과 생년월일, 본인의 신체사이즈를 입력합니다.
 ###### 2. 아바타 생성을 위해 전신사진 (앞/뒤)을 업로드 합니다.
 ###### 3. 홈 화면에서 클로젯 사용방법을 확인합니다.
 
 #### [ 아이템 추가 / 가상착용 ]
-<img width="250" src="https://user-images.githubusercontent.com/52556870/145669881-24b39723-7e3d-4767-ab81-283e8030670a.gif">
+<img width="250" src="https://user-images.githubusercontent.com/52556870/145670184-66e3e1d1-f818-4ac5-bc3e-f6403d2b36c0.gif">
 
 ###### 1. 의상에 맞는 카테고리를 선택해 의상을 업로드합니다.
 ###### 2. CLOSET/ STYLING 메뉴에서 착용하고 싶은 의상을 선택해 가상 착용된 모습을 확인하실 수 있습니다.
@@ -44,7 +44,7 @@
 ###### 4. 사용자가 원하는 시점에 회원탈퇴가 가능합니다. 
 
 #### [ 다중 선택 삭제 / 다중 선택 스타일링 ]
-<img width="250" src="https://user-images.githubusercontent.com/52556870/145669508-a3b99f80-f421-4172-96f4-559600e0cf2a.gif">
+<img width="250" src="https://user-images.githubusercontent.com/52556870/145670200-0bb9175e-92f2-4697-ba97-5d2bc8560f8c.gif">
 
 ###### 1. 마음에 들지않는 아이템들은 다중 선택 삭제가 가능합니다. 
 ###### 2. 카테고리별로 다중 선택하여 스타일링이 가능합니다. 
