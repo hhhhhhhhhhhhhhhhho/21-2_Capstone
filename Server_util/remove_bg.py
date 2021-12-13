@@ -45,10 +45,10 @@ def download_blob(source_blob_name, destination_file_name):
 
 
 def remove_background(user_id,target_file):
-    #https://github.com/danielgatis/rembg    
+    #https://github.com/OPHoperHPO/image-background-remove-tool
     #removed_bg_fileUrl="completed_removing/"+user_id+"_output.png" ### FIXME test removing 지우고, 
     removed_bg_fileUrl="https://firebasestorage.googleapis.com/v0/b/closet-89ea8.appspot.com/o/user%2Fbody1%2FfPFIyQhZe6VYheDbDFbjqXMQoxK2_img_body1.jpg?alt=media&token=e7ab0ece-c118-48b8-9ba7-92db20b47bcf"
-    #os.system("curl -s "+target_file+" | rembg > "+removed_bg_fileUrl)
+    #os.system("python3 main.py -i /content/test.jpg -o /content/output.png -m u2net -prep bbmd-mskrcnn -postp rtb-bnb")
     removed_bg_fileURL_onFireStore = db_func.fileUpload("user/avatar/"+user_id+"_body_front_removedBg.png",removed_bg_fileUrl)
     print("**** FireStore Fileupload 완료 *****")
     db_func.realtime_update(user_id,"avatar_front_imageUrl",removed_bg_fileURL_onFireStore)

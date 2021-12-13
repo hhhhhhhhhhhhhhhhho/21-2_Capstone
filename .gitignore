@@ -22,3 +22,8 @@ local.properties
 ./.DS_Store
 *.DS_Store
 */.DS_Store
+
+./.DS_Store
+
+/ClosetApplication/
+ClosetApplication/
