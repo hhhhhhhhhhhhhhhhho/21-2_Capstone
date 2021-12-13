@@ -71,43 +71,4 @@ class MyPageFragment : Fragment(R.layout.fragment_mypage) {
             }
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-
-        val userDB = FirebaseDatabase.getInstance().reference.child(DBkey.DB_USERS)
-        val userUid = FirebaseAuth.getInstance().currentUser!!.uid
-
-        userDB.child(userUid).addValueEventListener(object :
-            ValueEventListener {
-            override fun onDataChange(dataSnapshot: DataSnapshot) {
-                LoginUserData.uid =
-                    dataSnapshot.child(DB_UID).value.toString()
-                LoginUserData.email =
-                    dataSnapshot.child(DB_EMAIL).value.toString()
-                LoginUserData.name =
-                    dataSnapshot.child(DB_NAME).value.toString()
-                LoginUserData.gender =
-                    dataSnapshot.child(DB_GENDER).value.toString()
-                LoginUserData.cm =
-                    dataSnapshot.child(DB_HEIGHT).value.toString()
-                LoginUserData.kg =
-                    dataSnapshot.child(DB_WEIGHT).value.toString()
-                LoginUserData.body_front_ImageUrl =
-                    dataSnapshot.child(DB_BODY_FRONT).value.toString()
-                LoginUserData.body_back_ImageUrl = Uri.parse(dataSnapshot.child(DB_BODY_BACK).value.toString())
-                LoginUserData.avatar_front_ImageUrl =
-                    dataSnapshot.child(DB_AVATAR_FRONT).value.toString()
-                //LoginUserData.avatar_back_ImageUrl = dataSnapshot.child("avatar_back_ImageUrl").value.toString()
-            }
-
-            override fun onCancelled(error: DatabaseError) {
-                Log.e(
-                    "MyPageFragment",
-                    error.toException().toString()
-                )
-            }
-        })
-    }
-
 }
