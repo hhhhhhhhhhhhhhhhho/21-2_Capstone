@@ -89,14 +89,16 @@ class StylingFragment : Fragment(layout.fragment_styling) {
             adapter = recyclerAdapter
             layoutManager = LinearLayoutManager(requireContext())
         }
-        WebParsingTask().execute()
+        WebParsingTask(weburl).execute()
     }
 
-    inner class WebParsingTask() :
+    inner class WebParsingTask(
+        val url : String
+    ) :
         AsyncTask<Any?, Any?, List<RecommendItemModel>>() { //input, progress update type, result type
         var itemList = mutableListOf<RecommendItemModel>()
         override fun doInBackground(vararg params: Any?): List<RecommendItemModel> {
-            val doc: Document = Jsoup.connect("$weburl").get()
+            val doc: Document = Jsoup.connect("$url").get()
             val elts: Elements = doc.select("ul li.li_box")
 
 
@@ -139,32 +141,28 @@ class StylingFragment : Fragment(layout.fragment_styling) {
                 binding.selectItemTap.visibility = View.VISIBLE
                 initRecyclerView(0)
             }
-            weburl = "https://search.musinsa.com/ranking/best?period=now&age=ALL&mainCategory=001"
-            WebParsingTask().execute()
+            WebParsingTask(makeWebUrl("001")).execute()
         }
         binding.pantsButton.setOnClickListener {
             activity?.let {
                 initRecyclerView(1)
                 binding.selectItemTap.visibility = View.VISIBLE
             }
-            weburl = "https://search.musinsa.com/ranking/best?period=now&age=ALL&mainCategory=003"
-            WebParsingTask().execute()
+            WebParsingTask(makeWebUrl("003")).execute()
         }
         binding.accessoryButton.setOnClickListener {
             activity?.let {
                 initRecyclerView(2)
                 binding.selectItemTap.visibility = View.VISIBLE
             }
-            weburl = "https://search.musinsa.com/ranking/best?period=now&age=ALL&mainCategory=011"
-            WebParsingTask().execute()
+            WebParsingTask(makeWebUrl("011")).execute()
         }
         binding.shoesButton.setOnClickListener {
             activity?.let {
                 binding.selectItemTap.visibility = View.VISIBLE
                 initRecyclerView(3)
             }
-            weburl = "https://search.musinsa.com/ranking/best?period=now&age=ALL&mainCategory=005"
-            WebParsingTask().execute()
+            WebParsingTask(makeWebUrl("005")).execute()
         }
         binding.backButton.setOnClickListener {
             activity?.let {
@@ -243,27 +241,26 @@ class StylingFragment : Fragment(layout.fragment_styling) {
             }.addOnFailureListener {
                 Log.w(TAG, "select item 업로드 실패 : " + it.toString())
             }
-//        userDB.reference.child(DB_USERS).child(selectItem.userId).addValueEventListener(object :
-//            ValueEventListener {
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                LoginUserData.body_front_ImageUrl =
-//                    dataSnapshot.child(userDBkey.DB_BODY_FRONT).value.toString()
-//                LoginUserData.avatar_front_ImageUrl =
-//                    dataSnapshot.child(userDBkey.DB_AVATAR_FRONT).value.toString()
-//
-//                hideProgress()
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//                Log.e(TAG, error.toException().toString())
-//            }
-//        })
+        userDB.reference.child(DB_USERS).child(selectItem.userId).addValueEventListener(object :
+            ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                LoginUserData.avatar_front_ImageUrl =
+                    dataSnapshot.child(userDBkey.DB_AVATAR_FRONT).value.toString()
 
+                hideProgress()
+            }
 
-        Glide.with(this)
-            .load(R.drawable.top_styling_image)
-            .into(binding.personImage)
-        hideProgress()
+            override fun onCancelled(error: DatabaseError) {
+                Log.e(TAG, error.toException().toString())
+            }
+        })
+    }
+    private fun makeWebUrl(category : String?) : String{
+        var url = weburl
+        if(category == null)
+            return url
+        url = weburl + "&mainCategory=" + category
+        return url
     }
 
     private fun showProgress() {

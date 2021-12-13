@@ -12,7 +12,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.database
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.ktx.Firebase
@@ -22,6 +25,7 @@ import com.nanioi.closetapplication.DBkey.Companion.DB_USERS
 import com.nanioi.closetapplication.MainActivity
 import com.nanioi.closetapplication.R
 import com.nanioi.closetapplication.User.LoginUserData
+import com.nanioi.closetapplication.User.userDBkey
 import com.nanioi.closetapplication.databinding.FragmentClosetBinding
 import com.nanioi.closetapplication.styling.StylingFragment
 import java.io.*
@@ -54,10 +58,9 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
     private val auth: FirebaseAuth by lazy {
         Firebase.auth
     }
-    val db = FirebaseFirestore.getInstance()
     private val userDB: FirebaseDatabase by lazy { Firebase.database }
     lateinit var itemList : List<ItemModel>
-
+    val TAG = "ClosetFragment"
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -186,7 +189,6 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
                     "ClosetFragment",
                     "select item 업로드 "
                 )
-                (activity as MainActivity).replaceFragment(StylingFragment())
             }.addOnFailureListener {
                 Log.w(
                     "ClosetFragment",
@@ -194,16 +196,21 @@ class ClosetFragment : Fragment(R.layout.fragment_closet) {
                 )
             }
 
-        //todo 가상착용 이미지 추가
-        (activity as MainActivity).replaceFragment(StylingFragment())
+        userDB.reference.child(DB_USERS).child(selectItem.userId).addValueEventListener(object :
+            ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                LoginUserData.avatar_front_ImageUrl =
+                    dataSnapshot.child(userDBkey.DB_AVATAR_FRONT).value.toString()
+
+                (activity as MainActivity).replaceFragment(StylingFragment())
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.e(TAG, error.toException().toString())
+            }
+        })
     }
 
-    fun deleteAllItems(userId : String){
-        for( item in itemList ){
-            Log.d("bbbbb","item : "+ item.itemId)
-            db.collection(DB_USERS).document(userId).collection(DB_ITEM).document(item.itemId.toString()).delete()
-        }
-    }
     override fun onResume() {
         super.onResume()
 
