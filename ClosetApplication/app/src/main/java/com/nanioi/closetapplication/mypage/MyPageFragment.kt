@@ -55,13 +55,11 @@ class MyPageFragment : Fragment(R.layout.fragment_mypage) {
         Glide.with(view)
             .load(LoginUserData.avatar_front_ImageUrl)
             .into(binding.mypagaAvatarImageView)
-//        Glide.with(view)
-//            .load(R.drawable.avatar)
-//            .into(binding.mypagaAvatarImageView)
 
-//        //아바타에 애니메이션 효과 추가
-//        val avataranim :Animation = AnimationUtils.loadAnimation(requireContext(),R.anim.avataranim)
-//        binding.mypagaAvatarImageView.startAnimation(avataranim)
+
+        //아바타에 애니메이션 효과 추가
+        val avataranim :Animation = AnimationUtils.loadAnimation(requireContext(),R.anim.avataranim)
+        binding.mypagaAvatarImageView.startAnimation(avataranim)
 
 
         //by 나연. 프로필 수정 버튼 클릭 시 activity이동 (21.09.27)
