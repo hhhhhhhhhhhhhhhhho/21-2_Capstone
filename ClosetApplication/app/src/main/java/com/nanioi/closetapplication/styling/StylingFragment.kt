@@ -246,7 +246,8 @@ class StylingFragment : Fragment(layout.fragment_styling) {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 LoginUserData.avatar_front_ImageUrl =
                     dataSnapshot.child(userDBkey.DB_AVATAR_FRONT).value.toString()
-
+                LoginUserData.avatar_back_ImageUrl =
+                    dataSnapshot.child(userDBkey.DB_AVATAR_BACK).value.toString()
                 hideProgress()
             }
 

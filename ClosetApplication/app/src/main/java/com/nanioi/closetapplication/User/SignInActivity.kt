@@ -83,7 +83,7 @@ class SignInActivity : AppCompatActivity() {
                                         LoginUserData.body_front_ImageUrl = dataSnapshot.child(DB_BODY_FRONT).value.toString()
                                         LoginUserData.body_back_ImageUrl = Uri.parse(dataSnapshot.child(DB_BODY_BACK).value.toString())
                                         LoginUserData.avatar_front_ImageUrl = dataSnapshot.child(DB_AVATAR_FRONT).value.toString()
-
+                                        LoginUserData.avatar_back_ImageUrl = dataSnapshot.child(userDBkey.DB_AVATAR_BACK).value.toString()
                                         if (LoginUserData.name != null) {
                                             Toast.makeText(
                                                 this@SignInActivity,

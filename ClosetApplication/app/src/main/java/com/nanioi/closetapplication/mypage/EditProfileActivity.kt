@@ -194,10 +194,6 @@ class EditProfileActivity : AppCompatActivity() {
         binding.ivEditUserDataBody2.setImageURI(editBody2ImageUri)
     }
 
-    private fun clickEventListener() = with(binding) {
-
-    }
-
     //by 나연. user정보 수정 ( 21.11.05 )
     private fun changeUserData() {
         Toast.makeText(this@EditProfileActivity, "회원정보 수정 중...", Toast.LENGTH_SHORT).show()
